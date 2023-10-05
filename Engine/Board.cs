@@ -67,9 +67,73 @@ namespace Engine
 		public ulong AllPieces { get; private set; } = 0;
 		public ulong WhitePieces { get; private set; } = 0;
 		public ulong BlackPieces { get; private set; } = 0;
-		public Board()
+		public Board(){ }
+
+		public Board(string fen)
 		{
-			//Doesn't do anything currently
+			var fields = fen.Split(' ');
+			//Piece placement
+			var x = 0;
+			var y = 0;
+			foreach(var row in fields[0].Split('/'))
+			{
+				foreach(var c in row)
+				{
+					switch (Char.ToLower(c))
+					{
+						case 'p':
+							AddPiece(x, y, PieceTypes.PAWN, Char.IsUpper(c));
+							break;
+                        case 'r':
+                            AddPiece(x, y, PieceTypes.ROOK, Char.IsUpper(c));
+                            break;
+                        case 'n':
+                            AddPiece(x, y, PieceTypes.KNIGHT, Char.IsUpper(c));
+                            break;
+                        case 'b':
+                            AddPiece(x, y, PieceTypes.BISHOP, Char.IsUpper(c));
+                            break;
+                        case 'q':
+                            AddPiece(x, y, PieceTypes.QUEEN, Char.IsUpper(c));
+                            break;
+                        case 'k':
+                            AddPiece(x, y, PieceTypes.KING, Char.IsUpper(c));
+                            break;
+                        default:
+							x += (int)Char.GetNumericValue(c) - 1;
+							break;
+					}
+					x++;
+				}
+                y++;
+            }
+
+			//Active color
+			_turn = (fields[1] == "w");
+
+			//Castling availability
+			
+			CastleRights = 0;
+            if (fields[2] != "-")
+            {
+				if (fields[2].Contains("K"))
+					CastleRights |= (int)Castles.WhiteKingside;
+                if (fields[2].Contains("Q"))
+                    CastleRights |= (int)Castles.WhiteQueenside;
+                if (fields[2].Contains("k"))
+                    CastleRights |= (int)Castles.BlackKingside;
+                if (fields[2].Contains("q"))
+                    CastleRights |= (int)Castles.BlackQueenside;
+            }
+
+			//En passant target square
+			EnPassantTarget = FindPiece(BitUtilities.AlgebraicToBit(fields[3])) as Pawn;
+
+			//Halfmove clock
+			HalfmoveClock = Int32.Parse(fields[4]);
+
+			//Fullmoves
+			_turnNumber = Int32.Parse(fields[5]);
 		}
 
 		public void AddPiece(int x, int y, PieceTypes t, bool side)

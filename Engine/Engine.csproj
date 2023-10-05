@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="EngineTest">
+      <HintPath>..\EngineTest\obj\Debug\net6.0\EngineTest.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
