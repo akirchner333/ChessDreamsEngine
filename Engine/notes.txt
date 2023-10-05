@@ -1,0 +1,27 @@
+https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces
+	-Good source of fairy pieces too
+
+To Do
+-Rook
+	-Castling
+-Check & checkmate detection
+-50/75 Move Rule
+-3/5 fold repetition
+
+
+Tests
+- Queens
+- Castling tests
+	-Plus I wouldn't be surprised if I broke the regular rook tests
+
+Once all of that is finished, then the basic engine will be working
+	-Write some board level tests for move correctness
+	-Then either get into optimization (magic bit boards, etc)
+	-Or start working on the AI
+
+Big List of Ideas
+-Sound on movement
+-Non-symmetrical pieces, so you can tell king's rook from queen's rook
+
+Players
+-Each player has a color for pieces, light squares, and black squares.
