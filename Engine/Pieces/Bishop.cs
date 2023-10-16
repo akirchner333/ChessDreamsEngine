@@ -18,10 +18,10 @@ namespace Engine
 
         public override ulong MoveMask(Board board)
 		{
-            return RiderMoves(7, Right | Bottom, board) |
-                RiderMoves(-7, Left | Top, board) |
-                RiderMoves(9, Left | Bottom, board) |
-                RiderMoves(-9, Right | Top, board);
+            return RiderMoves(7, Board.Columns["H"], board) |
+                RiderMoves(-7, Board.Columns["A"], board) |
+                RiderMoves(9, Board.Columns["A"], board) |
+                RiderMoves(-9, Board.Columns["H"], board);
         }
 	}
 }

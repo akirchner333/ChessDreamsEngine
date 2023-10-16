@@ -13,5 +13,10 @@ namespace EngineTest
         {
             return p.Moves(b).Select(m => m.EndAlgebraic());
         }
+
+        public static IEnumerable<string> StartEnd(Piece p, Board b)
+        {
+            return p.Moves(b).Select(m => m.StartEnd());
+        }
     }
 }

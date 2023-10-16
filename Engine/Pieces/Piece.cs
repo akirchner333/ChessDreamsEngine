@@ -9,25 +9,25 @@ namespace Engine
     public abstract class Piece
     {
         public ulong Position { get; set; } = 0;
+        public int Index { get; set; } = 0;
         public PieceTypes Type { get; protected set; }
-        protected string _name = "whatever";
         public bool Side;
+        public bool Captured { get; set; } = false;
 
-        protected const ulong Bottom = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_11111111;
-        protected const ulong Top =    0b11111111_00000000_00000000_00000000_00000000_00000000_00000000_00000000;
-        protected const ulong Right =  0b10000000_10000000_10000000_10000000_10000000_10000000_10000000_10000000;
-        protected const ulong Left =   0b00000001_00000001_00000001_00000001_00000001_00000001_00000001_00000001;
+        protected string _name = "whatever";
 
         public Piece(int x, int y, bool side)
         {
             Side = side;
-            Position = (ulong)1 << (y * 8 + x);
+            Index = y * 8 + x;
+            Position = 1ul << Index;
         }
 
         public Piece(string square, bool side)
         {
             Side = side;
-            Position = BitUtilities.AlgebraicToBit(square);
+            Index = BitUtil.AlgebraicToIndex(square);
+            Position = 1ul << Index;
         }
 
         public string PieceSprite()
@@ -37,11 +37,17 @@ namespace Engine
 
         public abstract ulong MoveMask(Board b);
 
+        public virtual ulong AttackMask(Board b)
+        {
+            return MoveMask(b);
+        }
+
         // Moves in a specified direction until it hits a border or obstacle. Can move any number of squares. Bishops, Rooks, and Queens
+        // Move this into a Rider class, maybe, later
         public ulong RiderMoves(int steps, ulong blocker, Board board)
         {
             ulong moves = 0;
-            var shifter = ShiftDirection(steps);
+            var shifter = ShiftPosition(steps);
 
             for (var i = 1; i < 8; i++)
             {
@@ -54,18 +60,7 @@ namespace Engine
             }
 
             //Removes all the possible moves that are on top of a piece of the same side
-            return (moves & allyPieces(board)) ^ moves;
-        }
-
-        // Moves directly to a fixed distance square, once. Knights and (technically) kings
-        public ulong LeaperMoves(int steps, ulong blocker, Board board)
-        {
-            var shifter = ShiftDirection(steps);
-            ulong move = shifter(1);
-            
-            if ((move & allyPieces(board)) == 0 && (move & blocker) == 0)
-                return move;
-            return 0;
+            return BitUtil.Remove(moves, allyPieces(board));
         }
 
         protected ulong allyPieces(Board b)
@@ -79,11 +74,16 @@ namespace Engine
         }
 
         //This is a bit of an over-complicated way to get around C#'s inability to shift by negative values
-        protected Func<int, ulong> ShiftDirection(int steps)
+        protected Func<int, ulong> ShiftPosition(int steps)
+        {
+            return Shifter(steps, Position);
+        }
+
+        protected static Func<int, ulong> Shifter(int steps, ulong start)
         {
             return steps > 0 ?
-                x => Position << x * steps :
-                x => Position >> x * Math.Abs(steps);
+                (x) => start << (x * steps) :
+                (x) => start >> (x * Math.Abs(steps));
         }
 
         //Takes a ulong and breaks it up into a bunch of Move objects, one for each bit
@@ -95,7 +95,7 @@ namespace Engine
             while ((mask >> index) > 0 && index < 64)
             {
                 index += BitOperations.TrailingZeroCount(mask >> index);
-                var targetSquare = (ulong)1 << index;
+                var targetSquare = 1ul << index;
 
                 // I don't like this bit - it's bad encapsulation to have so much Board in Piece
                 // Maybe board should handle identifying captures?
@@ -120,9 +120,14 @@ namespace Engine
             return ConvertMask(b);
         }
 
-        public virtual void ApplyMove(Move m)
+        public virtual void MoveTo(ulong end)
         {
-            Position = m.End;
+            Position = end;
+        }
+
+        public virtual void ReverseMove(Move m)
+        {
+            Position = m.Start;
         }
     }
 }

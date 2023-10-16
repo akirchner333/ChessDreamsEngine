@@ -15,8 +15,10 @@ namespace Engine
     {
         public ulong Start { get; private set; }
         public ulong End { get; private set; }
+        public ulong TargetSquare { get; set; } = 0;
         public bool Side { get; private set; }
         public bool Capture { get; protected set; } = false;
+        public bool Promoting { get; protected set; } = false;
 
         public Move(ulong start, ulong end, bool side)
         {
@@ -27,7 +29,17 @@ namespace Engine
 
         public string EndAlgebraic()
         {
-            return BitUtilities.BitToAlgebraic(End);
+            return BitUtil.BitToAlgebraic(End);
+        }
+
+        public string StartAlgebraic()
+        {
+            return BitUtil.BitToAlgebraic(Start);
+        }
+
+        public string StartEnd()
+        {
+            return StartAlgebraic() + EndAlgebraic();
         }
     }
 
@@ -37,16 +49,16 @@ namespace Engine
         public CaptureMove(ulong start, ulong end, bool side, PieceTypes target) : base(start, end, side)
         {
             Target = target;
+            TargetSquare = end;
             Capture = true;
         }
     }
 
     public class PassantMove : CaptureMove
     {
-        public ulong TargetPosition { get; private set; }
-        public PassantMove(ulong start, ulong end, bool side, ulong targetPosition) : base(start, end, side, PieceTypes.PAWN)
+        public PassantMove(ulong start, ulong end, bool side, ulong targetSquare) : base(start, end, side, PieceTypes.PAWN)
         {
-            TargetPosition = targetPosition;
+            TargetSquare = targetSquare;
             Capture = true;
         }
     }
@@ -57,6 +69,7 @@ namespace Engine
         public PromotionMove(ulong start, ulong end, bool side, PieceTypes promotion) : base(start, end, side)
         {
             Promotion = promotion;
+            Promoting = true;
         }
     }
 
@@ -68,21 +81,19 @@ namespace Engine
         public CapturePromotionMove(ulong start, ulong end, bool side, PieceTypes target, PieceTypes promotion) : base(start, end, side)
         {
             Target = target;
+            TargetSquare = end;
             Promotion = promotion;
             Capture = true;
+            Promoting = true;
         }
     }
 
     //Castling is traditionally a king move, so start and end refer to the king's starting and ending position
     public class CastleMove : Move
     {
-        public ulong KnightStart { get; protected set; }
-        public ulong KnightEnd { get; protected set; }
-        public CastleMove(ulong start, ulong end, ulong knightStart, ulong knightEnd, bool side) : base(start, end, side)
-        {
-            KnightStart = knightStart;
-            KnightEnd = knightEnd;
-        }
+        public ulong RookStart { get; init; }
+        public ulong RookEnd { get; init; }
+        public CastleMove(ulong start, ulong end, bool side) : base(start, end, side) { }
     }
 }
 

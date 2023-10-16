@@ -6,33 +6,50 @@ namespace Engine
     {
         //Keeps track if this pawn has ever move
         //This way if a pawn got teleported back to the first row it couldn't make a 2 move again (I dunno, it could happen)
-        private Boolean _neverMoved = true;
+        public Boolean NeverMoved { get; private set; } = true;
+        private ulong _sevenBlocker;
+        private ulong _nineBlocker;
+        private Func<int, ulong> _shifter;
+        //The penultimate row for each side. pen(ultimate)Row
+        private ulong _penRow;
+
         public Pawn(int x, int y, bool side) : base(x, y, side)
         {
-            _name = "Pawn";
-            Type = PieceTypes.PAWN;
+            setFixed();
         }
 
         public Pawn(String algebraic, bool side) : base(algebraic, side)
         {
+            setFixed();
+        }
+
+        private void setFixed()
+        {
             _name = "Pawn";
             Type = PieceTypes.PAWN;
+            _sevenBlocker = ~(Side ? Board.Columns["H"] : Board.Columns["A"]);
+            _nineBlocker = ~(Side ? Board.Columns["A"] : Board.Columns["H"]);
+            _shifter = ShiftPosition(Side ? 1 : -1);
+            _penRow = Side ? Board.Rows[6] : Board.Rows[1];
+            //Pawns that don't start on the home row are assumed to have moved
+            NeverMoved = BitUtil.Overlap(Position, Side ? Board.Rows[1] : Board.Rows[6]);
         }
 
         public override ulong MoveMask(Board board)
         {
-            var shifter = pawnShifter();
-            ulong moves = 0;
-            var blocker = Side == Sides.White ? Board.Rows[7] : Board.Rows[0];
+            if (BitUtil.Overlap(Position, _penRow))
+                return 0;
 
-            var oneStep = shifter(8);
-            if ((oneStep & (board.AllPieces | blocker)) == 0)
+            ulong moves = 0;
+
+            var oneStep = _shifter(8);
+            if ((oneStep & board.AllPieces) == 0)
             {
                 moves |= oneStep;
             }
-            if (_neverMoved && moves > 0)
+            if (NeverMoved && moves > 0)
             {
-                var twoSteps = shifter(16);
+                var twoSteps = _shifter(16);
                 if ((twoSteps & board.AllPieces) == 0)
                     moves |= twoSteps;
             }
@@ -40,21 +57,20 @@ namespace Engine
             return moves | CaptureMoveMask(board);
         }
 
+        public override ulong AttackMask(Board b)
+        {
+            return CaptureMoveMask(b);
+        }
+
+        //To Do: Add the correct blockers here
         public ulong CaptureMoveMask(Board board)
         {
-            var blocker = Side == Sides.White ? Board.Rows[7] : Board.Rows[0];
-            var shifter = pawnShifter();
-
             ulong attacks = (
-                (shifter(7) & (long.MaxValue ^ Right)) |
-                (shifter(9) & (long.MaxValue ^ Left))
+                (_shifter(7) & _sevenBlocker) |
+                (_shifter(9) & _nineBlocker)
             ) & enemyPieces(board);
 
-            if ((attacks & blocker) == 0)
-            {
-                return attacks;
-            }
-            return 0;
+            return attacks;
         }
 
         public List<Move> EnPassant(Board board)
@@ -65,8 +81,7 @@ namespace Engine
 
             if ((Position << 1) == board.EnPassantTarget.Position || (Position >> 1) == board.EnPassantTarget.Position)
             {
-                var shifter = pawnShifter();
-                ulong end = (Position << 1) == board.EnPassantTarget.Position ? shifter(7) : shifter(9);
+                ulong end = (Position << 1) == board.EnPassantTarget.Position ? _shifter(7) : _shifter(9);
                 moves.Add(new PassantMove(Position, end, Side, board.EnPassantTarget.Position));
             }
             return moves;
@@ -76,23 +91,21 @@ namespace Engine
         public List<Move> Promotions(Board board)
         {
             var list = new List<Move>();
-            var penRow = Side == Sides.White ? Board.Rows[6] : Board.Rows[1];
-            var shifter = pawnShifter();
-            if ((Position & penRow) != 0)
+            if ((Position & _penRow) != 0)
             {
-                if ((shifter(8) & board.AllPieces) == 0)
-                    list.AddRange(AllPromotions(shifter(8)));
-                if ((shifter(7) & board.AllPieces) != 0)
+                if ((_shifter(8) & board.AllPieces) == 0)
+                    list.AddRange(AllPromotions(_shifter(8)));
+                if ((_shifter(7) & board.AllPieces) != 0)
                 {
-                    var targetPiece = board.FindPiece(shifter(7));
+                    var targetPiece = board.FindPiece(_shifter(7));
                     if (targetPiece != null)
-                        list.AddRange(AllCapturePromotions(shifter(7), targetPiece.Type));
+                        list.AddRange(AllCapturePromotions(_shifter(7), targetPiece.Type));
                 }
-                if ((shifter(9) & board.AllPieces) != 0)
+                if ((_shifter(9) & board.AllPieces) != 0)
                 {
-                    var targetPiece = board.FindPiece(shifter(9));
+                    var targetPiece = board.FindPiece(_shifter(9));
                     if (targetPiece != null)
-                        list.AddRange(AllCapturePromotions(shifter(9), targetPiece.Type));
+                        list.AddRange(AllCapturePromotions(_shifter(9), targetPiece.Type));
                 }
             }
             return list;
@@ -131,18 +144,21 @@ namespace Engine
             return result;
         }
 
-        public Func<int, ulong> pawnShifter()
+        public override void MoveTo(ulong end)
         {
-            return ShiftDirection(Side ? 1 : -1);
-        }
-
-        public override void ApplyMove(Move m)
-        {
-            base.ApplyMove(m);
+            base.MoveTo(end);
+            _shifter = ShiftPosition(Side ? 1 : -1);
             //Does having a conditional check here every time we do a move faster than just setting _neverMoved to false every time?
             //And does it make enough of a difference to matter?
-            if (_neverMoved)
-                _neverMoved = false;
+            if (NeverMoved)
+                NeverMoved = false;
+        }
+
+        public override void ReverseMove(Move m)
+        {
+            //How do I know if this was the move that sets it back to 0?
+            //Uuuuugh
+            base.ReverseMove(m);
         }
     }
 }

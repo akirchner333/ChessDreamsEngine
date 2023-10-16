@@ -43,11 +43,5 @@ namespace EngineTest
             enemies.AddPiece(2, 0, PieceTypes.ROOK, Sides.Black);
             Assert.AreEqual((ulong)65798, actual: topLeft.MoveMask(enemies));
         }
-
-        //[TestMethod]
-        //public void TestCastles()
-        //{
-
-        //}
     }
 }

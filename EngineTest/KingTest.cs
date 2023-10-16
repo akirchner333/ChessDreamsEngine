@@ -4,12 +4,12 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 namespace EngineTest
 {
     [TestClass]
-    public class KingTest
+    public class KingTest : PieceTest
     {
         [TestMethod]
         public void TestMoves()
         {
-            var b = new Board();
+            var b = new Board("8/8/8/8/8/8/8/8 w - - 0 1");
             var king = new King("D3", Sides.White);
             var targets = king.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(8, targets.Count());
@@ -39,6 +39,45 @@ namespace EngineTest
             {
                 Assert.IsTrue(targets.Contains(target));
             }
+        }
+
+
+
+        [TestMethod]
+        public void TestCastles()
+        {
+            var b = new Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+            var king = b.FindPiece(BitUtil.AlgebraicToBit("E1"));
+            Assert.IsNotNull(king);
+            var moves = StartEnd(king, b);
+            Assert.IsTrue(moves.Contains("E1C1"));
+            Assert.IsTrue(moves.Contains("E1G1"));
+
+            var noRights = new Board("r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1");
+            king = noRights.FindPiece(BitUtil.AlgebraicToBit("E1"));
+            Assert.IsNotNull(king);
+            moves = StartEnd(king, noRights);
+            Assert.IsFalse(moves.Contains("E1C1"));
+            Assert.IsFalse(moves.Contains("E1G1"));
+
+            var noKingRights = new Board("r3k2r/8/8/8/8/8/8/R3K2R w Qkq - 0 1");
+            king = noKingRights.FindPiece(BitUtil.AlgebraicToBit("E1"));
+            Assert.IsNotNull(king);
+            moves = StartEnd(king, noKingRights);
+            Assert.IsTrue(moves.Contains("E1C1"));
+            Assert.IsFalse(moves.Contains("E1G1"));
+
+            var blockers = new Board("7k/8/8/8/8/8/8/4KB1R w K - 0 1");
+            king = blockers.FindPiece(BitUtil.AlgebraicToBit("E1"));
+            Assert.IsNotNull(king);
+            moves = StartEnd(king, blockers);
+            Assert.IsFalse(moves.Contains("E1G1"));
+
+            var attackedSquare = new Board("7k/8/2r5/8/8/8/8/R3K3 w Q - 0 1");
+            king = attackedSquare.FindPiece(BitUtil.AlgebraicToBit("E1"));
+            Assert.IsNotNull(king);
+            moves = StartEnd(king, attackedSquare);
+            Assert.IsFalse(moves.Contains("E1G1"));
         }
     }
 }
