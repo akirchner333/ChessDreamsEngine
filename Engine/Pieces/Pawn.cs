@@ -4,6 +4,9 @@ namespace Engine
 {
     public class Pawn : Piece
     {
+        public override string Name { get; } = "Pawn";
+        public override PieceTypes Type { get; } = PieceTypes.PAWN;
+        public override char Short { get; } = 'p';
         //Keeps track if this pawn has ever move
         //This way if a pawn got teleported back to the first row it couldn't make a 2 move again (I dunno, it could happen)
         public Boolean NeverMoved { get; private set; } = true;
@@ -23,15 +26,18 @@ namespace Engine
             setFixed();
         }
 
+        public Pawn(ulong bit, bool side) : base(bit, side)
+        {
+            setFixed();
+        }
+
         private void setFixed()
         {
-            _name = "Pawn";
-            Type = PieceTypes.PAWN;
             _sevenBlocker = ~(Side ? Board.Columns["H"] : Board.Columns["A"]);
             _nineBlocker = ~(Side ? Board.Columns["A"] : Board.Columns["H"]);
             _shifter = ShiftPosition(Side ? 1 : -1);
             _penRow = Side ? Board.Rows[6] : Board.Rows[1];
-            //Pawns that don't start on the home row are assumed to have moved
+            //Pawns that don't start on the home row are assumed to have moved already
             NeverMoved = BitUtil.Overlap(Position, Side ? Board.Rows[1] : Board.Rows[6]);
         }
 
@@ -59,6 +65,9 @@ namespace Engine
 
         public override ulong AttackMask(Board b)
         {
+            if (PassantAttacker(b))
+                return CaptureMoveMask(b) | b.EnPassantTarget.Position;
+
             return CaptureMoveMask(b);
         }
 
@@ -76,15 +85,19 @@ namespace Engine
         public List<Move> EnPassant(Board board)
         {
             var moves = new List<Move>();
-            if (board.EnPassantTarget == null)
+            if (!PassantAttacker(board))
                 return moves;
 
-            if ((Position << 1) == board.EnPassantTarget.Position || (Position >> 1) == board.EnPassantTarget.Position)
-            {
-                ulong end = (Position << 1) == board.EnPassantTarget.Position ? _shifter(7) : _shifter(9);
-                moves.Add(new PassantMove(Position, end, Side, board.EnPassantTarget.Position));
-            }
+            ulong end = (Position << 1) == board.EnPassantTarget.Position ? _shifter(7) : _shifter(9);
+            moves.Add(new PassantMove(Position, end, Side, board.EnPassantTarget.Position));
             return moves;
+        }
+
+        public bool PassantAttacker(Board board)
+        {
+            return board.EnPassantTarget != null && (
+                (Position << 1) == board.EnPassantTarget.Position || (Position >> 1) == board.EnPassantTarget.Position
+            );
         }
 
         // Promotions! Detecting when they happen and making the moves for them
@@ -126,10 +139,10 @@ namespace Engine
         {
             return new List<Move>()
             {
-                new CapturePromotionMove(Position, end, Side, target, PieceTypes.ROOK),
-                new CapturePromotionMove(Position, end, Side, target, PieceTypes.KNIGHT),
-                new CapturePromotionMove(Position, end, Side, target, PieceTypes.BISHOP),
-                new CapturePromotionMove(Position, end, Side, target, PieceTypes.QUEEN)
+                new CapturePromotionMove(Position, end, Side, PieceTypes.ROOK),
+                new CapturePromotionMove(Position, end, Side, PieceTypes.KNIGHT),
+                new CapturePromotionMove(Position, end, Side, PieceTypes.BISHOP),
+                new CapturePromotionMove(Position, end, Side, PieceTypes.QUEEN)
             };
         }
 
@@ -144,21 +157,25 @@ namespace Engine
             return result;
         }
 
-        public override void MoveTo(ulong end)
+        public override Move ApplyMove(Move m)
         {
-            base.MoveTo(end);
+            m = base.ApplyMove(m);
             _shifter = ShiftPosition(Side ? 1 : -1);
-            //Does having a conditional check here every time we do a move faster than just setting _neverMoved to false every time?
-            //And does it make enough of a difference to matter?
             if (NeverMoved)
+            {
+                m.FirstMove = NeverMoved;
                 NeverMoved = false;
+            }
+
+            return m;
         }
 
-        public override void ReverseMove(Move m)
+        public override Move ReverseMove(Move m)
         {
-            //How do I know if this was the move that sets it back to 0?
-            //Uuuuugh
-            base.ReverseMove(m);
+            m = base.ReverseMove(m);
+            NeverMoved = m.FirstMove;
+            _shifter = ShiftPosition(Side ? 1 : -1);
+            return m;
         }
     }
 }

@@ -6,15 +6,23 @@ using System.Numerics;
 
 namespace Engine
 {
-    public abstract class Piece
+
+    public interface IPiece
     {
-        public ulong Position { get; set; } = 0;
-        public int Index { get; set; } = 0;
-        public PieceTypes Type { get; protected set; }
+        string Name { get; }
+        PieceTypes Type { get; }
+        char Short { get; }
+    }
+    public abstract class Piece: IPiece
+    {
+        public abstract string Name { get; }
+        public abstract PieceTypes Type { get; }
+        public abstract char Short { get; }
+
+        public ulong Position { get; set; }
+        public int Index { get; set; }
         public bool Side;
         public bool Captured { get; set; } = false;
-
-        protected string _name = "whatever";
 
         public Piece(int x, int y, bool side)
         {
@@ -30,9 +38,16 @@ namespace Engine
             Position = 1ul << Index;
         }
 
+        public Piece(ulong bit, bool side)
+        {
+            Side = side;
+            Position = bit;
+            Index = BitUtil.BitToIndex(bit);
+        }
+
         public string PieceSprite()
         {
-            return (Side ? "White" : "Black") + _name;
+            return (Side ? "White" : "Black") + Name;
         }
 
         public abstract ulong MoveMask(Board b);
@@ -105,7 +120,7 @@ namespace Engine
                 {
                     var targetPiece = b.FindPiece(targetSquare);
                     if (targetPiece != null)
-                        moves.Add(new CaptureMove(Position, targetSquare, Side, targetPiece.Type));
+                        moves.Add(new CaptureMove(Position, targetSquare, Side));
                 }
                 index += 1;
             }
@@ -120,14 +135,18 @@ namespace Engine
             return ConvertMask(b);
         }
 
-        public virtual void MoveTo(ulong end)
+        public virtual Move ApplyMove(Move m)
         {
-            Position = end;
+            Position = m.End;
+            Index = BitUtil.BitToIndex(m.End);
+            return m;
         }
 
-        public virtual void ReverseMove(Move m)
+        public virtual Move ReverseMove(Move m)
         {
             Position = m.Start;
+            Index = BitUtil.BitToIndex(m.Start);
+            return m;
         }
     }
 }

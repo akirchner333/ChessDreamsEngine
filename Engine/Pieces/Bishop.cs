@@ -4,17 +4,17 @@ namespace Engine
 {
 	public class Bishop : Piece
 	{
-		public Bishop(int x, int y, bool side) : base(x, y, side)
-        {
-			_name = "Bishop";
-			Type = PieceTypes.BISHOP;
-		}
+        public override string Name { get; } = "Bishop";
+        public override PieceTypes Type { get; } = PieceTypes.BISHOP;
+        public override char Short { get; } = 'b';
+        public Bishop(int x, int y, bool side) : base(x, y, side)
+        { }
 
         public Bishop(String algebraic, bool side) : base(algebraic, side)
-        {
-            _name = "Pawn";
-            Type = PieceTypes.PAWN;
-        }
+        { }
+
+        public Bishop(ulong bit, bool side) : base(bit, side)
+        { }
 
         public override ulong MoveMask(Board board)
 		{

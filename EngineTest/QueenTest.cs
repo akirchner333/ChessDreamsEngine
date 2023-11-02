@@ -13,27 +13,27 @@ namespace EngineTest
         [TestMethod]
         public void MoveTest()
         {
-            Queen topLeft = new Queen("A1", true);
+            Queen topLeft = new Queen("a1", true);
             Board b = new Board();
 
             var moves = EndPoints(topLeft, b);
             Assert.AreEqual(21, moves.Count());
             foreach(var square in new string[] {
-                "A2", "A3", "A4", "A5", "A6", "A7", "A8", 
-                "B1", "C1", "D1", "E1", "F1", "G1", "H1",
-                "B2", "C3", "D4", "E5", "F6", "G7", "H8"
+                "a2", "a3", "a4", "a5", "a6", "a7", "a8", 
+                "b1", "c1", "d1", "e1", "f1", "g1", "h1",
+                "b2", "c3", "d4", "e5", "f6", "g7", "h8"
             })
             {
                 Assert.IsTrue(moves.Any(m => m == square));
             }
 
-            Queen bottomRight = new Queen("H8", true);
+            Queen bottomRight = new Queen("h8", true);
             moves = EndPoints(bottomRight, b);
             Assert.AreEqual(21, moves.Count());
             foreach (var square in new string[] {
-                "H1", "H2", "H3", "H4", "H5", "H6", "H7",
-                "A8", "B8", "C8", "D8", "E8", "F8", "G8",
-                "A1", "B2", "C3", "D4", "E5", "F6", "G7"
+                "h1", "h2", "h3", "h4", "h5", "h6", "h7",
+                "a8", "b8", "c8", "d8", "e8", "f8", "g8",
+                "a1", "b2", "c3", "d4", "e5", "f6", "g7"
             })
             {
                 Assert.IsTrue(moves.Any(m => m == square));

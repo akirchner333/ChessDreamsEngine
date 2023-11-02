@@ -4,17 +4,17 @@ namespace Engine
 {
     public class Queen : Piece
     {
+        public override string Name { get; } = "Queen";
+        public override PieceTypes Type { get; } = PieceTypes.QUEEN;
+        public override char Short { get; } = 'q';
         public Queen(int x, int y, bool side) : base(x, y, side)
-        {
-            _name = "Queen";
-            Type = PieceTypes.QUEEN;
-        }
+        {}
 
         public Queen(String algebraic, bool side) : base(algebraic, side)
-        {
-            _name = "Pawn";
-            Type = PieceTypes.PAWN;
-        }
+        {}
+
+        public Queen(ulong bit, bool side) : base(bit, side)
+        {}
 
         public override ulong MoveMask(Board board)
         {

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using System.Numerics;
 
 namespace Engine
 {
+    public interface IMove { }
     enum MoveType
     {
         Quiet,
@@ -11,14 +13,22 @@ namespace Engine
         Passant,
         Upgrade
     }
-    public class Move
+    public class Move : IMove
     {
         public ulong Start { get; private set; }
         public ulong End { get; private set; }
-        public ulong TargetSquare { get; set; } = 0;
         public bool Side { get; private set; }
+        public ulong TargetSquare { get; set; } = 0;
         public bool Capture { get; protected set; } = false;
         public bool Promoting { get; protected set; } = false;
+
+        //These are things we reference to help with reversing. They're set as the move is applied
+        //Is this the pieces first move?
+        public bool FirstMove { get; set; } = false;
+        public int EffectedCastles { get; set; } = 0;
+        public Pawn? EnPassantTarget { get; set; }
+        public int HalfMoves { get; set; }
+        public PieceTypes Target { get; set; }
 
         public Move(ulong start, ulong end, bool side)
         {
@@ -41,14 +51,17 @@ namespace Engine
         {
             return StartAlgebraic() + EndAlgebraic();
         }
+
+        public virtual string LongAlgebraic()
+        {
+            return StartEnd();
+        }
     }
 
     public class CaptureMove : Move
     {
-        public PieceTypes Target {  get; protected set; }
-        public CaptureMove(ulong start, ulong end, bool side, PieceTypes target) : base(start, end, side)
+        public CaptureMove(ulong start, ulong end, bool side) : base(start, end, side)
         {
-            Target = target;
             TargetSquare = end;
             Capture = true;
         }
@@ -56,7 +69,7 @@ namespace Engine
 
     public class PassantMove : CaptureMove
     {
-        public PassantMove(ulong start, ulong end, bool side, ulong targetSquare) : base(start, end, side, PieceTypes.PAWN)
+        public PassantMove(ulong start, ulong end, bool side, ulong targetSquare) : base(start, end, side)
         {
             TargetSquare = targetSquare;
             Capture = true;
@@ -71,20 +84,27 @@ namespace Engine
             Promotion = promotion;
             Promoting = true;
         }
+
+        public override string LongAlgebraic()
+        {
+            var promotionChar = Promotion switch
+            {
+                PieceTypes.ROOK => 'r',
+                PieceTypes.KNIGHT => 'n',
+                PieceTypes.BISHOP => 'b',
+                PieceTypes.QUEEN => 'q',
+                _ => 'x'
+            };
+            return StartEnd() + promotionChar;
+        }
     }
 
-    public class CapturePromotionMove : Move
-    {
-        public PieceTypes Target { get; protected set; }
-        public PieceTypes Promotion { get; protected set; }
-        
-        public CapturePromotionMove(ulong start, ulong end, bool side, PieceTypes target, PieceTypes promotion) : base(start, end, side)
+    public class CapturePromotionMove : PromotionMove
+    {        
+        public CapturePromotionMove(ulong start, ulong end, bool side, PieceTypes promotion) : base(start, end, side, promotion)
         {
-            Target = target;
             TargetSquare = end;
-            Promotion = promotion;
             Capture = true;
-            Promoting = true;
         }
     }
 

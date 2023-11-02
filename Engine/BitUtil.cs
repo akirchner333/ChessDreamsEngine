@@ -7,7 +7,7 @@ namespace Engine
 {
 	public static class BitUtil
 	{
-		private const string squareLetters = "ABCDEFGH";
+		private const string squareLetters = "abcdefgh";
 		public static string BitToAlgebraic(ulong n)
 		{
 			var index = BitOperations.TrailingZeroCount(n);
@@ -22,15 +22,27 @@ namespace Engine
 		public static int AlgebraicToIndex(string a)
 		{
             var column = squareLetters.IndexOf(a[0]);
+			if (column == -1)
+				column = squareLetters.IndexOf(Char.ToLower(a[0]));
             // Accessing the string by [] gets me a char, which converts to ints based on their unicode values (I'm guessing)
             // So subtracting 49 to make '1' => 0
             var row = Convert.ToInt32(a[1]) - 49;
             return row * 8 + column;
         }
 
+		public static int CoordToIndex(int x, int y)
+		{
+			return x + y * 8;
+		}
+
+		public static ulong CoordToBit(int x, int y)
+		{
+			return 1ul << CoordToIndex(x, y);
+		}
+
 		public static int BitToIndex(ulong n)
 		{
-			return BitOperations.TrailingZeroCount(n) + 1;
+			return BitOperations.TrailingZeroCount(n);
 		}
 
         //Do `a` and `b` share any bits?
@@ -39,13 +51,23 @@ namespace Engine
             return (a & b) != 0;
         }
 
-		// Remove all the bits from 
+		/// <summary>
+		/// Method <c>Remove</c> removes all the bits in b from a 
+		/// <summary>
         public static ulong Remove(ulong a, ulong b)
 		{
-			return (a & b) ^ a;
+			return a & ~b;
 		}
 
-		public static ulong[] SplitBits(ulong a)
+        /// <summary>
+        /// Method <c>Remove</c> removes all the bits in b from a 
+        /// <summary>
+        public static int Remove(int a, int b)
+        {
+			return a & ~b;
+        }
+
+        public static ulong[] SplitBits(ulong a)
 		{
 			var result = new ulong[BitOperations.PopCount(a)];
 

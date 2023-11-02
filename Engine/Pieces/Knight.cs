@@ -1,43 +1,35 @@
-﻿using System;
+﻿using Engine.Pieces.Movers;
+using System;
 using System.Xml.Linq;
 
 namespace Engine
 {
-    public class Knight : Leaper
+    public class Knight : Piece
     {
-        private static ulong[]? _allMoves;
+        public override string Name { get; } = "Knight";
+        public override PieceTypes Type { get; } = PieceTypes.KNIGHT;
+        public override char Short { get; } = 'n';
+
+        private Leaper _leaper = new Leaper(new int[8]{15, -15, 17, -17, 6, -6, 10, -10}, "Knight");
 
         public Knight(int x, int y, bool side) : base(x, y, side)
         {
-            _name = "Knight";
-            Type = PieceTypes.KNIGHT;
-            if (_allMoves == null)
-                _allMoves = FillMoveDatabase();
+            _leaper.Side = side;
         }
 
         public Knight(String algebraic, bool side) : base(algebraic, side)
         {
-            _name = "Pawn";
-            Type = PieceTypes.PAWN;
-            if (_allMoves == null)
-                _allMoves = FillMoveDatabase();
+            _leaper.Side = side;
         }
 
-        public override ulong MovesAtIndex(ulong index)
+        public Knight(ulong bit, bool side) : base(bit, side)
         {
-            return LeaperMask(15, Board.Columns["H"], index) |
-                   LeaperMask(-15, Board.Columns["A"], index) |
-                   LeaperMask(17, Board.Columns["A"], index) |
-                   LeaperMask(-17, Board.Columns["H"], index) |
-                   LeaperMask(6, Board.Columns["H"] | Board.Columns["G"], index) |
-                   LeaperMask(-6, Board.Columns["A"] | Board.Columns["B"], index) |
-                   LeaperMask(10, Board.Columns["A"] | Board.Columns["B"], index) |
-                   LeaperMask(-10, Board.Columns["H"] | Board.Columns["G"], index);
+            _leaper.Side = side;
         }
 
-        public override ulong GetMoveDatabase(int index)
+        public override ulong MoveMask(Board b)
         {
-            return _allMoves![index];
+            return _leaper.MoveMask(Index, b);
         }
     }
 }

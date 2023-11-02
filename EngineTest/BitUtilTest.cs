@@ -9,23 +9,23 @@ namespace EngineTest
         [TestMethod]
         public void TestBitToAlgebraic()
         {
-            Assert.AreEqual("A1", BitUtil.BitToAlgebraic(1));
-            Assert.AreEqual("B1", BitUtil.BitToAlgebraic(2));
-            Assert.AreEqual("H1", BitUtil.BitToAlgebraic(1 << 7));
-            Assert.AreEqual("A2", BitUtil.BitToAlgebraic(1 << 8));
-            Assert.AreEqual("A8", BitUtil.BitToAlgebraic(1ul << 56));
-            Assert.AreEqual("H8", BitUtil.BitToAlgebraic(1ul << 63));
+            Assert.AreEqual("a1", BitUtil.BitToAlgebraic(1));
+            Assert.AreEqual("b1", BitUtil.BitToAlgebraic(2));
+            Assert.AreEqual("h1", BitUtil.BitToAlgebraic(1 << 7));
+            Assert.AreEqual("a2", BitUtil.BitToAlgebraic(1 << 8));
+            Assert.AreEqual("a8", BitUtil.BitToAlgebraic(1ul << 56));
+            Assert.AreEqual("h8", BitUtil.BitToAlgebraic(1ul << 63));
         }
 
         [TestMethod]
         public void TestAlgebraicToBit()
         {
-            Assert.AreEqual(1ul, BitUtil.AlgebraicToBit("A1"));
-            Assert.AreEqual(2ul, BitUtil.AlgebraicToBit("B1"));
-            Assert.AreEqual(1ul << 7, BitUtil.AlgebraicToBit("H1"));
-            Assert.AreEqual(1ul << 8, BitUtil.AlgebraicToBit("A2"));
-            Assert.AreEqual(1ul << 56, BitUtil.AlgebraicToBit("A8"));
-            Assert.AreEqual(1ul << 63, BitUtil.AlgebraicToBit("H8"));
+            Assert.AreEqual(1ul, BitUtil.AlgebraicToBit("a1"));
+            Assert.AreEqual(2ul, BitUtil.AlgebraicToBit("b1"));
+            Assert.AreEqual(1ul << 7, BitUtil.AlgebraicToBit("h1"));
+            Assert.AreEqual(1ul << 8, BitUtil.AlgebraicToBit("a2"));
+            Assert.AreEqual(1ul << 56, BitUtil.AlgebraicToBit("a8"));
+            Assert.AreEqual(1ul << 63, BitUtil.AlgebraicToBit("h8"));
         }
 
         [TestMethod]
@@ -67,6 +67,12 @@ namespace EngineTest
 
             Assert.AreEqual(64, BitUtil.SplitBits(ulong.MaxValue).Count());
             Assert.AreEqual(0, BitUtil.SplitBits(0ul).Count());
+        }
+
+        [TestMethod]
+        public void BitToIndexTest()
+        {
+            Assert.AreEqual(5, BitUtil.BitToIndex(1 << 5));
         }
     }
 }

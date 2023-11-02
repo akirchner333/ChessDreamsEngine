@@ -40,19 +40,19 @@ namespace EngineTest
             var moves = bishop.Moves(b);
             var targets = moves.Select(m => m.EndAlgebraic());
             Assert.AreEqual(13, targets.Count());
-            Assert.IsTrue(targets.Contains("A1"));
-            Assert.IsTrue(targets.Contains("A7"));
-            Assert.IsTrue(targets.Contains("B2"));
-            Assert.IsTrue(targets.Contains("B6"));
-            Assert.IsTrue(targets.Contains("C3"));
-            Assert.IsTrue(targets.Contains("C5"));
-            Assert.IsTrue(targets.Contains("E3"));
-            Assert.IsTrue(targets.Contains("E5"));
-            Assert.IsTrue(targets.Contains("F2"));
-            Assert.IsTrue(targets.Contains("F6"));
-            Assert.IsTrue(targets.Contains("G1"));
-            Assert.IsTrue(targets.Contains("G7"));
-            Assert.IsTrue(targets.Contains("H8"));
+            Assert.IsTrue(targets.Contains("a1"));
+            Assert.IsTrue(targets.Contains("a7"));
+            Assert.IsTrue(targets.Contains("b2"));
+            Assert.IsTrue(targets.Contains("b6"));
+            Assert.IsTrue(targets.Contains("c3"));
+            Assert.IsTrue(targets.Contains("c5"));
+            Assert.IsTrue(targets.Contains("e3"));
+            Assert.IsTrue(targets.Contains("e5"));
+            Assert.IsTrue(targets.Contains("f2"));
+            Assert.IsTrue(targets.Contains("f6"));
+            Assert.IsTrue(targets.Contains("g1"));
+            Assert.IsTrue(targets.Contains("g7"));
+            Assert.IsTrue(targets.Contains("h8"));
         }
     }
 }
