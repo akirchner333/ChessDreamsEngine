@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Pieces.Movers;
+using System;
 using System.Collections.Generic;
 
 namespace Engine
@@ -8,18 +9,26 @@ namespace Engine
         public override string Name { get; } = "Rook";
         public override PieceTypes Type { get; } = PieceTypes.ROOK;
         public override char Short { get; } = 'r';
-        public Rook(int x, int y, bool side) : base(x, y, side){ }
 
-        public Rook(String algebraic, bool side) : base(algebraic, side) { }
+        private readonly RookMover _mover = new();
+        public Rook(int x, int y, bool side) : base(x, y, side)
+        {
+            _mover.Side = side;
+        }
 
-        public Rook(ulong bit, bool side) : base(bit, side) { }
+        public Rook(String algebraic, bool side) : base(algebraic, side)
+        {
+            _mover.Side = side;
+        }
+
+        public Rook(ulong bit, bool side) : base(bit, side)
+        {
+            _mover.Side = side;
+        }
 
         public override ulong MoveMask(Board board)
         {
-            return RiderMoves(1, Board.Columns["A"], board) | 
-                RiderMoves(-1, Board.Columns["H"], board) |
-                RiderMoves(8, 0, board) |
-                RiderMoves(-8, 0, board);
+            return _mover.MoveMask(Index, board);
         }
 
         public override Move ApplyMove(Move m)

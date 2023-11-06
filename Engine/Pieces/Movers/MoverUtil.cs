@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,14 @@ namespace Engine.Pieces.Movers
         {
             return steps > 0 ?
                 (x) => start << (x * steps) :
-                (x) => start >> (x * Math.Abs(steps));
+                (x) => start >> (-x * steps);
+        }
+
+        public static Func<ulong, int, ulong> BareShifter(int steps)
+        {
+            return steps > 0 ?
+                (start, x) => start << (x * steps) :
+                (start, x) => start >> (-x * steps);
         }
 
         public static ulong Blocker(int direction)

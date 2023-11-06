@@ -74,5 +74,26 @@ namespace EngineTest
         {
             Assert.AreEqual(5, BitUtil.BitToIndex(1 << 5));
         }
+
+        [TestMethod]
+        public void FillTest()
+        {
+            Assert.AreEqual(16711680ul, BitUtil.Fill(16, 23));
+            Assert.AreEqual(1048574ul, BitUtil.Fill(1, 19));
+        }
+
+        [TestMethod]
+        public void SouthFillTest()
+        {
+            Assert.AreEqual(18085043209519168ul, BitUtil.SouthFill(18014398509481984));
+            Assert.AreEqual(514ul, BitUtil.SouthFill(512));
+        }
+
+        [TestMethod]
+        public void NorthFillTest()
+        {
+            Assert.AreEqual(4629700416936869888ul, BitUtil.NorthFill(18014398509481984));
+            Assert.AreEqual(144680345676153344ul, BitUtil.NorthFill(512));
+        }
     }
 }

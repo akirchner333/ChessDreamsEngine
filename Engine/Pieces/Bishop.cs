@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Pieces.Movers;
+using System;
 
 namespace Engine
 {
@@ -7,21 +8,26 @@ namespace Engine
         public override string Name { get; } = "Bishop";
         public override PieceTypes Type { get; } = PieceTypes.BISHOP;
         public override char Short { get; } = 'b';
+
+        private BishopMover _mover = new();
         public Bishop(int x, int y, bool side) : base(x, y, side)
-        { }
+        {
+            _mover.Side = side;
+        }
 
         public Bishop(String algebraic, bool side) : base(algebraic, side)
-        { }
+        {
+            _mover.Side = side;
+        }
 
         public Bishop(ulong bit, bool side) : base(bit, side)
-        { }
+        {
+            _mover.Side = side;
+        }
 
         public override ulong MoveMask(Board board)
 		{
-            return RiderMoves(7, Board.Columns["H"], board) |
-                RiderMoves(-7, Board.Columns["A"], board) |
-                RiderMoves(9, Board.Columns["A"], board) |
-                RiderMoves(-9, Board.Columns["H"], board);
+            return _mover.MoveMask(Index, board);
         }
 	}
 }

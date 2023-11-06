@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Pieces.Movers
 {
-    public class Leaper
+    public class Leaper : IMover
     {
         public string Key { get; private set; }
         public bool Side { get; set; }
@@ -17,7 +17,7 @@ namespace Engine.Pieces.Movers
             if (!_moveDatabase.ContainsKey(key))
                 _moveDatabase.Add(Key, FillMoveDatabase(directions));
         }
-        public ulong MoveMask(int index, Board board)
+        public virtual ulong MoveMask(int index, Board board)
         {
             return BitUtil.Remove(GetMoveDatabase(index), board.SidePieces(Side));
         }

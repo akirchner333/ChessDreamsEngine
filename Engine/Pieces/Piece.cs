@@ -57,27 +57,6 @@ namespace Engine
             return MoveMask(b);
         }
 
-        // Moves in a specified direction until it hits a border or obstacle. Can move any number of squares. Bishops, Rooks, and Queens
-        // Move this into a Rider class, maybe, later
-        public ulong RiderMoves(int steps, ulong blocker, Board board)
-        {
-            ulong moves = 0;
-            var shifter = ShiftPosition(steps);
-
-            for (var i = 1; i < 8; i++)
-            {
-                var square = shifter(i);
-                if (square == 0 || (square & blocker) > 0)
-                    break;
-                moves |= square;
-                if ((board.AllPieces & square) > 0)
-                    break;
-            }
-
-            //Removes all the possible moves that are on top of a piece of the same side
-            return BitUtil.Remove(moves, allyPieces(board));
-        }
-
         protected ulong allyPieces(Board b)
         {
             return Side ? b.WhitePieces : b.BlackPieces;
@@ -102,28 +81,12 @@ namespace Engine
         }
 
         //Takes a ulong and breaks it up into a bunch of Move objects, one for each bit
-        public List<Move> ConvertMask(Board b)
+        public virtual List<Move> ConvertMask(Board b)
         {
             var moves = new List<Move>();
             var mask = MoveMask(b);
-            var index = 0;
-            while ((mask >> index) > 0 && index < 64)
-            {
-                index += BitOperations.TrailingZeroCount(mask >> index);
-                var targetSquare = 1ul << index;
-
-                // I don't like this bit - it's bad encapsulation to have so much Board in Piece
-                // Maybe board should handle identifying captures?
-                if ((b.AllPieces & targetSquare) == 0)
-                    moves.Add(new Move(Position, targetSquare, Side));
-                else
-                {
-                    var targetPiece = b.FindPiece(targetSquare);
-                    if (targetPiece != null)
-                        moves.Add(new CaptureMove(Position, targetSquare, Side));
-                }
-                index += 1;
-            }
+            foreach(var bit in BitUtil.SplitBits(mask))
+                moves.Add(new Move(Position, bit, Side) { Capture = BitUtil.Overlap(bit, b.AllPieces) });
 
             return moves;
         }

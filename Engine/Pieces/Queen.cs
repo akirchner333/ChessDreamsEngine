@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Pieces.Movers;
+using System;
 
 namespace Engine
 {
@@ -7,25 +8,30 @@ namespace Engine
         public override string Name { get; } = "Queen";
         public override PieceTypes Type { get; } = PieceTypes.QUEEN;
         public override char Short { get; } = 'q';
+
+        private RookMover _rookMover = new();
+        private BishopMover _bishopMover = new();
         public Queen(int x, int y, bool side) : base(x, y, side)
-        {}
+        {
+            _rookMover.Side = side;
+            _bishopMover.Side = side;
+        }
 
         public Queen(String algebraic, bool side) : base(algebraic, side)
-        {}
+        {
+            _rookMover.Side = side;
+            _bishopMover.Side = side;
+        }
 
         public Queen(ulong bit, bool side) : base(bit, side)
-        {}
+        {
+            _rookMover.Side = side;
+            _bishopMover.Side = side;
+        }
 
         public override ulong MoveMask(Board board)
         {
-            return RiderMoves(7, Board.Columns["H"], board) |
-                RiderMoves(-7, Board.Columns["A"], board) |
-                RiderMoves(9, Board.Columns["A"], board) |
-                RiderMoves(-9, Board.Columns["H"], board) |
-                RiderMoves(1, Board.Columns["A"], board) |
-                RiderMoves(-1, Board.Columns["H"], board) |
-                RiderMoves(8, 0, board) |
-                RiderMoves(-8, 0, board);
+            return _rookMover.MoveMask(Index, board) | _bishopMover.MoveMask(Index, board); 
         }
-    }
+    } 
 }

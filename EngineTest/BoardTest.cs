@@ -97,7 +97,7 @@ namespace EngineTest
                     var board = new Board(parts[0]);
                     var officialMoves = parts[1].Split(" ").ToList();
                     var moves = board.Moves();
-                    Assert.AreEqual(moves.Count, officialMoves.Count, $"Move count mismatch on {parts[0]}");
+                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on {parts[0]}");
                     foreach(var move in board.Moves())
                     {
                         Assert.IsTrue(
@@ -141,7 +141,8 @@ namespace EngineTest
                     var parts = line.Split(',');
                     var officialMoves = parts[1].Split(" ").ToList();
                     var moves = board.Moves();
-                    Assert.AreEqual(moves.Count, officialMoves.Count, $"Move count mismatch on halfmove {halfmove}, before {parts[0]}");
+                    //var missing = String.Join(" ", moves.Select(m => m.LongAlgebraic()));
+                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on halfmove {halfmove}, before {parts[0]}");
                     foreach (var move in board.Moves())
                     {
                         Assert.IsTrue(

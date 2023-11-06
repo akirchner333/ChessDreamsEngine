@@ -35,12 +35,12 @@ namespace EngineTest
             Pawn whitePawn = new Pawn("a4", Sides.White);
             var targets = whitePawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(1, targets.Count());
-            Assert.IsTrue(targets.Contains("a5"));
+            Assert.IsTrue(targets.Contains("a5"), $"Expected to contain a5 actually continas {targets.First()}");
 
             Pawn blackPawn = new Pawn("a5", Sides.Black);
             targets = blackPawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(1, targets.Count());
-            Assert.IsTrue(targets.Contains("a4"));
+            Assert.IsTrue(targets.Contains("a4"), $"Expected to contain a4 actually contains {targets.First()}");
         }
 
         [TestMethod]
@@ -61,14 +61,7 @@ namespace EngineTest
         [TestMethod]
         public void CaptureTest()
         {
-            Board b = new Board();
-            for(var i = 0; i < 8; i++)
-            {
-                b.AddPiece(i, 2, PieceTypes.PAWN, Sides.Black);
-                b.AddPiece(i, 3, PieceTypes.PAWN, Sides.Black);
-                b.AddPiece(i, 5, PieceTypes.PAWN, Sides.White);
-            }
-            b.AddPiece("A1", PieceTypes.ROOK, Sides.Black);
+            Board b = new Board("k7/8/PPPPPPPP/8/8/pppppppp/8/7K b - - 0 1");
 
             Pawn whitePawn = new Pawn("c2", Sides.White);
             var targets = EndPoints(whitePawn, b);
@@ -76,7 +69,7 @@ namespace EngineTest
             Assert.IsTrue(targets.Contains("b3"));
             Assert.IsTrue(targets.Contains("d3"));
             var moves = whitePawn.Moves(b);
-            Assert.IsTrue(moves.Any(m => m is CaptureMove));
+            Assert.IsTrue(moves.All(m => m.Capture));
 
             Pawn leftPawn = new Pawn("a2", Sides.White);
             targets = EndPoints(leftPawn, b);
@@ -131,7 +124,7 @@ namespace EngineTest
             Pawn whitePawn = new Pawn("b7", Sides.White);
             var moves = whitePawn.Moves(b);
             Assert.AreEqual(8, moves.Count());
-            Assert.IsTrue(moves.All(m => m is CapturePromotionMove));
+            Assert.IsTrue(moves.All(m => m.Capture));
             Assert.IsTrue(moves.Any(m => m.End == BitUtil.AlgebraicToBit("a8")));
             Assert.IsTrue(moves.Any(m => m.End == BitUtil.AlgebraicToBit("c8")));
         }
@@ -151,7 +144,7 @@ namespace EngineTest
             {
                 Assert.AreEqual(BitUtil.AlgebraicToBit("b4"), passant.Start);
                 Assert.AreEqual(BitUtil.AlgebraicToBit("a3"), passant.End);
-                Assert.AreEqual(BitUtil.AlgebraicToBit("a4"), ((PassantMove)passant).TargetSquare);
+                Assert.AreEqual(BitUtil.AlgebraicToBit("a4"), passant.TargetSquare());
             }
         }
     }

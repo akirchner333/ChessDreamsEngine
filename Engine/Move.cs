@@ -18,13 +18,11 @@ namespace Engine
         public ulong Start { get; private set; }
         public ulong End { get; private set; }
         public bool Side { get; private set; }
-        public ulong TargetSquare { get; set; } = 0;
-        public bool Capture { get; protected set; } = false;
+        public bool Capture { get; set; } = false;
         public bool Promoting { get; protected set; } = false;
 
         //These are things we reference to help with reversing. They're set as the move is applied
         //Is this the pieces first move?
-        public bool FirstMove { get; set; } = false;
         public int EffectedCastles { get; set; } = 0;
         public Pawn? EnPassantTarget { get; set; }
         public int HalfMoves { get; set; }
@@ -35,6 +33,11 @@ namespace Engine
             Start = start;
             End = end;
             Side = side;
+        }
+
+        public virtual ulong TargetSquare()
+        {
+            return End;
         }
 
         public string EndAlgebraic()
@@ -58,22 +61,19 @@ namespace Engine
         }
     }
 
-    public class CaptureMove : Move
+    public class PassantMove : Move
     {
-        public CaptureMove(ulong start, ulong end, bool side) : base(start, end, side)
-        {
-            TargetSquare = end;
-            Capture = true;
-        }
-    }
-
-    public class PassantMove : CaptureMove
-    {
+        private ulong _targetSquare;
         public PassantMove(ulong start, ulong end, bool side, ulong targetSquare) : base(start, end, side)
         {
-            TargetSquare = targetSquare;
+            _targetSquare = targetSquare;
             Capture = true;
         }
+        public override ulong TargetSquare()
+        {
+            return _targetSquare;
+        }
+
     }
 
     public class PromotionMove : Move
@@ -96,15 +96,6 @@ namespace Engine
                 _ => 'x'
             };
             return StartEnd() + promotionChar;
-        }
-    }
-
-    public class CapturePromotionMove : PromotionMove
-    {        
-        public CapturePromotionMove(ulong start, ulong end, bool side, PieceTypes promotion) : base(start, end, side, promotion)
-        {
-            TargetSquare = end;
-            Capture = true;
         }
     }
 

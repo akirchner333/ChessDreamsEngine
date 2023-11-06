@@ -7,30 +7,39 @@ namespace Engine
 {
 	public static class BitUtil
 	{
-		private const string squareLetters = "abcdefgh";
-		public static string BitToAlgebraic(ulong n)
-		{
-			var index = BitOperations.TrailingZeroCount(n);
-			return String.Format("{0}{1}", squareLetters[index % 8], index / 8 + 1);
-		}
-
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONVERSION METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		public static ulong AlgebraicToBit(string a)
 		{
 			return 1ul << AlgebraicToIndex(a);
 		}
 
-		public static int AlgebraicToIndex(string a)
-		{
-            var column = squareLetters.IndexOf(a[0]);
-			if (column == -1)
-				column = squareLetters.IndexOf(Char.ToLower(a[0]));
-            // Accessing the string by [] gets me a char, which converts to ints based on their unicode values (I'm guessing)
-            // So subtracting 49 to make '1' => 0
-            var row = Convert.ToInt32(a[1]) - 49;
-            return row * 8 + column;
+        // So when you access a string with [] you get a char and chars are basically just numbers through unicode
+        // So 'a' is 97 through 'h' is 104. But what if it's capital letters? That's 'A' = 65 through 'H' = 72
+        // 97 is a prime, so there's nothing we can do with that, but if we subtract one from each value we get 96 and 64, which are both divisible by 32
+        // So it's a[0] - 1 % 32 gets use the values, regardless of upper or lower case
+        // Since we're moduloing by 32, this'd work for boards with up to 32 files
+        // Disclaimer: I was sick with every disease when I wrote this method
+        public static int AlgebraicToIndex(string a)
+        {
+            return CoordToIndex(
+                (int)(a[0] - 1) % 32,
+                (int)(a[1]) - 49
+            );
         }
 
-		public static int CoordToIndex(int x, int y)
+        private const string _files = "abcdefgh";
+        public static string BitToAlgebraic(ulong n)
+        {
+            var index = BitOperations.TrailingZeroCount(n);
+            return String.Format("{0}{1}", _files[IndexToX(index)], IndexToY(index) + 1);
+        }
+
+        public static int BitToIndex(ulong n)
+        {
+            return BitOperations.TrailingZeroCount(n);
+        }
+
+        public static int CoordToIndex(int x, int y)
 		{
 			return x + y * 8;
 		}
@@ -40,10 +49,22 @@ namespace Engine
 			return 1ul << CoordToIndex(x, y);
 		}
 
-		public static int BitToIndex(ulong n)
+        public static ulong IndexToBit(int i)
+        {
+            return 1ul << i;
+        }
+
+		public static int IndexToX(int i)
 		{
-			return BitOperations.TrailingZeroCount(n);
+			return i % 8;
 		}
+
+        public static int IndexToY(int i)
+        {
+            return i / 8;
+        }
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ OPERATION METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         //Do `a` and `b` share any bits?
         public static bool Overlap(ulong a, ulong b)
@@ -83,5 +104,29 @@ namespace Engine
 
             return result;
 		}
-	}
+
+        // Fills all the bits between start and end (inclusive)
+        // This'll do something weird if start > end or if you try to put 63 in for end
+        public static ulong Fill(int start, int end)
+        {
+            return ((1ul << (end + 1)) - 1) ^ ((1ul << start) - 1);
+        }
+
+        public static ulong SouthFill(ulong a)
+        {
+            a |= a >> 8;
+            a |= a >> 16;
+            a |= a >> 32;
+            return a;
+        }
+
+        public static ulong NorthFill(ulong a)
+        {
+            a |= a << 8;
+            a |= a << 16;
+            a |= a << 32;
+            return a;
+        }
+
+    }
 }

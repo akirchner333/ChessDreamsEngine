@@ -36,12 +36,19 @@ namespace EngineTest
             friendlies.AddPiece(0, 2, PieceTypes.ROOK, Sides.White);
             friendlies.AddPiece(2, 0, PieceTypes.ROOK, Sides.White);
             var topLeft = new Rook(0, 0, Sides.White);
-            Assert.AreEqual((ulong)258, actual: topLeft.MoveMask(friendlies));
+            Assert.AreEqual(258ul, actual: topLeft.MoveMask(friendlies));
 
             var enemies = new Board();
             enemies.AddPiece(0, 2, PieceTypes.ROOK, Sides.Black);
             enemies.AddPiece(2, 0, PieceTypes.ROOK, Sides.Black);
-            Assert.AreEqual((ulong)65798, actual: topLeft.MoveMask(enemies));
+            Assert.AreEqual(65798ul, actual: topLeft.MoveMask(enemies));
+
+            var middle = new Rook("e4", Sides.White);
+            var middleEnemies = new Board("k7/4r3/8/8/2r3r1/4r3/8/7K w - - 0 1");
+            Assert.AreEqual(4521262345879552ul, middle.MoveMask(middleEnemies));
+
+            var middleFriends = new Board("k7/4R3/8/8/2R3R1/4R3/8/7K w - - 0 1");
+            Assert.AreEqual(17661576609792ul, middle.MoveMask(middleFriends));
         }
     }
 }

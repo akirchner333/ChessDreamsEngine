@@ -342,7 +342,7 @@ namespace Engine
 			{
 				WhitePieces = BitUtil.Remove(WhitePieces, m.Start);
 				WhitePieces |= m.End;
-				BlackPieces = BitUtil.Remove(BlackPieces, m.TargetSquare);
+				BlackPieces = BitUtil.Remove(BlackPieces, m.TargetSquare());
 				if (m is CastleMove)
 				{
 					WhitePieces = BitUtil.Remove(WhitePieces, ((CastleMove)m).RookStart);
@@ -353,7 +353,7 @@ namespace Engine
 			{
 				BlackPieces = BitUtil.Remove(BlackPieces, m.Start);
 				BlackPieces |= m.End;
-				WhitePieces = BitUtil.Remove(WhitePieces, m.TargetSquare);
+				WhitePieces = BitUtil.Remove(WhitePieces, m.TargetSquare());
 				if (m is CastleMove)
 				{
 					BlackPieces = BitUtil.Remove(BlackPieces, ((CastleMove)m).RookStart);
@@ -362,7 +362,7 @@ namespace Engine
 			}
 			AllPieces = WhitePieces | BlackPieces;
 
-			Piece? capturedPiece = FindPiece(m.TargetSquare);
+			Piece? capturedPiece = FindPiece(m.TargetSquare());
 			if (capturedPiece != null)
 			{
 				capturedPiece.Captured = true;
@@ -395,11 +395,7 @@ namespace Engine
 
             if (m.Capture)
             {
-				var targetSquare = m is PassantMove ? ((PassantMove)m).TargetSquare : m.End;
-                var target = FindPiece(targetSquare);
-
-				if (target != null)
-					m = CapturePiece(target, m);
+                m = CapturePiece(m);
             }
 
             m = MovePiece(p, m.Start, m.End, m);
@@ -486,9 +482,17 @@ namespace Engine
 			return m;
         }
 
-		public Move CapturePiece(Piece p, Move m)
+		public Move CapturePiece(Move m)
 		{
-			m.Target = p.Type;
+            var p = FindPiece(m.TargetSquare());
+
+            if (p == null)
+			{
+				m.Capture = false;
+				return m;
+			}
+
+            m.Target = p.Type;
 			if (p.Side)
                 WhitePieces = BitUtil.Remove(WhitePieces, p.Position);
             else
@@ -510,8 +514,7 @@ namespace Engine
 
             if (m.Capture)
             {
-                var targetSquare = m is PassantMove ? ((PassantMove)m).TargetSquare : m.End;
-				AddPiece(targetSquare, m.Target, !m.Side);
+				AddPiece(m.TargetSquare(), m.Target, !m.Side);
             }
 
             MovePiece(p, m.End, m.Start, m, true);
