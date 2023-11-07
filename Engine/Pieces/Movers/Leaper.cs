@@ -17,6 +17,12 @@ namespace Engine.Pieces.Movers
             if (!_moveDatabase.ContainsKey(key))
                 _moveDatabase.Add(Key, FillMoveDatabase(directions));
         }
+
+        public ulong RawMask(int index)
+        {
+            return GetMoveDatabase(index);
+        }
+
         public virtual ulong MoveMask(int index, Board board)
         {
             return BitUtil.Remove(GetMoveDatabase(index), board.SidePieces(Side));

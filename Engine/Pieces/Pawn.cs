@@ -8,17 +8,20 @@ namespace Engine
     public class Pawn : Piece
     {
         public override string Name { get; } = "Pawn";
+
         public override PieceTypes Type { get; } = PieceTypes.PAWN;
         public override char Short { get; } = 'p';
 
-        private Func<int, ulong> _shifter;
-        //The penultimate row for each side. pen(ultimate)Row
         private ulong _endRow;
 
         private PeacefulLeaper _moveLeaper;
         private KillerLeaper _attackLeaper;
         private InitialMover _twoSteps;
 
+        private Promotions _promotion;
+
+        // Everything gets set in SetFixed, so I'm ignoring the warnings here
+#pragma warning disable CS8618
         public Pawn(int x, int y, bool side) : base(x, y, side)
         {
             setFixed();
@@ -33,10 +36,10 @@ namespace Engine
         {
             setFixed();
         }
+#pragma warning restore CS8618
 
         private void setFixed()
         {
-            _shifter = ShiftPosition(Side ? 1 : -1);
             _endRow = Side ? Board.Rows[7] : Board.Rows[0];
             _moveLeaper = new PeacefulLeaper(Side ? new int[1] { 8 } : new int[1] { -8 }, Side ? "PawnMoveWhite" : "PawnMoveBlack");
             _attackLeaper = new KillerLeaper(Side ? new int[2] {  7, 9 } : new int[2] { -7, -9 }, Side ? "PawnAttackWhite" : "PawnAttackBlack")
@@ -44,6 +47,7 @@ namespace Engine
                 Side = Side
             };
             _twoSteps = new InitialMover(Side ? Board.Rows[1] : Board.Rows[6], Side ? 8 : -8);
+            _promotion = new Promotions(Side ? Board.Rows[7] : Board.Rows[0]) { Side = Side };
         }
 
         public override ulong MoveMask(Board board)
@@ -53,56 +57,44 @@ namespace Engine
 
         public override ulong AttackMask(Board b)
         {
-            if (PassantAttacker(b))
-                return _attackLeaper.MoveMask(Index, b) | b.EnPassantTarget.Position;
+            if (b.Passant.Attack(_attackLeaper.RawMask(Index)))
+                return _attackLeaper.MoveMask(Index, b) | b.Passant.TargetSquare;
 
             return _attackLeaper.MoveMask(Index, b);
         }
 
-        public List<Move> EnPassant(Board board)
+        // This calls the Passant rule in the board directly
+        // So if I tried to put a Pawn into a game that didn't allow En Passant (i.e. didn't have that rule), it would fail
+        // I think the solution to this is Events and messages - something to look into later
+        public Move[] EnPassant(Board board)
         {
-            var moves = new List<Move>();
-            if (!PassantAttacker(board))
-                return moves;
+            // Might be worth replacing this conditional with something like Promotion
+            if (board.Passant.Attack(_attackLeaper.RawMask(Index)))
+            {
+                return new Move[1]
+                {
+                    new PassantMove(Position, board.Passant.PassantSquare, Side, board.Passant.TargetSquare)
+                };
+            }
 
-            ulong end = (Position << 1) == board.EnPassantTarget.Position ? _shifter(7) : _shifter(9);
-            moves.Add(new PassantMove(Position, end, Side, board.EnPassantTarget.Position));
-            return moves;
+            return new Move[0] {};
         }
 
-        public bool PassantAttacker(Board board)
-        {
-            return board.EnPassantTarget != null && (
-                (Position << 1) == board.EnPassantTarget.Position || (Position >> 1) == board.EnPassantTarget.Position
-            );
-        }
+        // There's something here about, like....
+        // Generating the move mask, breaking the number based on certain sections
+        // Then building something about what's left
         public override List<Move> ConvertMask(Board b)
         {
             var moves = new List<Move>();
             var mask = MoveMask(b);
-            var bits = BitUtil.SplitBits(mask);
+            // Need an elegant way to gather all the squares otherwise claimed and then just put the regular squares back in here
+            var bits = BitUtil.SplitBits(mask & ~_promotion.PromoteSquares);
             foreach(var bit in bits)
-            {
-                if (BitUtil.Overlap(bit, _endRow))
-                    moves.AddRange(AllPromotions(bit, BitUtil.Overlap(bit, b.AllPieces)));
-                else
-                {
-                    moves.Add(new Move(Position, bit, Side) {  Capture = BitUtil.Overlap(bit, b.AllPieces) });
-                }
-            }
+                moves.Add(new Move(Position, bit, Side) { Capture = BitUtil.Overlap(bit, b.AllPieces) });
+
+            moves.AddRange(_promotion.ConvertMask(b, Position, mask));
 
             return moves;
-        }
-
-        private List<Move> AllPromotions(ulong end, bool capture)
-        {
-            return new List<Move>()
-            {
-                new PromotionMove(Position, end, Side, PieceTypes.ROOK) { Capture = capture },
-                new PromotionMove(Position, end, Side, PieceTypes.KNIGHT) { Capture = capture },
-                new PromotionMove(Position, end, Side, PieceTypes.BISHOP) { Capture = capture },
-                new PromotionMove(Position, end, Side, PieceTypes.QUEEN) { Capture = capture }
-            };
         }
 
         public override List<Move> Moves(Board b)
@@ -110,7 +102,6 @@ namespace Engine
             var result = new List<Move>();
 
             result.AddRange(base.Moves(b));
-            //result.AddRange(Promotions(b));
             result.AddRange(EnPassant(b));
 
             return result;
@@ -119,7 +110,6 @@ namespace Engine
         public override Move ApplyMove(Move m)
         {
             m = base.ApplyMove(m);
-            _shifter = ShiftPosition(Side ? 1 : -1);
 
             return m;
         }
@@ -127,7 +117,6 @@ namespace Engine
         public override Move ReverseMove(Move m)
         {
             m = base.ReverseMove(m);
-            _shifter = ShiftPosition(Side ? 1 : -1);
             return m;
         }
     }

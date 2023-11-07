@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Rules;
+using System;
 using System.Collections;
 using System.Drawing;
 
@@ -77,10 +78,13 @@ namespace Engine
 		public int TurnNumber { get; private set; } = 0;
 		public GameState State { get; set; } = GameState.PLAY;
 		public bool drawAvailable = false;
-		public int HalfmoveClock { get; set; } = 0;
 		public int CastleRights { get; set; } = 0b1111;
 
 		public Pawn? EnPassantTarget { get; private set; } = null;
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~ RULES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		public EnPassant Passant { get; private set; }
+		public FiftyMove Clock { get; private set; }
 
 		public ulong AllPieces { get; private set; } = 0;
 		public ulong WhitePieces { get; private set; } = 0;
@@ -88,11 +92,10 @@ namespace Engine
 		public List<Move> MoveList { get; private set; } = new List<Move>();
 
 		// ------------------------------------------------------------- BOARD CREATION ------------------------------------------------
-		public Board(){ }
-
-		public static Board StartPosition()
+		public Board()
 		{
-			return new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+			Passant = new EnPassant(this);
+			Clock = new FiftyMove(this);
 		}
 
 		public Board(string fen)
@@ -140,11 +143,8 @@ namespace Engine
 			//Castling availability
 			SetCastleRights(fields[2]);
 
-			//En passant target square
-			SetEnPassant(fields[3]);
-
-			//Halfmove clock
-			HalfmoveClock = Int32.Parse(fields[4]);
+            Passant = new EnPassant(fields, this);
+			Clock = new FiftyMove(fields, this);
 
 			//Fullmoves
 			TurnNumber = Int32.Parse(fields[5]);
@@ -152,7 +152,12 @@ namespace Engine
 			SetGameState();
         }
 
-		public void SetCastleRights(string castling)
+        public static Board StartPosition()
+        {
+            return new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        }
+
+        public void SetCastleRights(string castling)
 		{
             CastleRights = 0;
             if (castling != "-")
@@ -165,16 +170,6 @@ namespace Engine
                     CastleRights |= (int)Castles.BlackKingside;
                 if (castling.Contains('q'))
                     CastleRights |= (int)Castles.BlackQueenside;
-            }
-        }
-
-		public void SetEnPassant(string passant)
-		{
-            if (passant != "-")
-            {
-                var enPassantSquare = BitUtil.AlgebraicToBit(passant);
-                var targetSquare = Turn ? enPassantSquare >> 8 : enPassantSquare << 8;
-                EnPassantTarget = FindPiece(targetSquare) as Pawn;
             }
         }
 
@@ -296,13 +291,7 @@ namespace Engine
                     fen += "q";
             }
 
-			if (EnPassantTarget == null)
-				fen += " -";
-			else
-				fen += " " + BitUtil.BitToAlgebraic(Turn ? EnPassantTarget.Position << 8 : EnPassantTarget.Position >> 8);
-
-			fen += $" {HalfmoveClock}";
-			fen += $" {TurnNumber}";
+			fen += $" {Passant.Fen()} {Clock.Fen()} {TurnNumber}";
 			return fen;
 		}
 
@@ -388,7 +377,6 @@ namespace Engine
 
 		public Move ApplyMove(Move m)
 		{
-			m.HalfMoves = HalfmoveClock;
             Piece? p = FindPiece(m.Start);
 			if (p == null)
 				return m;
@@ -400,12 +388,8 @@ namespace Engine
 
             m = MovePiece(p, m.Start, m.End, m);
 
-			// Sets (or unsets) an en-passant target
-			m.EnPassantTarget = EnPassantTarget;
-            if (p.Type == PieceTypes.PAWN && (m.Start >> 16 == m.End || m.Start << 16 == m.End))
-                EnPassantTarget = (Pawn)p;
-            else
-                EnPassantTarget = null;
+			m = Passant.ApplyMove(m, p);
+			m = Clock.ApplyMove(m, p);
 
             //Move the rook when castling
             if (m is CastleMove)
@@ -449,11 +433,6 @@ namespace Engine
 
             //Store the current board state somewhere for 3/5 repetition
 
-            HalfmoveClock++;
-			if (HalfmoveClock == 150)
-				State = GameState.DRAW;
-			else if (HalfmoveClock > 100)
-				drawAvailable = true;
             //Next move
             if (Turn == Sides.Black)
 				TurnNumber++;
@@ -475,7 +454,6 @@ namespace Engine
 
 			if(p is Pawn)
 			{
-				HalfmoveClock = -1;
 				drawAvailable = false;
 			}
 
@@ -500,7 +478,6 @@ namespace Engine
             AllPieces = BlackPieces | WhitePieces;
 
             Pieces.Remove(p);
-            HalfmoveClock = -1;
 			drawAvailable = false;
 
 			return m;
@@ -519,8 +496,9 @@ namespace Engine
 
             MovePiece(p, m.End, m.Start, m, true);
 
-            // Resets the en-passant target
-            EnPassantTarget = m.EnPassantTarget;
+			// Resets the en-passant target
+			Passant.ReverseMove(m);
+			Clock.ReverseMove(m);
 
             //Move the rook when castling
             if (m is CastleMove)
@@ -540,9 +518,6 @@ namespace Engine
 
             //To Do: Pop the board state back one
 
-            HalfmoveClock = m.HalfMoves;
-            if (HalfmoveClock <= 100)
-                drawAvailable = false;
             //Next move
             if (Turn == Sides.White)
                 TurnNumber--;
