@@ -22,8 +22,8 @@ namespace Engine.Pieces.Magic
             MagicDatabase.FillNewPiece("Bishop");
             MagicDatabase.FillNewPiece("Rook");
 
-            RookTester = new TestMagic(new RookMover(), "Rook");
-            BishopTester = new TestMagic(new BishopMover(), "Bishop");
+            RookTester = new TestMagic(new RookCalc(), "Rook");
+            BishopTester = new TestMagic(new BishopCalc(), "Bishop");
         }
 
         public void Search(int tryCount)

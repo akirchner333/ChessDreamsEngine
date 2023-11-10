@@ -13,11 +13,11 @@ namespace Engine.Pieces.Magic
     public class TestMagic
     {
         public string Name { get; set; }
-        private IMagicRider _mover;
+        private IRiderCalc _mover;
         public ulong[] Magics { get; private set; }
         public int[] Offsets { get; private set; }
         public ulong[][] Blockers { get; private set;  } = new ulong[64][];
-        public TestMagic(IMagicRider mover, string name)
+        public TestMagic(IRiderCalc mover, string name)
         {
             _mover = mover;
             Magics = MagicDatabase.LoadMagics(name);

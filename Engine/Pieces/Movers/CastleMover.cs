@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Pieces.Movers
 {
-    public interface IRiderCalc
+    public class CastleMover
     {
-        ulong EmptyMask(int i);
-        ulong CalculateMask(int i, ulong pieces);
     }
 }
