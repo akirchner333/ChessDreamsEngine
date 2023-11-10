@@ -1,5 +1,6 @@
 ﻿using Engine.Pieces.Movers;
 using System;
+using Engine.Rules;
 
 namespace Engine
 {
@@ -30,14 +31,10 @@ namespace Engine
             return _leaper.MoveMask(Index, b);
         }
 
-        public override List<Move> Moves(Board b)
+        public override Move[] Moves(Board b)
         {
-            var result = new List<Move>();
-
-            result.AddRange(base.Moves(b));
-            result.AddRange(CastleMoves(b));
-
-            return result;
+            //This is probably not the fastest way to do this
+            return base.Moves(b).Concat(CastleMoves(b)).ToArray();
         }
 
         // I am hardcoding a lot of castling stuff for now since castling is a weird move
@@ -116,7 +113,7 @@ namespace Engine
                 _ => 0ul
             };
 
-            return b.HasCastleRights(castle) && !BitUtil.Overlap(b.AllPieces, emptyMask) && !attacked;
+            return b.Castles.HasCastleRights(castle) && !BitUtil.Overlap(b.AllPieces, emptyMask) && !attacked;
         }
     }
 }

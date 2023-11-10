@@ -33,14 +33,15 @@ namespace EngineTest
         public void TestCollisions()
         {
             var friendlies = new Board();
-            friendlies.AddPiece(0, 2, PieceTypes.ROOK, Sides.White);
-            friendlies.AddPiece(2, 0, PieceTypes.ROOK, Sides.White);
-            var topLeft = new Rook(0, 0, Sides.White);
+            friendlies.AddPiece("a3", PieceTypes.ROOK, Sides.White);
+            friendlies.AddPiece("c1", PieceTypes.ROOK, Sides.White);
+            var topLeft = new Rook("a1", Sides.White);
             Assert.AreEqual(258ul, actual: topLeft.MoveMask(friendlies));
 
             var enemies = new Board();
-            enemies.AddPiece(0, 2, PieceTypes.ROOK, Sides.Black);
-            enemies.AddPiece(2, 0, PieceTypes.ROOK, Sides.Black);
+            enemies.AddPiece("a3", PieceTypes.ROOK, Sides.Black);
+            enemies.AddPiece("c1", PieceTypes.ROOK, Sides.Black);
+            Console.WriteLine(enemies.BlackPieces);
             Assert.AreEqual(65798ul, actual: topLeft.MoveMask(enemies));
 
             var middle = new Rook("e4", Sides.White);

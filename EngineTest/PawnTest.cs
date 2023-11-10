@@ -139,7 +139,7 @@ namespace EngineTest
 
             var moves = blackPawn!.Moves(b);
             Assert.IsTrue(moves.Any(m => m is PassantMove));
-            var passant = moves.Find(m => m is PassantMove);
+            var passant = Array.Find(moves, m => m is PassantMove);
             if(passant != null)
             {
                 Assert.AreEqual(BitUtil.AlgebraicToBit("b4"), passant.Start);

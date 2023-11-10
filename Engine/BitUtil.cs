@@ -105,6 +105,21 @@ namespace Engine
             return result;
 		}
 
+        public static void SplitBitsNew(ulong a, Action<ulong, int> callback)
+        {
+            var length = BitOperations.PopCount(a);
+
+            var offset = 0;
+            var i = 0;
+            while ((a >> offset) > 0 && i < length)
+            {
+                offset += BitOperations.TrailingZeroCount(a >> offset);
+                callback(1ul << offset, i);
+                offset++;
+                i++;
+            }
+        }
+
         // Fills all the bits between start and end (inclusive)
         // This'll do something weird if start > end or if you try to put 63 in for end
         public static ulong Fill(int start, int end)

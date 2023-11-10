@@ -23,11 +23,11 @@ namespace Engine
 
         //These are things we reference to help with reversing. They're set as the move is applied
         //Is this the pieces first move?
-        public int EffectedCastles { get; set; } = 0;
+        public int Castles { get; set; } = 0;
         public ulong PassantTarget { get; set; }
         public ulong PassantSquare { get; set; }
         public int HalfMoves { get; set; }
-        public PieceTypes Target { get; set; }
+        public int TargetIndex { get; set; }
 
         public Move(ulong start, ulong end, bool side)
         {

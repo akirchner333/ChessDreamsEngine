@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Engine.Pieces.Movers;
+using Engine.Pieces.MoveFactories;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -23,12 +25,14 @@ namespace Engine
         public int Index { get; set; }
         public bool Side;
         public bool Captured { get; set; } = false;
+        protected MoveFactory _convert { get; set; } = new MoveFactory();
 
         public Piece(int x, int y, bool side)
         {
             Side = side;
-            Index = y * 8 + x;
+            Index = BitUtil.CoordToIndex(x, y);
             Position = 1ul << Index;
+            _convert.Side = side;
         }
 
         public Piece(string square, bool side)
@@ -36,6 +40,7 @@ namespace Engine
             Side = side;
             Index = BitUtil.AlgebraicToIndex(square);
             Position = 1ul << Index;
+            _convert.Side = side;
         }
 
         public Piece(ulong bit, bool side)
@@ -43,18 +48,14 @@ namespace Engine
             Side = side;
             Position = bit;
             Index = BitUtil.BitToIndex(bit);
+            _convert.Side = side;
         }
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ INFO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public string PieceSprite()
         {
             return (Side ? "White" : "Black") + Name;
-        }
-
-        public abstract ulong MoveMask(Board b);
-
-        public virtual ulong AttackMask(Board b)
-        {
-            return MoveMask(b);
         }
 
         protected ulong allyPieces(Board b)
@@ -67,37 +68,24 @@ namespace Engine
             return Side ? b.BlackPieces : b.WhitePieces;
         }
 
-        //This is a bit of an over-complicated way to get around C#'s inability to shift by negative values
-        protected Func<int, ulong> ShiftPosition(int steps)
-        {
-            return Shifter(steps, Position);
-        }
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Move Generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        protected static Func<int, ulong> Shifter(int steps, ulong start)
-        {
-            return steps > 0 ?
-                (x) => start << (x * steps) :
-                (x) => start >> (x * Math.Abs(steps));
-        }
+        public abstract ulong MoveMask(Board b);
 
-        //Takes a ulong and breaks it up into a bunch of Move objects, one for each bit
-        public virtual List<Move> ConvertMask(Board b)
+        public virtual ulong AttackMask(Board b)
         {
-            var moves = new List<Move>();
-            var mask = MoveMask(b);
-            foreach(var bit in BitUtil.SplitBits(mask))
-                moves.Add(new Move(Position, bit, Side) { Capture = BitUtil.Overlap(bit, b.AllPieces) });
-
-            return moves;
+            return MoveMask(b);
         }
 
         // In many cases just breaking up the mask (am I using that term correctly?) will be enough
         // But for stuff like en passant or castling, we'll need to extend this method to add in some extra stuff
-        public virtual List<Move> Moves(Board b)
+        public virtual Move[] Moves(Board b)
         {
-            return ConvertMask(b);
+            var mask = MoveMask(b);
+            return _convert.ConvertMask(b, Position, mask);
         }
 
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOVE APPLICATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public virtual Move ApplyMove(Move m)
         {
             Position = m.End;

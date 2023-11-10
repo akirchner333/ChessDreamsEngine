@@ -9,8 +9,8 @@ namespace Engine
         public override PieceTypes Type { get; } = PieceTypes.QUEEN;
         public override char Short { get; } = 'q';
 
-        private RookMover _rookMover = new();
-        private BishopMover _bishopMover = new();
+        private readonly RookMover _rookMover = new();
+        private readonly BishopMover _bishopMover = new();
         public Queen(int x, int y, bool side) : base(x, y, side)
         {
             _rookMover.Side = side;

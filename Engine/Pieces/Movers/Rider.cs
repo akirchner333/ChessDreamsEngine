@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace Engine.Pieces.Movers
 {
+    public interface IMagicRider
+    {
+        ulong EmptyMask(int i);
+        ulong CalculateMask(int i, ulong pieces);
+    }
+
     public class Rider
     {
         public string Key { get; private set; }

@@ -1,4 +1,5 @@
 ﻿using Engine;
+using Engine.Rules;
 using System.Linq;
 
 namespace EngineTest
@@ -10,40 +11,40 @@ namespace EngineTest
         public void CastleRightsTest()
         {
             Board all = new Board("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w KQkq - 0 1");
-            Assert.IsTrue(all.HasCastleRights(Castles.WhiteKingside));
-            Assert.IsTrue(all.HasCastleRights(Castles.WhiteQueenside));
-            Assert.IsTrue(all.HasCastleRights(Castles.BlackKingside));
-            Assert.IsTrue(all.HasCastleRights(Castles.BlackQueenside));
+            Assert.IsTrue(all.Castles.HasCastleRights(Castles.WhiteKingside));
+            Assert.IsTrue(all.Castles.HasCastleRights(Castles.WhiteQueenside));
+            Assert.IsTrue(all.Castles.HasCastleRights(Castles.BlackKingside));
+            Assert.IsTrue(all.Castles.HasCastleRights(Castles.BlackQueenside));
 
             Board none = new Board("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w - - 0 1");
-            Assert.IsFalse(none.HasCastleRights(Castles.WhiteKingside));
-            Assert.IsFalse(none.HasCastleRights(Castles.WhiteQueenside));
-            Assert.IsFalse(none.HasCastleRights(Castles.BlackKingside));
-            Assert.IsFalse(none.HasCastleRights(Castles.BlackQueenside));
+            Assert.IsFalse(none.Castles.HasCastleRights(Castles.WhiteKingside));
+            Assert.IsFalse(none.Castles.HasCastleRights(Castles.WhiteQueenside));
+            Assert.IsFalse(none.Castles.HasCastleRights(Castles.BlackKingside));
+            Assert.IsFalse(none.Castles.HasCastleRights(Castles.BlackQueenside));
 
             Board whiteOnly = new Board("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w KQ - 0 1");
-            Assert.IsTrue(whiteOnly.HasCastleRights(Castles.WhiteKingside));
-            Assert.IsTrue(whiteOnly.HasCastleRights(Castles.WhiteQueenside));
-            Assert.IsFalse(whiteOnly.HasCastleRights(Castles.BlackKingside));
-            Assert.IsFalse(whiteOnly.HasCastleRights(Castles.BlackQueenside));
+            Assert.IsTrue(whiteOnly.Castles.HasCastleRights(Castles.WhiteKingside));
+            Assert.IsTrue(whiteOnly.Castles.HasCastleRights(Castles.WhiteQueenside));
+            Assert.IsFalse(whiteOnly.Castles.HasCastleRights(Castles.BlackKingside));
+            Assert.IsFalse(whiteOnly.Castles.HasCastleRights(Castles.BlackQueenside));
 
             Board blackOnly = new Board("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w kq - 0 1");
-            Assert.IsFalse(blackOnly.HasCastleRights(Castles.WhiteKingside));
-            Assert.IsFalse(blackOnly.HasCastleRights(Castles.WhiteQueenside));
-            Assert.IsTrue(blackOnly.HasCastleRights(Castles.BlackKingside));
-            Assert.IsTrue(blackOnly.HasCastleRights(Castles.BlackQueenside));
+            Assert.IsFalse(blackOnly.Castles.HasCastleRights(Castles.WhiteKingside));
+            Assert.IsFalse(blackOnly.Castles.HasCastleRights(Castles.WhiteQueenside));
+            Assert.IsTrue(blackOnly.Castles.HasCastleRights(Castles.BlackKingside));
+            Assert.IsTrue(blackOnly.Castles.HasCastleRights(Castles.BlackQueenside));
 
             Board noKing = new Board("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w Qq - 0 1");
-            Assert.IsFalse(noKing.HasCastleRights(Castles.WhiteKingside));
-            Assert.IsTrue(noKing.HasCastleRights(Castles.WhiteQueenside));
-            Assert.IsFalse(noKing.HasCastleRights(Castles.BlackKingside));
-            Assert.IsTrue(noKing.HasCastleRights(Castles.BlackQueenside));
+            Assert.IsFalse(noKing.Castles.HasCastleRights(Castles.WhiteKingside));
+            Assert.IsTrue(noKing.Castles.HasCastleRights(Castles.WhiteQueenside));
+            Assert.IsFalse(noKing.Castles.HasCastleRights(Castles.BlackKingside));
+            Assert.IsTrue(noKing.Castles.HasCastleRights(Castles.BlackQueenside));
 
             Board noQueen = new Board("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w Kk - 0 1");
-            Assert.IsTrue(noQueen.HasCastleRights(Castles.WhiteKingside));
-            Assert.IsFalse(noQueen.HasCastleRights(Castles.WhiteQueenside));
-            Assert.IsTrue(noQueen.HasCastleRights(Castles.BlackKingside));
-            Assert.IsFalse(noQueen.HasCastleRights(Castles.BlackQueenside));
+            Assert.IsTrue(noQueen.Castles.HasCastleRights(Castles.WhiteKingside));
+            Assert.IsFalse(noQueen.Castles.HasCastleRights(Castles.WhiteQueenside));
+            Assert.IsTrue(noQueen.Castles.HasCastleRights(Castles.BlackKingside));
+            Assert.IsFalse(noQueen.Castles.HasCastleRights(Castles.BlackQueenside));
         }
 
         [TestMethod]
@@ -97,15 +98,23 @@ namespace EngineTest
                     var board = new Board(parts[0]);
                     var officialMoves = parts[1].Split(" ").ToList();
                     var moves = board.Moves();
-                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on {parts[0]}");
+                    
                     foreach(var move in board.Moves())
                     {
                         Assert.IsTrue(
                             officialMoves.Contains(move.LongAlgebraic()),
-                            $"Expected to find {move.LongAlgebraic()} in {parts[0]} but did not"
+                            $"Found incorrect {move.LongAlgebraic()} in {parts[0]}"
                         );
                     }
 
+                    foreach (var move in officialMoves)
+                    {
+                        Assert.IsTrue(
+                            moves.Select(m => m.LongAlgebraic()).Contains(move),
+                            $"Expected to find {move} in {parts[0]} but did not"
+                        );
+                    }
+                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on {parts[0]}");
                 }
             }
         }
@@ -142,14 +151,23 @@ namespace EngineTest
                     var officialMoves = parts[1].Split(" ").ToList();
                     var moves = board.Moves();
                     //var missing = String.Join(" ", moves.Select(m => m.LongAlgebraic()));
-                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on halfmove {halfmove}, before {parts[0]}");
+                    
                     foreach (var move in board.Moves())
                     {
                         Assert.IsTrue(
                             officialMoves.Contains(move.LongAlgebraic()),
-                            $"Expected to find {move.LongAlgebraic()} in halfmove {halfmove} but did not"
+                            $"Found incorrect move {move.LongAlgebraic()} in halfmove {halfmove}, before {parts[0]}"
                         );
                     }
+
+                    foreach (var move in officialMoves)
+                    {
+                        Assert.IsTrue(
+                            moves.Select(m => m.LongAlgebraic()).Contains(move),
+                            $"Expected to find {move} at halfmove {halfmove} (before {parts[0]} but did not"
+                        );
+                    }
+                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on halfmove {halfmove}, before {parts[0]}");
 
                     var nextMove = moves.Find(m => m.LongAlgebraic() == parts[0]);
                     board.ApplyMove(nextMove!);
