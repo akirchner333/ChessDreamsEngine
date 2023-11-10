@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Rules
 {
-    public class FiftyMove
+    public class FiftyMove : IRule
     {
         public int Clock { get; set; }
         private Board _board;
@@ -28,10 +28,10 @@ namespace Engine.Rules
             return Clock.ToString();
         }
 
-        public Move ApplyMove(Move m, Piece p)
+        public Move ApplyMove(Move m, int pieceIndex)
         {
             m.HalfMoves = Clock;
-            if(m.Capture || p.Type == PieceTypes.PAWN)
+            if(m.Capture || _board.Pieces[pieceIndex].Type == PieceTypes.PAWN)
             {
                 Clock = 0;
             }
@@ -52,7 +52,7 @@ namespace Engine.Rules
             return m;
         }
 
-        public void ReverseMove(Move m)
+        public void ReverseMove(Move m, int _pieceIndex)
         {
             Clock = m.HalfMoves;
             if (Clock <= 100)

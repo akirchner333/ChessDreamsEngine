@@ -74,12 +74,12 @@ namespace EngineTest
 
             Board mandatoryCapture = new Board("4k3/4Q3/8/8/8/8/8/K7 b - - 0 1");
             moves = mandatoryCapture.Moves();
-            Assert.AreEqual(1, moves.Count);
+            Assert.AreEqual(1, moves.Count());
             Assert.AreEqual("e8e7", moves[0].StartEnd());
 
             Board mandatoryCapture2 = new Board("4k3/4Q2R/8/8/7q/8/8/K7 b - - 0 1");
             moves = mandatoryCapture2.Moves();
-            Assert.AreEqual(1, moves.Count);
+            Assert.AreEqual(1, moves.Count());
             Assert.AreEqual("h4e7", moves[0].StartEnd());
         }
 
@@ -114,7 +114,7 @@ namespace EngineTest
                             $"Expected to find {move} in {parts[0]} but did not"
                         );
                     }
-                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on {parts[0]}");
+                    Assert.AreEqual(officialMoves.Count, moves.Count(), $"Move count mismatch on {parts[0]}");
                 }
             }
         }
@@ -167,9 +167,9 @@ namespace EngineTest
                             $"Expected to find {move} at halfmove {halfmove} (before {parts[0]} but did not"
                         );
                     }
-                    Assert.AreEqual(officialMoves.Count, moves.Count, $"Move count mismatch on halfmove {halfmove}, before {parts[0]}");
+                    Assert.AreEqual(officialMoves.Count, moves.Count(), $"Move count mismatch on halfmove {halfmove}, before {parts[0]}");
 
-                    var nextMove = moves.Find(m => m.LongAlgebraic() == parts[0]);
+                    var nextMove = Array.Find(moves, m => m.LongAlgebraic() == parts[0]);
                     board.ApplyMove(nextMove!);
                     halfmove++;
                 }
@@ -197,7 +197,7 @@ namespace EngineTest
 
                         var moveList = board.Moves();
 
-                        Assert.AreEqual(moves.Count, officialMoves.Count, $"Move count mismatch on {parts[0]}");
+                        Assert.AreEqual(moves.Count(), officialMoves.Count, $"Move count mismatch on {parts[0]}");
                         foreach (var m in moveList)
                         {
                             Assert.IsTrue(

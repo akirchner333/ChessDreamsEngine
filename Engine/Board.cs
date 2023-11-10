@@ -7,7 +7,7 @@ namespace Engine
 {
     public interface IGameEngine<M> where M : class
     {
-        List<M> Moves();
+        M[] Moves();
         M ApplyMove(M move);
         void ReverseMove(M move);
         bool TerminalNode();
@@ -75,12 +75,13 @@ namespace Engine
         public EnPassant Passant { get; private set; }
         public FiftyMove Clock { get; private set; }
         public Castling Castles { get; private set; }
+        public Promotion Promote { get; private set; }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RECORDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public ulong AllPieces { get; private set; } = 0;
         public ulong WhitePieces { get; private set; } = 0;
         public ulong BlackPieces { get; private set; } = 0;
-        public List<Move> MoveList { get; private set; } = new List<Move>();
+        public Move[] MoveList { get; private set; }
 
         // ------------------------------------------------------------- BOARD CREATION ------------------------------------------------
         public Board()
@@ -88,6 +89,9 @@ namespace Engine
             Passant = new EnPassant(this);
             Clock = new FiftyMove(this);
             Castles = new Castling(this);
+            Promote = new Promotion(this);
+
+            SetGameState();
         }
 
         public Board(string fen)
@@ -136,6 +140,7 @@ namespace Engine
             Castles = new Castling(fields, this);
             Passant = new EnPassant(fields, this);
             Clock = new FiftyMove(fields, this);
+            Promote = new Promotion(this);
 
             //Fullmoves
             TurnNumber = Int32.Parse(fields[5]);
@@ -264,7 +269,7 @@ namespace Engine
         }
 
         // ----------------------------------------------------------------------- MOVE GENERATION --------------------------------------------
-        public List<Move> Moves()
+        public Move[] Moves()
         {
             return MoveList;
         }
@@ -272,19 +277,27 @@ namespace Engine
         public void GenerateMoves()
         {
             if (State != GameState.PLAY)
-                MoveList = new List<Move>();
+                MoveList = new Move[0];
             else
                 MoveList = PseudolegalMoves()
                     .Where(m => LegalMove(m))
-                    .ToList();
+                    .ToArray();
         }
 
-        public IEnumerable<Move> PseudolegalMoves()
+        public Move[] PseudolegalMoves()
         {
-            return Pieces
-                .Where(p => p.Side == Turn && !p.Captured)
-                .Select(p => p.Moves(this))
-                .SelectMany(m => m);
+            var movingPieces = Pieces.Where(p => p.Side == Turn && !p.Captured).ToArray();
+            var moves = new Move[218];
+            var moveCount = 0;
+            for (var i = 0; i < movingPieces.Count(); i++)
+            {
+                var pieceMoves = movingPieces[i].Moves(this);
+                pieceMoves.CopyTo(moves, moveCount);
+                moveCount += pieceMoves.Count();
+            }
+
+            Array.Resize(ref moves, moveCount);
+            return moves;
         }
 
         //Just updates the AllPieces, WhitePieces, and BlackPieces boards, checks if it puts you in check
@@ -360,13 +373,8 @@ namespace Engine
 
             m = Passant.ApplyMove(m, p);
             m = Castles.ApplyMove(m, p);
-            m = Clock.ApplyMove(m, p);
-
-            //Promotions
-            if (m.Promoting)
-            {
-                Pieces[pieceIndex] = NewPiece(m.End, ((PromotionMove)m).Promotion, m.Side);
-            }
+            m = Clock.ApplyMove(m, pieceIndex);
+            m = Promote.ApplyMove(m, pieceIndex);
 
             //Store the current board state somewhere for 3/5 repetition
 
@@ -438,14 +446,9 @@ namespace Engine
             MovePiece(p, m.End, m.Start, m, true);
 
             Passant.ReverseMove(m);
-            Clock.ReverseMove(m);
+            Clock.ReverseMove(m, pieceIndex);
             Castles.ReverseMove(m);
-
-            //Promotions
-            if (m.Promoting)
-            {
-                Pieces[pieceIndex] = NewPiece(m.Start, PieceTypes.PAWN, m.Side);
-            }
+            Promote.ReverseMove(m, pieceIndex);
 
             //To Do: Pop the board state back one
 
@@ -461,7 +464,7 @@ namespace Engine
         public void SetGameState()
         {
             GenerateMoves();
-            if (MoveList.Count == 0)
+            if (MoveList.Count() == 0)
             {
                 var king = Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == Turn);
                 if (king != null)
