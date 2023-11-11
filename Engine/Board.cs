@@ -76,6 +76,7 @@ namespace Engine
         public FiftyMove Clock { get; private set; }
         public Castling Castles { get; private set; }
         public Promotion Promote { get; private set; }
+        public Zobrist Hasher { get; private set; }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RECORDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public ulong AllPieces { get; private set; } = 0;
@@ -90,6 +91,7 @@ namespace Engine
             Clock = new FiftyMove(this);
             Castles = new Castling(this);
             Promote = new Promotion(this);
+            Hasher = new Hasher(this);
 
             SetGameState();
         }
@@ -136,14 +138,13 @@ namespace Engine
 
             //Active color
             Turn = (fields[1] == "w");
+            TurnNumber = Int32.Parse(fields[5]);
 
             Castles = new Castling(fields, this);
             Passant = new EnPassant(fields, this);
             Clock = new FiftyMove(fields, this);
             Promote = new Promotion(this);
-
-            //Fullmoves
-            TurnNumber = Int32.Parse(fields[5]);
+            Hasher = new Hasher(this);
 
             SetGameState();
         }
@@ -178,6 +179,8 @@ namespace Engine
             //So it's probably ok
             Array.Resize(ref Pieces, Pieces.Length + 1);
             Pieces[Pieces.Length - 1] = newPiece;
+
+            Hasher.TogglePiece(newPiece, newPiece.Index);
         }
 
         public Piece NewPiece(ulong bit, PieceTypes t, bool side)
@@ -379,6 +382,8 @@ namespace Engine
 
             SetGameState();
 
+            m = Zobrist.ApplyMove(m);
+
             return m;
         }
 
@@ -425,6 +430,8 @@ namespace Engine
 
         public void ReverseMove(Move m)
         {
+            m = Zobrist.ReverseMove(m);
+
             int pieceIndex = FindPieceIndex(m.End);
             if (pieceIndex == -1)
                 return;

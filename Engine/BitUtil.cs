@@ -39,6 +39,16 @@ namespace Engine
             return BitOperations.TrailingZeroCount(n);
         }
 
+        public static int BitToX(ulong n)
+        {
+            return IndexToX(BitToIndex(n));
+        }
+
+        public static int BitToY(ulong n)
+        {
+            return IndexToY(BitToIndex(n));
+        }
+
         public static int CoordToIndex(int x, int y)
 		{
 			return x + y * 8;
