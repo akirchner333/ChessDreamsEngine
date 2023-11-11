@@ -65,8 +65,8 @@ namespace Engine
             { "A", 0b00000001_00000001_00000001_00000001_00000001_00000001_00000001_00000001 }
         };
 
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GAME STATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public Piece[] Pieces = new Piece[0];
-
         public bool Turn = Sides.White;
         public int TurnNumber { get; private set; } = 0;
         public GameState State { get; set; } = GameState.PLAY;
@@ -363,14 +363,8 @@ namespace Engine
                 return m;
             Piece p = Pieces[pieceIndex];
 
-
-            if (m.Capture)
-            {
-                m = CapturePiece(m);
-            }
-
+            m = CapturePiece(m);
             m = MovePiece(p, m.Start, m.End, m);
-
             m = Passant.ApplyMove(m, p);
             m = Castles.ApplyMove(m, p);
             m = Clock.ApplyMove(m, pieceIndex);
@@ -407,6 +401,9 @@ namespace Engine
 
         public Move CapturePiece(Move m)
         {
+            if (!m.Capture)
+                return m;
+
             var pieceIndex = FindPieceIndex(m.TargetSquare());
 
             m.TargetIndex = pieceIndex;
