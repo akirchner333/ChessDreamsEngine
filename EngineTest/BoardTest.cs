@@ -188,12 +188,21 @@ namespace EngineTest
                     var fen = parts[0];
                     var officialMoves = parts[1].Split(" ").ToList();
                     var board = new Board(fen);
+
+                    var hash = board.Hash;
                     var moves = board.Moves();
+                    var all = board.AllPieces;
+                    var white = board.WhitePieces;
+                    var black = board.BlackPieces;
                     foreach (var move in board.Moves())
                     {
                         var fullMove = board.ApplyMove(move);
                         board.ReverseMove(fullMove);
                         Assert.AreEqual(fen, board.Fen(), $"Expected: {fen}, Actual: {board.Fen()}, After {move.StartEnd()}");
+                        Assert.AreEqual(hash, board.Hash, $"Hash mismatch {move.ToString()}");
+                        Assert.AreEqual(all, board.AllPieces, $"All Pieces mismatch {move.ToString()}");
+                        Assert.AreEqual(white, board.WhitePieces, $"White pieces mismatch {move.ToString()}");
+                        Assert.AreEqual(black, board.BlackPieces, $"Black pieces mismatch {move.ToString()}");
 
                         var moveList = board.Moves();
 

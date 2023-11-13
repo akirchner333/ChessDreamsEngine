@@ -21,7 +21,7 @@
       <value>15366295536826358022</value>
       <value>16824375977945482248</value>
       <value>6723256150974233458</value>
-      <value>5532159747920213316</value>
+      <value>6721625175517983091</value>
       <value>14680193154124252017</value>
       <value>10701749496519191610</value>
       <value>1643756225647882261</value>
@@ -29,9 +29,9 @@
       <value>9783754651162668036</value>
       <value>18431272092379385618</value>
       <value>18265088931160818222</value>
-      <value>16057682033081585878</value>
+      <value>17239781595213176295</value>
       <value>4515081059117676944</value>
-      <value>9267599547361752512</value>
+      <value>16777832758708867086</value>
       <value>1250334734899480124</value>
       <value>11942428778652146196</value>
       <value>7566923412355944598</value>
@@ -87,7 +87,7 @@
       <value>59</value>
       <value>59</value>
       <value>56</value>
-      <value>56</value>
+      <value>57</value>
       <value>56</value>
       <value>56</value>
       <value>59</value>
@@ -95,9 +95,9 @@
       <value>59</value>
       <value>59</value>
       <value>56</value>
+      <value>54</value>
       <value>53</value>
-      <value>53</value>
-      <value>56</value>
+      <value>57</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
@@ -136,7 +136,7 @@
   </Bishop>
   <Rook>
     <magics>
-      <value>16498006519881410044</value>
+      <value>16113105437765703762</value>
       <value>5044042586713724870</value>
       <value>14858684190899627</value>
       <value>9964646660903986900</value>
@@ -167,7 +167,7 @@
       <value>7371504754955183364</value>
       <value>4694847047544860568</value>
       <value>13612333775987330679</value>
-      <value>6148451812227374477</value>
+      <value>3015542589161233539</value>
       <value>5850132895716339155</value>
       <value>15807456599734749944</value>
       <value>9318960606936397414</value>
@@ -202,7 +202,7 @@
       <value>3139625268090881798</value>
     </magics>
     <offsets>
-      <value>50</value>
+      <value>51</value>
       <value>52</value>
       <value>51</value>
       <value>51</value>
@@ -233,7 +233,7 @@
       <value>53</value>
       <value>53</value>
       <value>53</value>
-      <value>52</value>
+      <value>53</value>
       <value>52</value>
       <value>53</value>
       <value>53</value>

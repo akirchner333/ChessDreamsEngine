@@ -30,7 +30,7 @@ namespace Engine.Pieces.Magic
         {
             for (int tries = 0; tries < tryCount; tries++)
             {
-                var key = RandomKey();
+                var key = Rand.RandULong();
 
                 RookTester.TestKey(key);
                 BishopTester.TestKey(key);
@@ -78,11 +78,6 @@ namespace Engine.Pieces.Magic
             RookTester.Clear();
             BishopTester.Clear();
             Save();
-        }
-
-        public ulong RandomKey()
-        {
-            return (ulong)((rand.NextInt64() << 1) ^ rand.Next());
         }
     }
 }

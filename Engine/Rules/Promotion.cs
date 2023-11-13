@@ -16,9 +16,11 @@ namespace Engine.Rules
 
         public Move ApplyMove(Move move, int pieceIndex)
         {
-            if (move.Promoting)
+            if (move is PromotionMove promo)
             {
-                _board.Pieces[pieceIndex] = _board.NewPiece(move.End, ((PromotionMove)move).Promotion, move.Side);
+                _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
+                _board.Pieces[pieceIndex] = _board.NewPiece(promo.End, promo.Promotion, promo.Side);
+                _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
             }
 
             return move;
@@ -28,7 +30,9 @@ namespace Engine.Rules
         {
             if (move.Promoting)
             {
+                _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
                 _board.Pieces[pieceIndex] = _board.NewPiece(move.Start, PieceTypes.PAWN, move.Side);
+                _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
             }
         }
     }

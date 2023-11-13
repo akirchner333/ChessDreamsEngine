@@ -18,10 +18,18 @@ namespace Engine.Rules
     {
         public int CastleRights { get; set; } = 0b1111;
         private Board _board;
+        private static ulong[] _values;
+
+        static Castling()
+        {
+            _values = Rand.RandULongArray(16);
+            _values[0] = 0;
+        }
 
         public Castling(Board board)
         {
             _board = board;
+            _board.Hash ^= _values[0];
         }
 
         public Castling(string[] fenParts, Board board)
@@ -39,6 +47,8 @@ namespace Engine.Rules
                 if (fenParts[2].Contains('q'))
                     CastleRights |= (int)Castles.BlackQueenside;
             }
+
+            _board.Hash ^= _values[CastleRights];
         }
         public string Fen()
         {
@@ -66,11 +76,16 @@ namespace Engine.Rules
 
         public Move ApplyMove(Move m, Piece p)
         {
-            if (m is CastleMove)
+            if (m is CastleMove castleMove)
             {
-                var rook = _board.FindPiece(((CastleMove)m).RookStart);
-                if (rook != null)
-                    m = _board.MovePiece(rook, ((CastleMove)m).RookStart, ((CastleMove)m).RookEnd, m);
+                castleMove.RookIndex = _board.FindPieceIndex(castleMove.RookStart);
+                if (castleMove.RookIndex != -1)
+                {
+                    var piece = _board.Pieces[castleMove.RookIndex];
+                    m = _board.Move.MovePiece(piece, castleMove.RookStart, castleMove.RookEnd, m);
+
+                }
+
             }
 
             m.Castles = CastleRights;
@@ -97,18 +112,21 @@ namespace Engine.Rules
             }
             CastleRights = BitUtil.Remove(CastleRights, effectedCastles);
 
+            _board.Hash ^= _values[m.Castles];
+            _board.Hash ^= _values[CastleRights];
+
             return m;
         }
 
         public void ReverseMove(Move m)
         {
-            if (m is CastleMove)
+            if (m is CastleMove castleMove && castleMove.RookIndex >= 0)
             {
-                var rook = _board.FindPiece(((CastleMove)m).RookEnd);
-                if (rook != null)
-                    _board.MovePiece(rook, ((CastleMove)m).RookEnd, ((CastleMove)m).RookStart, m, true);
+                _board.Move.MovePiece(_board.Pieces[castleMove.RookIndex], castleMove.RookEnd, castleMove.RookStart, m, true);
             }
 
+            _board.Hash ^= _values[m.Castles];
+            _board.Hash ^= _values[CastleRights];
             CastleRights = m.Castles;
         }
 

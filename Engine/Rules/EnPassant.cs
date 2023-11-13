@@ -10,21 +10,29 @@ namespace Engine.Rules
     {
         public ulong PassantSquare {  get; private set; } = 0;
         public ulong TargetSquare { get; private set; } = 0;
-        public Board Board { get; private set; }
+        private Board _board;
+        private static ulong[] _values;
+
+        static EnPassant()
+        {
+            _values = Rand.RandULongArray(8);
+        }
 
         public EnPassant(Board board)
         {
-            Board = board;
+            _board = board;
         }
 
         public EnPassant(string[] fenParts, Board board)
         {
-            Board = board;
+            _board = board;
+
             var passant = fenParts[3];
             if (passant != "-")
             {
                 PassantSquare = BitUtil.AlgebraicToBit(passant);
-                TargetSquare = Board.Turn ? PassantSquare >> 8 : PassantSquare << 8;
+                TargetSquare = _board.Turn ? PassantSquare >> 8 : PassantSquare << 8;
+                _board.Hash ^= _values[HashIndex()];
             }
         }
 
@@ -37,13 +45,19 @@ namespace Engine.Rules
         }
         public Move ApplyMove(Move m, Piece p)
         {
+            //This is awkward. Need some manner of handling hash of no-passant elegantly
+            if (PassantSquare != 0)
+            {
+                _board.Hash ^= _values[HashIndex()];
+            }
             m.PassantTarget = TargetSquare;
             m.PassantSquare = PassantSquare;
 
             if (p.Type == PieceTypes.PAWN && (m.Start >> 16 == m.End || m.Start << 16 == m.End))
             {
                 TargetSquare = m.End;
-                PassantSquare = Board.Turn ? m.Start << 8 : m.Start >> 8;
+                PassantSquare = _board.Turn ? m.Start << 8 : m.Start >> 8;
+                _board.Hash ^= _values[HashIndex()];
             }
             else
             {
@@ -56,8 +70,17 @@ namespace Engine.Rules
 
         public void ReverseMove(Move m)
         {
+            if(PassantSquare != 0)
+            {
+                _board.Hash ^= _values[HashIndex()];
+            }
+            
             TargetSquare = m.PassantTarget;
             PassantSquare = m.PassantSquare;
+            if (PassantSquare != 0)
+            {
+                _board.Hash ^= _values[HashIndex()];
+            }
         }
 
 
@@ -66,6 +89,11 @@ namespace Engine.Rules
         public bool Attack(ulong mask)
         {
             return BitUtil.Overlap(PassantSquare, mask);
+        }
+
+        public int HashIndex()
+        {
+            return BitUtil.BitToX(PassantSquare);
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Engine
         public ulong PassantSquare { get; set; }
         public int HalfMoves { get; set; }
         public int TargetIndex { get; set; }
+        public ulong[] PastPositions = new ulong[0];
 
         public Move(ulong start, ulong end, bool side)
         {
@@ -40,7 +41,6 @@ namespace Engine
         {
             return End;
         }
-
         public string EndAlgebraic()
         {
             return BitUtil.BitToAlgebraic(End);
@@ -60,6 +60,18 @@ namespace Engine
         {
             return StartEnd();
         }
+
+        public override string ToString()
+        {
+            if(Capture)
+            {
+                return "Capturing move " + LongAlgebraic();
+            }
+            else
+            {
+                return "Move " + LongAlgebraic();
+            }
+        }
     }
 
     public class PassantMove : Move
@@ -75,6 +87,10 @@ namespace Engine
             return _targetSquare;
         }
 
+        public override string ToString()
+        {
+            return "En Passant " + LongAlgebraic();
+        }
     }
 
     public class PromotionMove : Move
@@ -98,6 +114,12 @@ namespace Engine
             };
             return StartEnd() + promotionChar;
         }
+
+        public override string ToString()
+        {
+            return (Capture ? "Capture Promote Move " : "Promotion Move ") + LongAlgebraic();
+
+        }
     }
 
     //Castling is traditionally a king move, so start and end refer to the king's starting and ending position
@@ -106,6 +128,13 @@ namespace Engine
         public ulong RookStart { get; init; }
         public ulong RookEnd { get; init; }
         public CastleMove(ulong start, ulong end, bool side) : base(start, end, side) { }
+
+        public int RookIndex { get; set; }
+
+        public override string ToString()
+        {
+            return "Castle Move " + LongAlgebraic();
+        }
     }
 }
 

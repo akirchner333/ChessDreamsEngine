@@ -69,29 +69,40 @@ namespace Engine
         public Piece[] Pieces = new Piece[0];
         public bool Turn = Sides.White;
         public int TurnNumber { get; private set; } = 0;
+        public static ulong TurnValue;
         public GameState State { get; set; } = GameState.PLAY;
         public bool drawAvailable = false;
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ RULES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        public PieceMovement Move { get; private set; }
+        public Capture Capture { get; private set; }
         public EnPassant Passant { get; private set; }
         public FiftyMove Clock { get; private set; }
         public Castling Castles { get; private set; }
         public Promotion Promote { get; private set; }
-        public Zobrist Hasher { get; private set; }
+        public Repetition Repetition { get; private set; }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RECORDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        public ulong AllPieces { get; private set; } = 0;
-        public ulong WhitePieces { get; private set; } = 0;
-        public ulong BlackPieces { get; private set; } = 0;
-        public Move[] MoveList { get; private set; }
+        public ulong AllPieces { get; set; } = 0;
+        public ulong WhitePieces { get; set; } = 0;
+        public ulong BlackPieces { get; set; } = 0;
+        public Move[] MoveList { get; set; }
+        public ulong Hash { get; set; } = 0;
 
         // ------------------------------------------------------------- BOARD CREATION ------------------------------------------------
+        static Board()
+        {
+            TurnValue = Rand.RandULong();
+        }
+        
         public Board()
         {
+            Move = new PieceMovement(this);
+            Capture = new Capture(this);
             Passant = new EnPassant(this);
             Clock = new FiftyMove(this);
             Castles = new Castling(this);
             Promote = new Promotion(this);
-            Hasher = new Hasher(this);
+            Repetition = new Repetition(this);
 
             SetGameState();
         }
@@ -138,13 +149,17 @@ namespace Engine
 
             //Active color
             Turn = (fields[1] == "w");
+            if (!Turn)
+                Hash ^= TurnValue;
             TurnNumber = Int32.Parse(fields[5]);
 
+            Move = new PieceMovement(this);
             Castles = new Castling(fields, this);
             Passant = new EnPassant(fields, this);
             Clock = new FiftyMove(fields, this);
             Promote = new Promotion(this);
-            Hasher = new Hasher(this);
+            Capture = new Capture(this);
+            Repetition = new Repetition(this);
 
             SetGameState();
         }
@@ -180,7 +195,7 @@ namespace Engine
             Array.Resize(ref Pieces, Pieces.Length + 1);
             Pieces[Pieces.Length - 1] = newPiece;
 
-            Hasher.TogglePiece(newPiece, newPiece.Index);
+            Move?.TogglePiece(newPiece);
         }
 
         public Piece NewPiece(ulong bit, PieceTypes t, bool side)
@@ -366,8 +381,8 @@ namespace Engine
                 return m;
             Piece p = Pieces[pieceIndex];
 
-            m = CapturePiece(m);
-            m = MovePiece(p, m.Start, m.End, m);
+            m = Capture.ApplyMove(m, pieceIndex);
+            m = Move.ApplyMove(m, pieceIndex);
             m = Passant.ApplyMove(m, p);
             m = Castles.ApplyMove(m, p);
             m = Clock.ApplyMove(m, pieceIndex);
@@ -379,43 +394,12 @@ namespace Engine
             if (Turn == Sides.Black)
                 TurnNumber++;
             Turn = !Turn;
+            Hash ^= TurnValue;
+
+            Repetition.ApplyMove(m, pieceIndex);
 
             SetGameState();
 
-            m = Zobrist.ApplyMove(m);
-
-            return m;
-        }
-
-        public Move MovePiece(Piece p, ulong start, ulong end, Move m, bool reverse = false)
-        {
-            m = reverse ? p.ReverseMove(m) : p.ApplyMove(m);
-            if (p.Side == Sides.Black)
-                BlackPieces = BitUtil.Remove(BlackPieces, start) | end;
-            else
-                WhitePieces = BitUtil.Remove(WhitePieces, start) | end;
-            AllPieces = BlackPieces | WhitePieces;
-
-            if (p is Pawn)
-            {
-                drawAvailable = false;
-            }
-
-            return m;
-        }
-
-        public Move CapturePiece(Move m)
-        {
-            if (!m.Capture)
-                return m;
-
-            var pieceIndex = FindPieceIndex(m.TargetSquare());
-
-            m.TargetIndex = pieceIndex;
-            var piece = Pieces[pieceIndex];
-
-            RemoveSquare(m.TargetSquare(), piece.Side);
-            piece.Captured = true;
             return m;
         }
 
@@ -430,25 +414,14 @@ namespace Engine
 
         public void ReverseMove(Move m)
         {
-            m = Zobrist.ReverseMove(m);
 
             int pieceIndex = FindPieceIndex(m.End);
             if (pieceIndex == -1)
                 return;
             var p = Pieces[pieceIndex];
 
-            if (m.Capture)
-            {
-                Pieces[m.TargetIndex].Captured = false;
-                if (!m.Side)
-                    WhitePieces |= Pieces[m.TargetIndex].Position;
-                else
-                    BlackPieces |= Pieces[m.TargetIndex].Position;
-                AllPieces = WhitePieces | BlackPieces;
-            }
-
-            MovePiece(p, m.End, m.Start, m, true);
-
+            Capture.ReverseMove(m, pieceIndex);
+            Move.ReverseMove(m, pieceIndex);
             Passant.ReverseMove(m);
             Clock.ReverseMove(m, pieceIndex);
             Castles.ReverseMove(m);
@@ -460,6 +433,8 @@ namespace Engine
             if (Turn == Sides.White)
                 TurnNumber--;
             Turn = !Turn;
+            Hash ^= TurnValue;
+            Repetition.ApplyMove(m, pieceIndex);
 
             State = GameState.PLAY;
             GenerateMoves();
