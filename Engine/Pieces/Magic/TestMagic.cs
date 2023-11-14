@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Engine.Pieces.Movers;
 using System.Numerics;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Engine.Pieces.Movers;
 
 namespace Engine.Pieces.Magic
 {
     public class TestMagic
     {
         public string Name { get; set; }
-        private IRiderCalc _mover;
+        private readonly IRiderCalc _mover;
         public ulong[] Magics { get; private set; }
         public int[] Offsets { get; private set; }
-        public ulong[][] Blockers { get; private set;  } = new ulong[64][];
+        public ulong[][] Blockers { get; private set; } = new ulong[64][];
         public TestMagic(IRiderCalc mover, string name)
         {
             _mover = mover;
@@ -29,7 +23,7 @@ namespace Engine.Pieces.Magic
 
         public void GenerateBlockers()
         {
-            for(var i = 0; i < 64; i++)
+            for (var i = 0; i < 64; i++)
             {
                 var mask = _mover.EmptyMask(i);
                 Blockers[i] = AllVariants(mask);
@@ -88,19 +82,19 @@ namespace Engine.Pieces.Magic
             return AllUnique(keys);
         }
 
-        public ulong[] MapBlockers(ulong[] blockers, ulong magic, int offset)
+        public static ulong[] MapBlockers(ulong[] blockers, ulong magic, int offset)
         {
             return blockers.Select(b => MakeKey(b, magic, offset)).ToArray();
         }
 
-        public ulong MakeKey(ulong blocker, ulong magic, int offset)
+        public static ulong MakeKey(ulong blocker, ulong magic, int offset)
         {
             return (blocker * magic) >> offset;
         }
 
         public void Clear()
         {
-            for(var i = 0; i < 64; i++)
+            for (var i = 0; i < 64; i++)
             {
                 Magics[i] = 1;
                 Offsets[i] = 0;
@@ -165,7 +159,7 @@ namespace Engine.Pieces.Magic
         // Are all the values in this array unique?
         public static bool AllUnique(ulong[] values)
         {
-            return values.Count() == values.Distinct().Count();
+            return values.Length == values.Distinct().Count();
         }
     }
 }

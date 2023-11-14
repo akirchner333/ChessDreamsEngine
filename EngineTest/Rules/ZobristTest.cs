@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine;
+﻿using Engine;
 
 namespace EngineTest.Rules
 {
@@ -27,27 +22,26 @@ namespace EngineTest.Rules
         [TestMethod]
         public void MoveSequenceTest()
         {
-            using (StreamReader r = new StreamReader("../../../move_sequence.csv"))
+            using StreamReader r = new("../../../move_sequence.csv");
+            
+            var board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            string line;
+            int halfmove = 0;
+            List<ulong> hashes = new();
+
+            while ((line = r.ReadLine()) != null)
             {
-                var board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-                string line;
-                int halfmove = 0;
-                List<ulong> hashes = new List<ulong>();
+                var parts = line.Split(',');
+                var moves = board.Moves();
+                hashes.Add(board.Hash);
+                //Assert.IsTrue(hashes.Distinct().Count() == hashes.Count(), $"Hash collision at halfmove {halfmove}, before {parts[0]}");
 
-                while ((line = r.ReadLine()) != null)
-                {
-                    var parts = line.Split(',');
-                    var moves = board.Moves();
-                    hashes.Add(board.Hash);
-                    //Assert.IsTrue(hashes.Distinct().Count() == hashes.Count(), $"Hash collision at halfmove {halfmove}, before {parts[0]}");
+                var sameBoard = new Board(board.Fen());
+                Assert.AreEqual(sameBoard.Hash, board.Hash, $"Hash from fen doesn't match hash from moves at halfmove {halfmove},  before {parts[0]}  {board.Fen()}");
 
-                    var sameBoard = new Board(board.Fen());
-                    Assert.AreEqual(sameBoard.Hash, board.Hash, $"Hash from fen doesn't match hash from moves at halfmove {halfmove},  before {parts[0]}  {board.Fen()}");
-
-                    var nextMove = Array.Find(moves, m => m.LongAlgebraic() == parts[0]);
-                    board.ApplyMove(nextMove!);
-                    halfmove++;
-                }
+                var nextMove = Array.Find(moves, m => m.LongAlgebraic() == parts[0]);
+                board.ApplyMove(nextMove!);
+                halfmove++;
             }
         }
     }

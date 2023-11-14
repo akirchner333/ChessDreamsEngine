@@ -1,5 +1,4 @@
 ﻿using Engine.Pieces.Movers;
-using System;
 
 namespace Engine
 {
@@ -31,7 +30,7 @@ namespace Engine
 
         public override ulong MoveMask(Board board)
         {
-            return _rookMover.MoveMask(Index, board) | _bishopMover.MoveMask(Index, board); 
+            return _rookMover.MoveMask(Index, board) | _bishopMover.MoveMask(Index, board);
         }
-    } 
+    }
 }

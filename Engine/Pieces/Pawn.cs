@@ -1,8 +1,5 @@
-﻿using Engine.Pieces.Movers;
-using Engine.Pieces.MoveFactories;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
+﻿using Engine.Pieces.MoveFactories;
+using Engine.Pieces.Movers;
 
 namespace Engine
 {
@@ -41,7 +38,7 @@ namespace Engine
         private void setFixed()
         {
             _moveLeaper = new PeacefulLeaper(Side ? new int[1] { 8 } : new int[1] { -8 }, Side ? "PawnMoveWhite" : "PawnMoveBlack");
-            _attackLeaper = new KillerLeaper(Side ? new int[2] {  7, 9 } : new int[2] { -7, -9 }, Side ? "PawnAttackWhite" : "PawnAttackBlack")
+            _attackLeaper = new KillerLeaper(Side ? new int[2] { 7, 9 } : new int[2] { -7, -9 }, Side ? "PawnAttackWhite" : "PawnAttackBlack")
             {
                 Side = Side
             };

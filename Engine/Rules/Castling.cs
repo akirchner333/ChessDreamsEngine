@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Rules
+﻿namespace Engine.Rules
 {
     public enum Castles
     {
-        WhiteKingside =  0b0001,
+        WhiteKingside = 0b0001,
         WhiteQueenside = 0b0010,
-        BlackKingside =  0b0100,
+        BlackKingside = 0b0100,
         BlackQueenside = 0b1000
     }
 
@@ -108,10 +102,10 @@ namespace Engine.Rules
 
             // If the rook is captured, then obviously it can't castle anymore
             // Don't have to worry about this with the King cause, it can't be captured
-            if(m.Capture)
+            if (m.Capture)
             {
                 var target = _board.Pieces[m.TargetIndex];
-                if(target.Type == PieceTypes.ROOK)
+                if (target.Type == PieceTypes.ROOK)
                 {
                     effectedCastles |= RookImpact(m.TargetSquare(), target);
                 }

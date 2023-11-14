@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Pieces.Movers
+﻿namespace Engine.Pieces.Movers
 {
     public class MoverUtil
     {
@@ -39,14 +32,14 @@ namespace Engine.Pieces.Movers
             var columns = "ABCDEFGH";
             if (reduced > 0)
             {
-                for(var i = 0; i < reduced; i++)
+                for (var i = 0; i < reduced; i++)
                 {
                     blocker |= Board.Columns[columns[i].ToString()];
                 }
             }
-            else if(reduced < 0)
+            else if (reduced < 0)
             {
-                for(var i = 7; i > 7 + reduced; i--)
+                for (var i = 7; i > 7 + reduced; i--)
                 {
                     blocker |= Board.Columns[columns[i].ToString()];
                 }

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Rules
+﻿namespace Engine.Rules
 {
     public class EnPassant
     {
-        public ulong PassantSquare {  get; private set; } = 0;
+        public ulong PassantSquare { get; private set; } = 0;
         public ulong TargetSquare { get; private set; } = 0;
         private Board _board;
         private static ulong[] _values;
@@ -70,11 +64,11 @@ namespace Engine.Rules
 
         public void ReverseMove(Move m)
         {
-            if(PassantSquare != 0)
+            if (PassantSquare != 0)
             {
                 _board.Hash ^= _values[HashIndex()];
             }
-            
+
             TargetSquare = m.PassantTarget;
             PassantSquare = m.PassantSquare;
             if (PassantSquare != 0)

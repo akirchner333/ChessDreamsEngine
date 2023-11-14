@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Rules
+﻿namespace Engine.Rules
 {
     public class FiftyMove : IRule
     {
@@ -31,7 +25,7 @@ namespace Engine.Rules
         public Move ApplyMove(Move m, int pieceIndex)
         {
             m.HalfMoves = Clock;
-            if(m.Capture || _board.Pieces[pieceIndex].Type == PieceTypes.PAWN)
+            if (m.Capture || _board.Pieces[pieceIndex].Type == PieceTypes.PAWN)
             {
                 Clock = 0;
             }
@@ -40,11 +34,11 @@ namespace Engine.Rules
                 Clock++;
             }
 
-            if(Clock >= 150)
+            if (Clock >= 150)
             {
                 _board.State = GameState.DRAW;
             }
-            else if(Clock >= 100)
+            else if (Clock >= 100)
             {
                 _board.drawAvailable = true;
             }

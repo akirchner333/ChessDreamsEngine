@@ -1,11 +1,4 @@
-﻿using Engine.Pieces.Magic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Pieces.Movers
+﻿namespace Engine.Pieces.Movers
 {
     public class RookMover : IMover
     {
@@ -27,7 +20,7 @@ namespace Engine.Pieces.Movers
 
     public class RookCalc : IRiderCalc
     {
-                private const ulong _notAFile = 0b1111111011111110111111101111111011111110111111101111111011111110;
+        private const ulong _notAFile = 0b1111111011111110111111101111111011111110111111101111111011111110;
         private const ulong _notHFile = 0b0111111101111111011111110111111101111111011111110111111101111111;
         public RookCalc() { }
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Numerics;
-
-namespace Engine
+﻿namespace Engine
 {
     public interface IMove { }
     enum MoveType
@@ -63,7 +59,7 @@ namespace Engine
 
         public override string ToString()
         {
-            if(Capture)
+            if (Capture)
             {
                 return "Capturing move " + LongAlgebraic();
             }

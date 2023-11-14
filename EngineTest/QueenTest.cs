@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine;
+﻿using Engine;
 
 namespace EngineTest
 {
@@ -18,8 +13,8 @@ namespace EngineTest
 
             var moves = EndPoints(topLeft, b);
             Assert.AreEqual(21, moves.Count());
-            foreach(var square in new string[] {
-                "a2", "a3", "a4", "a5", "a6", "a7", "a8", 
+            foreach (var square in new string[] {
+                "a2", "a3", "a4", "a5", "a6", "a7", "a8",
                 "b1", "c1", "d1", "e1", "f1", "g1", "h1",
                 "b2", "c3", "d4", "e5", "f6", "g7", "h8"
             })

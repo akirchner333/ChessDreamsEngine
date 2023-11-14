@@ -1,10 +1,9 @@
 ﻿using Engine.Pieces.Movers;
-using System;
 
 namespace Engine
 {
-	public class Bishop : Piece
-	{
+    public class Bishop : Piece
+    {
         public override string Name { get; } = "Bishop";
         public override PieceTypes Type { get; } = PieceTypes.BISHOP;
         public override char Short { get; } = 'b';
@@ -26,8 +25,8 @@ namespace Engine
         }
 
         public override ulong MoveMask(Board board)
-		{
+        {
             return _mover.MoveMask(Index, board);
         }
-	}
+    }
 }

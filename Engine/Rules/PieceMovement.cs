@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Rules
+﻿namespace Engine.Rules
 {
     // Handles movement and stores all the zobrist values for piece square combos
     // Kind of an awkward combo, so I dunno
@@ -64,7 +58,7 @@ namespace Engine.Rules
                 _board.WhitePieces = BitUtil.Remove(_board.WhitePieces, start);
                 _board.WhitePieces |= end;
             }
-                
+
             _board.AllPieces = _board.BlackPieces | _board.WhitePieces;
 
             return m;

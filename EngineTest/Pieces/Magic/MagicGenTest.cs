@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine;
-using Engine.Pieces.Magic;
+﻿using Engine.Pieces.Magic;
 
 namespace EngineTest.Pieces.Movers
 {

@@ -1,18 +1,10 @@
 ﻿using Engine.Pieces.Movers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Engine.Pieces.Magic
 {
     public class Searcher
     {
-        public Random rand { get; private set; } = new Random();
+        private readonly Random _searchRand = new();
 
         public TestMagic RookTester { get; private set; }
         public TestMagic BishopTester { get; private set; }
@@ -30,11 +22,11 @@ namespace Engine.Pieces.Magic
         {
             for (int tries = 0; tries < tryCount; tries++)
             {
-                var key = Rand.RandULong();
+                var key = Rand.RandULong(_searchRand);
 
                 RookTester.TestKey(key);
                 BishopTester.TestKey(key);
-                if(tries % 500 == 0)
+                if (tries % 500 == 0)
                 {
                     Console.WriteLine(tries);
                     Save();
@@ -52,7 +44,7 @@ namespace Engine.Pieces.Magic
         //For trying specific values. Good for injecting other people's magics
         public void Try(ulong[] magics)
         {
-            foreach(var m in magics)
+            foreach (var m in magics)
             {
                 RookTester.TestKey(m);
                 BishopTester.TestKey(m);

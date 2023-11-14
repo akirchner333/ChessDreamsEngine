@@ -1,5 +1,4 @@
 ﻿using Engine;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace EngineTest
 {
@@ -12,7 +11,7 @@ namespace EngineTest
             Board b = new Board();
             Knight middle = new Knight("d4", Sides.White);
             var targets = EndPoints(middle, b);
-            foreach(var target in targets)
+            foreach (var target in targets)
             {
                 Console.WriteLine(target);
             }
@@ -38,6 +37,6 @@ namespace EngineTest
             Assert.IsTrue(targets.Any(m => m == "f2"));
             Assert.IsTrue(targets.Any(m => m == "g3"));
         }
-        
+
     }
 }

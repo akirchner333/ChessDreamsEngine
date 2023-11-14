@@ -1,7 +1,4 @@
 ﻿using Engine.Rules;
-using System;
-using System.Collections;
-using System.Drawing;
 
 namespace Engine
 {
@@ -41,7 +38,7 @@ namespace Engine
         // - Build from FEN
         // - Print FEN
 
-        public static ulong[] Rows = new ulong[8]
+        public readonly static ulong[] Rows = new ulong[8]
         {
             0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_11111111,
             0b00000000_00000000_00000000_00000000_00000000_00000000_11111111_00000000,
@@ -53,7 +50,7 @@ namespace Engine
             0b11111111_00000000_00000000_00000000_00000000_00000000_00000000_00000000
         };
 
-        public static Dictionary<string, ulong> Columns = new Dictionary<string, ulong>()
+        public readonly static Dictionary<string, ulong> Columns = new()
         {
             { "H", 0b10000000_10000000_10000000_10000000_10000000_10000000_10000000_10000000 },
             { "G", 0b01000000_01000000_01000000_01000000_01000000_01000000_01000000_01000000 },
@@ -66,10 +63,10 @@ namespace Engine
         };
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GAME STATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        public Piece[] Pieces = new Piece[0];
+        public Piece[] Pieces = Array.Empty<Piece>();
         public bool Turn = Sides.White;
         public int TurnNumber { get; private set; } = 0;
-        public static ulong TurnValue;
+        public static ulong TurnValue { get; private set; }
         public GameState State { get; set; } = GameState.PLAY;
         public bool drawAvailable = false;
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ RULES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,7 +90,7 @@ namespace Engine
         {
             TurnValue = Rand.RandULong();
         }
-        
+
         public Board()
         {
             Move = new PieceMovement(this);
@@ -193,12 +190,12 @@ namespace Engine
             //This is probably not the fastest, but we'll only be adding pieces at the start of the game
             //So it's probably ok
             Array.Resize(ref Pieces, Pieces.Length + 1);
-            Pieces[Pieces.Length - 1] = newPiece;
+            Pieces[^1] = newPiece;
 
             Move?.TogglePiece(newPiece);
         }
 
-        public Piece NewPiece(ulong bit, PieceTypes t, bool side)
+        public static Piece NewPiece(ulong bit, PieceTypes t, bool side)
         {
             return t switch
             {
@@ -294,7 +291,7 @@ namespace Engine
         public void GenerateMoves()
         {
             if (State != GameState.PLAY)
-                MoveList = new Move[0];
+                MoveList = Array.Empty<Move>();
             else
                 MoveList = PseudolegalMoves()
                     .Where(m => LegalMove(m))
@@ -306,11 +303,11 @@ namespace Engine
             var movingPieces = Pieces.Where(p => p.Side == Turn && !p.Captured).ToArray();
             var moves = new Move[218];
             var moveCount = 0;
-            for (var i = 0; i < movingPieces.Count(); i++)
+            for (var i = 0; i < movingPieces.Length; i++)
             {
                 var pieceMoves = movingPieces[i].Moves(this);
                 pieceMoves.CopyTo(moves, moveCount);
-                moveCount += pieceMoves.Count();
+                moveCount += pieceMoves.Length;
             }
 
             Array.Resize(ref moves, moveCount);
@@ -377,7 +374,6 @@ namespace Engine
             int pieceIndex = FindPieceIndex(m.End);
             if (pieceIndex == -1)
                 return;
-            var p = Pieces[pieceIndex];
 
             Capture.ReverseMove(m, pieceIndex);
             Move.ReverseMove(m, pieceIndex);
@@ -411,7 +407,7 @@ namespace Engine
         public void SetGameState()
         {
             GenerateMoves();
-            if (MoveList.Count() == 0)
+            if (MoveList.Length == 0)
             {
                 var king = Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == Turn);
                 if (king != null)

@@ -1,6 +1,4 @@
 ﻿using Engine.Pieces.Movers;
-using System;
-using System.Xml.Linq;
 
 namespace Engine
 {
@@ -10,7 +8,7 @@ namespace Engine
         public override PieceTypes Type { get; } = PieceTypes.KNIGHT;
         public override char Short { get; } = 'n';
 
-        private Leaper _leaper = new Leaper(new int[8]{15, -15, 17, -17, 6, -6, 10, -10}, "Knight");
+        private Leaper _leaper = new Leaper(new int[8] { 15, -15, 17, -17, 6, -6, 10, -10 }, "Knight");
 
         public Knight(int x, int y, bool side) : base(x, y, side)
         {

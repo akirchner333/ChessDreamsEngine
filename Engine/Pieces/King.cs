@@ -1,6 +1,4 @@
 ﻿using Engine.Pieces.Movers;
-using System;
-using Engine.Rules;
 
 namespace Engine
 {
@@ -41,7 +39,7 @@ namespace Engine
             return base.Moves(b).Concat(_castler.Moves(b, Position)).ToArray();
         }
 
-        
+
     }
 }
 

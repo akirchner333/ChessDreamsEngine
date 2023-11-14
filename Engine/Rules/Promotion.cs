@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Rules
+﻿namespace Engine.Rules
 {
     public class Promotion : IRule
     {
-        private Board _board;
+        private readonly Board _board;
         public Promotion(Board board)
         {
             _board = board;
@@ -19,7 +13,7 @@ namespace Engine.Rules
             if (move is PromotionMove promo)
             {
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
-                _board.Pieces[pieceIndex] = _board.NewPiece(promo.End, promo.Promotion, promo.Side);
+                _board.Pieces[pieceIndex] = Board.NewPiece(promo.End, promo.Promotion, promo.Side);
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
             }
 
@@ -31,7 +25,7 @@ namespace Engine.Rules
             if (move.Promoting)
             {
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
-                _board.Pieces[pieceIndex] = _board.NewPiece(move.Start, PieceTypes.PAWN, move.Side);
+                _board.Pieces[pieceIndex] = Board.NewPiece(move.Start, PieceTypes.PAWN, move.Side);
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
             }
         }

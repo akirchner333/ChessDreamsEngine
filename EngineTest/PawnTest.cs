@@ -1,10 +1,4 @@
 ﻿using Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EngineTest
 {
@@ -140,7 +134,7 @@ namespace EngineTest
             var moves = blackPawn!.Moves(b);
             Assert.IsTrue(moves.Any(m => m is PassantMove));
             var passant = Array.Find(moves, m => m is PassantMove);
-            if(passant != null)
+            if (passant != null)
             {
                 Assert.AreEqual(BitUtil.AlgebraicToBit("b4"), passant.Start);
                 Assert.AreEqual(BitUtil.AlgebraicToBit("a3"), passant.End);

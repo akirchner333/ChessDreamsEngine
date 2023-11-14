@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Rules
+﻿namespace Engine.Rules
 {
     public class Repetition
     {
@@ -17,10 +11,10 @@ namespace Engine.Rules
 
         public Move ApplyMove(Move move, int pieceIndex)
         {
-            if(_board.Clock.Clock == 0)
+            if (_board.Clock.Clock == 0)
             {
                 _positions = new ulong[150];
-                
+
             }
             _positions[_board.Clock.Clock] = _board.Hash;
             move.PastPositions = _positions;
@@ -41,7 +35,7 @@ namespace Engine.Rules
             {
                 _board.drawAvailable = true;
             }
-            else if(repetitions >= 5)
+            else if (repetitions >= 5)
             {
                 _board.State = GameState.DRAW;
             }

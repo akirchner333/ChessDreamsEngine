@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Pieces.Movers
+﻿namespace Engine.Pieces.Movers
 {
     // A class for moves that can only be made when the piece is on a specific set of squares
     // Generally for initial moves, like pawns, but could be others also

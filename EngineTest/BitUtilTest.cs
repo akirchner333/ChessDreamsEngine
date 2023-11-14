@@ -1,5 +1,4 @@
 ﻿using Engine;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace EngineTest
 {
@@ -58,11 +57,11 @@ namespace EngineTest
         {
             var bits = BitUtil.SplitBits(0b10101101010);
             Assert.AreEqual(6, bits.Count());
-            Assert.AreEqual(         0b10ul, bits[0]);
-            Assert.AreEqual(       0b1000ul, bits[1]);
-            Assert.AreEqual(     0b100000ul, bits[2]);
-            Assert.AreEqual(    0b1000000ul, bits[3]);
-            Assert.AreEqual(  0b100000000ul, bits[4]);
+            Assert.AreEqual(0b10ul, bits[0]);
+            Assert.AreEqual(0b1000ul, bits[1]);
+            Assert.AreEqual(0b100000ul, bits[2]);
+            Assert.AreEqual(0b1000000ul, bits[3]);
+            Assert.AreEqual(0b100000000ul, bits[4]);
             Assert.AreEqual(0b10000000000ul, bits[5]);
 
             Assert.AreEqual(64, BitUtil.SplitBits(ulong.MaxValue).Count());

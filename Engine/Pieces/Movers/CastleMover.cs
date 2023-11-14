@@ -1,16 +1,10 @@
 ﻿using Engine.Rules;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Pieces.Movers
 {
     public class CastleMover
     {
-        public bool Side {  get; set; }
+        public bool Side { get; set; }
         public CastleMover() { }
 
         public const ulong c1 = 4ul;

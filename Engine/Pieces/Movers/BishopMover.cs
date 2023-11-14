@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Numerics;
-using Engine.Pieces.Magic;
-
-namespace Engine.Pieces.Movers
+﻿namespace Engine.Pieces.Movers
 {
     public class BishopMover : IMover
     {

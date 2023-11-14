@@ -1,10 +1,4 @@
-﻿using Engine.Pieces.Movers;
-using Engine.Pieces.MoveFactories;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
+﻿using Engine.Pieces.MoveFactories;
 
 namespace Engine
 {
@@ -15,7 +9,7 @@ namespace Engine
         PieceTypes Type { get; }
         char Short { get; }
     }
-    public abstract class Piece: IPiece
+    public abstract class Piece : IPiece
     {
         public abstract string Name { get; }
         public abstract PieceTypes Type { get; }

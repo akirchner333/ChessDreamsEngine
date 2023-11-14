@@ -1,17 +1,14 @@
-﻿using System;
-using System.Drawing;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace Engine
 {
-	public static class BitUtil
-	{
+    public static class BitUtil
+    {
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONVERSION METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		public static ulong AlgebraicToBit(string a)
-		{
-			return 1ul << AlgebraicToIndex(a);
-		}
+        public static ulong AlgebraicToBit(string a)
+        {
+            return 1ul << AlgebraicToIndex(a);
+        }
 
         // So when you access a string with [] you get a char and chars are basically just numbers through unicode
         // So 'a' is 97 through 'h' is 104. But what if it's capital letters? That's 'A' = 65 through 'H' = 72
@@ -50,24 +47,24 @@ namespace Engine
         }
 
         public static int CoordToIndex(int x, int y)
-		{
-			return x + y * 8;
-		}
+        {
+            return x + y * 8;
+        }
 
-		public static ulong CoordToBit(int x, int y)
-		{
-			return 1ul << CoordToIndex(x, y);
-		}
+        public static ulong CoordToBit(int x, int y)
+        {
+            return 1ul << CoordToIndex(x, y);
+        }
 
         public static ulong IndexToBit(int i)
         {
             return 1ul << i;
         }
 
-		public static int IndexToX(int i)
-		{
-			return i % 8;
-		}
+        public static int IndexToX(int i)
+        {
+            return i % 8;
+        }
 
         public static int IndexToY(int i)
         {
@@ -82,38 +79,38 @@ namespace Engine
             return (a & b) != 0;
         }
 
-		/// <summary>
-		/// Method <c>Remove</c> removes all the bits in b from a 
-		/// <summary>
+        /// <summary>
+        /// Method <c>Remove</c> removes all the bits in b from a 
+        /// <summary>
         public static ulong Remove(ulong a, ulong b)
-		{
-			return a & ~b;
-		}
+        {
+            return a & ~b;
+        }
 
         /// <summary>
         /// Method <c>Remove</c> removes all the bits in b from a 
         /// <summary>
         public static int Remove(int a, int b)
         {
-			return a & ~b;
+            return a & ~b;
         }
 
         public static ulong[] SplitBits(ulong a)
-		{
-			var result = new ulong[BitOperations.PopCount(a)];
+        {
+            var result = new ulong[BitOperations.PopCount(a)];
 
             var offset = 0;
-			var i = 0;
+            var i = 0;
             while ((a >> offset) > 0 && i < result.Count())
             {
                 offset += BitOperations.TrailingZeroCount(a >> offset);
                 result[i] = 1ul << offset;
-				offset++;
-				i++;
+                offset++;
+                i++;
             }
 
             return result;
-		}
+        }
 
         public static void SplitBitsNew(ulong a, Action<ulong, int> callback)
         {

@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace Engine.Pieces.Movers
 {
     // This is a Mover and a Factory, combined into one. Whatever! Rules are fake!
     public class PassantMover
     {
-        public bool Side {  get; set; }
+        public bool Side { get; set; }
         public PassantMover() { }
 
         // This calls the Passant rule in the board directly
@@ -22,7 +16,7 @@ namespace Engine.Pieces.Movers
             return b.Passant.PassantSquare & attack.RawMask(index);
         }
 
-        
+
         public Move[] ConvertMask(Board b, ulong start, ulong mask)
         {
             var moves = new Move[BitOperations.PopCount(mask)];

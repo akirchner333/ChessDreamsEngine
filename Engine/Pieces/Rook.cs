@@ -1,6 +1,4 @@
 ﻿using Engine.Pieces.Movers;
-using System;
-using System.Collections.Generic;
 
 namespace Engine
 {
@@ -33,13 +31,13 @@ namespace Engine
 
         public override Move ApplyMove(Move m)
         {
-            if(m is CastleMove)
+            if (m is CastleMove)
             {
                 Position = ((CastleMove)m).RookEnd;
                 Index = BitUtil.BitToIndex(((CastleMove)m).RookEnd);
                 return m;
             }
-            
+
             return base.ApplyMove(m);
         }
 
