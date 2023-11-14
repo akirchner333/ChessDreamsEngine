@@ -322,51 +322,19 @@ namespace Engine
         // TO DO: One shudders to look upon this. Make it better
         public bool LegalMove(Move m)
         {
-            var holdWhite = WhitePieces;
-            var holdBlack = BlackPieces;
-
-            if (m.Side)
-            {
-                WhitePieces = BitUtil.Remove(WhitePieces, m.Start);
-                WhitePieces |= m.End;
-                BlackPieces = BitUtil.Remove(BlackPieces, m.TargetSquare());
-                if (m is CastleMove)
-                {
-                    WhitePieces = BitUtil.Remove(WhitePieces, ((CastleMove)m).RookStart);
-                    WhitePieces |= ((CastleMove)m).RookEnd;
-                }
-            }
-            else
-            {
-                BlackPieces = BitUtil.Remove(BlackPieces, m.Start);
-                BlackPieces |= m.End;
-                WhitePieces = BitUtil.Remove(WhitePieces, m.TargetSquare());
-                if (m is CastleMove)
-                {
-                    BlackPieces = BitUtil.Remove(BlackPieces, ((CastleMove)m).RookStart);
-                    BlackPieces |= ((CastleMove)m).RookEnd;
-                }
-            }
-            AllPieces = WhitePieces | BlackPieces;
-
-            Piece? capturedPiece = FindPiece(m.TargetSquare());
-            if (capturedPiece != null)
-            {
-                capturedPiece.Captured = true;
-            }
+            var pieceIndex = FindPieceIndex(m.Start);
+            if (pieceIndex == -1)
+                return false;
+            // Piece movement and captures are the only thing that matters for attacks
+            // Promotion can put your opponent in check, but it can't put /you/ in check
+            m = Capture.ApplyMove(m, pieceIndex);
+            m = Move.ApplyMove(m, pieceIndex);
 
             var king = Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == m.Side);
-            //Having an issue with this line but I'm confused as how to I could lose the King
-            var check = king != null ? Attacked(m.Side, m.Start == king.Position ? m.End : king.Position) : true;
+            var check = Attacked(m.Side, king!.Position);
 
-            WhitePieces = holdWhite;
-            BlackPieces = holdBlack;
-            AllPieces = holdWhite | holdBlack;
-
-            if (capturedPiece != null)
-            {
-                capturedPiece.Captured = false;
-            }
+            Move.ReverseMove(m, pieceIndex);
+            Capture.ReverseMove(m, pieceIndex);
 
             return !check;
         }
