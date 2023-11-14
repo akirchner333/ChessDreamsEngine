@@ -83,19 +83,14 @@ namespace Engine.Rules
                 {
                     var piece = _board.Pieces[castleMove.RookIndex];
                     m = _board.Move.MovePiece(piece, castleMove.RookStart, castleMove.RookEnd, m);
-
                 }
-
             }
 
             m.Castles = CastleRights;
             int effectedCastles = 0;
             if (p.Type == PieceTypes.ROOK)
             {
-                if (BitUtil.Overlap(m.Start, Board.Columns["A"]))
-                    effectedCastles |= p.Side ? (int)Castles.WhiteQueenside : (int)Castles.BlackQueenside;
-                else if (BitUtil.Overlap(m.Start, Board.Columns["H"]))
-                    effectedCastles |= p.Side ? (int)Castles.WhiteKingside : (int)Castles.BlackKingside;
+                effectedCastles |= RookImpact(m.Start, p);
             }
             else if (p.Type == PieceTypes.KING)
             {
@@ -110,12 +105,34 @@ namespace Engine.Rules
                     effectedCastles |= (int)Castles.BlackQueenside;
                 }
             }
+
+            // If the rook is captured, then obviously it can't castle anymore
+            // Don't have to worry about this with the King cause, it can't be captured
+            if(m.Capture)
+            {
+                var target = _board.Pieces[m.TargetIndex];
+                if(target.Type == PieceTypes.ROOK)
+                {
+                    effectedCastles |= RookImpact(m.TargetSquare(), target);
+                }
+            }
+
             CastleRights = BitUtil.Remove(CastleRights, effectedCastles);
 
             _board.Hash ^= _values[m.Castles];
             _board.Hash ^= _values[CastleRights];
 
             return m;
+        }
+
+        public int RookImpact(ulong start, Piece p)
+        {
+            if (BitUtil.Overlap(start, Board.Columns["A"]))
+                return p.Side ? (int)Castles.WhiteQueenside : (int)Castles.BlackQueenside;
+            else if (BitUtil.Overlap(start, Board.Columns["H"]))
+                return p.Side ? (int)Castles.WhiteKingside : (int)Castles.BlackKingside;
+
+            return 0;
         }
 
         public void ReverseMove(Move m)
@@ -129,6 +146,5 @@ namespace Engine.Rules
             _board.Hash ^= _values[CastleRights];
             CastleRights = m.Castles;
         }
-
     }
 }

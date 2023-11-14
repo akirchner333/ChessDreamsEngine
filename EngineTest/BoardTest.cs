@@ -1,5 +1,6 @@
 ﻿using Engine;
 using Engine.Rules;
+using System.ComponentModel;
 using System.Linq;
 
 namespace EngineTest
@@ -215,8 +216,37 @@ namespace EngineTest
                             );
                         }
                     }
-
                 }
+            }
+        }
+
+        [TestMethod]
+        public void DepthTest()
+        {
+            var board = new Board("k7/8/8/8/8/3B1b2/8/4K2R b K - 0 1");
+            TestReverse(board, 3, "");
+        }
+
+        public void TestReverse(Board board, int depth, string sequence)
+        {
+            if (depth == 0)
+                return;
+
+            var hash = board.Hash;
+            var all = board.AllPieces;
+            var white = board.WhitePieces;
+            var black = board.BlackPieces;
+
+            foreach (var move in board.Moves())
+            {
+                var newSequence = sequence + " " + move.LongAlgebraic();
+                var fullMove = board.ApplyMove(move);
+                TestReverse(board, depth - 1, newSequence);
+                board.ReverseMove(fullMove);
+                Assert.AreEqual(all, board.AllPieces, $"All Pieces mismatch on depth {depth} after {newSequence}");
+                Assert.AreEqual(white, board.WhitePieces, $"White pieces mismatch on depth {depth} after {newSequence}");
+                Assert.AreEqual(black, board.BlackPieces, $"Black pieces mismatch on depth {depth} after {newSequence}");
+                Assert.AreEqual(hash, board.Hash, $"Hash mismatch on depth {depth} after {newSequence}");
             }
         }
     }

@@ -55,9 +55,16 @@ namespace Engine.Rules
             TogglePiece(p);
 
             if (p.Side == Sides.Black)
-                _board.BlackPieces = BitUtil.Remove(_board.BlackPieces, start) | end;
+            {
+                _board.BlackPieces = BitUtil.Remove(_board.BlackPieces, start);
+                _board.BlackPieces |= end;
+            }
             else
-                _board.WhitePieces = BitUtil.Remove(_board.WhitePieces, start) | end;
+            {
+                _board.WhitePieces = BitUtil.Remove(_board.WhitePieces, start);
+                _board.WhitePieces |= end;
+            }
+                
             _board.AllPieces = _board.BlackPieces | _board.WhitePieces;
 
             return m;

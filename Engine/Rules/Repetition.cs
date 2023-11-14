@@ -8,13 +8,6 @@ namespace Engine.Rules
 {
     public class Repetition
     {
-        // In theory, whenever the halfmove clock is reset we could clear the stack, since you can't recapture that
-        // Except we need those positions if we reverse the move
-        // So we might benefit from a difference between simulated moves (which can be reversed) and actual moves (which can't)
-
-        // Ok But: Only the last clock-number moves need to be checked
-        // Maybe just throw all the 
-
         private Board _board;
         private ulong[] _positions = new ulong[150];
         public Repetition(Board board)

@@ -215,21 +215,20 @@ namespace Engine
         // --------------------------------------------------------------- BOARD INFORMATION -------------------------------------------------
         public Piece? FindPiece(ulong position)
         {
-            return Array.Find(Pieces, p => p.Position == position & !p.Captured);
+            return Array.Find(Pieces, p => !p.Captured & p.Position == position);
         }
 
         public int FindPieceIndex(ulong position)
         {
-            return Array.FindIndex(Pieces, p => p.Position == position & !p.Captured);
+            return Array.FindIndex(Pieces, p => !p.Captured & p.Position == position);
         }
 
         //Is the given square under attack by the other side?
         public bool Attacked(bool side, ulong position)
         {
-            var captures = Pieces
+            return Pieces
                 .Where(p => p.Side != side && !p.Captured)
-                .Aggregate(0ul, (acc, p) => acc | p.AttackMask(this));
-            return BitUtil.Overlap(position, captures);
+                .Any(p => BitUtil.Overlap(position, p.AttackMask(this)));
         }
 
         public bool TerminalNode()
@@ -379,6 +378,7 @@ namespace Engine
             var pieceIndex = FindPieceIndex(m.Start);
             if (pieceIndex == -1)
                 return m;
+
             Piece p = Pieces[pieceIndex];
 
             m = Capture.ApplyMove(m, pieceIndex);
@@ -401,15 +401,6 @@ namespace Engine
             SetGameState();
 
             return m;
-        }
-
-        public void RemoveSquare(ulong position, bool side)
-        {
-            if (side)
-                WhitePieces = BitUtil.Remove(WhitePieces, position);
-            else
-                BlackPieces = BitUtil.Remove(BlackPieces, position);
-            AllPieces = BlackPieces | WhitePieces;
         }
 
         public void ReverseMove(Move m)
@@ -438,6 +429,15 @@ namespace Engine
 
             State = GameState.PLAY;
             GenerateMoves();
+        }
+
+        public void RemoveSquare(ulong position, bool side)
+        {
+            if (side)
+                WhitePieces = BitUtil.Remove(WhitePieces, position);
+            else
+                BlackPieces = BitUtil.Remove(BlackPieces, position);
+            AllPieces = BlackPieces | WhitePieces;
         }
 
         public void SetGameState()
