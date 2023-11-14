@@ -40,7 +40,7 @@ namespace Engine.Pieces.Magic
         {
             for (var i = 0; i < 64; i++)
             {
-                var keyOffset = FindOffset(key, Blockers[i], Offsets[i]);
+                var keyOffset = FindOffset(key, Blockers[i], Offsets[i], i);
                 if (keyOffset > Offsets[i])
                 {
                     Console.WriteLine($"New {Name} magic {i}, {Offsets[i]} -> {keyOffset}");
@@ -50,13 +50,31 @@ namespace Engine.Pieces.Magic
             }
         }
 
-        public int FindOffset(ulong key, ulong[] blockers, int currentOffset)
+        public int FindOffset(ulong key, ulong[] blockers, int currentOffset, int index)
         {
             var highest = 0;
             for (var i = currentOffset + 1; i < 64; i++)
             {
-                var keys = MapBlockers(blockers, key, i);
-                if (AllUnique(keys))
+                var keyValues = new ulong[(int)Math.Pow(2, 64 - i)];
+                // Cause MaxValue is never gonna be the right answer. Unlike 0, which is the right answer for some positions
+                Array.Fill(keyValues, ulong.MaxValue);
+                var unique = true;
+                for (var j = 0; j < blockers.Count(); j++)
+                {
+                    var blockerKey = MakeKey(blockers[j], key, i);
+                    var answer = _mover.CalculateMask(index, blockers[j]);
+                    if (keyValues[blockerKey] != ulong.MaxValue && keyValues[blockerKey] != answer)
+                    {
+                        unique = false;
+                        j = blockers.Count() + 1;
+                    }
+                    else
+                    {
+                        keyValues[blockerKey] = answer;
+                    }
+                }
+
+                if (unique)
                 {
                     highest = i;
                 }
