@@ -3,34 +3,34 @@
   <Bishop>
     <magics>
       <value>14796761295963078913</value>
-      <value>2065243575629144365</value>
+      <value>11970757694909578454</value>
       <value>15983314740760578373</value>
       <value>17334641946904912743</value>
       <value>9837027206936113061</value>
       <value>8665774809907857276</value>
-      <value>1793989646327562688</value>
+      <value>11424708711906430350</value>
       <value>4146410641644590642</value>
       <value>5764739604963787842</value>
-      <value>4843441109598999177</value>
+      <value>12171309586696821758</value>
       <value>3394641232453110973</value>
       <value>8349278024728010474</value>
       <value>819721123842136949</value>
       <value>2947612609087625388</value>
-      <value>6675559564116924617</value>
-      <value>10770206926979996699</value>
+      <value>2608460680704687848</value>
+      <value>5338357198587822010</value>
       <value>15366295536826358022</value>
       <value>16824375977945482248</value>
       <value>6723256150974233458</value>
       <value>6721625175517983091</value>
       <value>14680193154124252017</value>
-      <value>10701749496519191610</value>
+      <value>3663115806528899627</value>
       <value>1643756225647882261</value>
       <value>3754104843464610879</value>
       <value>9783754651162668036</value>
       <value>18431272092379385618</value>
-      <value>18265088931160818222</value>
+      <value>15588524032469872665</value>
       <value>17239781595213176295</value>
-      <value>4515081059117676944</value>
+      <value>10561222330778632197</value>
       <value>16777832758708867086</value>
       <value>1250334734899480124</value>
       <value>11942428778652146196</value>
@@ -38,7 +38,7 @@
       <value>13233857313884881994</value>
       <value>8652790388290159234</value>
       <value>7291102601464361142</value>
-      <value>15964844360200861616</value>
+      <value>16159454215142377479</value>
       <value>1954029619390384135</value>
       <value>10816621587191827207</value>
       <value>7774140985714365952</value>
@@ -50,61 +50,61 @@
       <value>3609591734721820583</value>
       <value>4855036581255337745</value>
       <value>15994877189078184005</value>
-      <value>1793989646327562688</value>
-      <value>16544681302042920219</value>
+      <value>15213156053583782883</value>
+      <value>2385779063871179956</value>
       <value>10770206926979996699</value>
       <value>11996319509511669590</value>
       <value>1649270057806856931</value>
       <value>7254140260974199547</value>
-      <value>16864370954049162864</value>
-      <value>2065243575629144365</value>
+      <value>14303421257422227689</value>
+      <value>12465906894295571668</value>
       <value>4146410641644590642</value>
-      <value>10770206926979996699</value>
+      <value>6197529225664128299</value>
       <value>478991906480211991</value>
       <value>3633270679996273674</value>
       <value>13462320549560730624</value>
       <value>9953976352882820902</value>
-      <value>5764739604963787842</value>
+      <value>3991736997092038336</value>
       <value>14796761295963078913</value>
     </magics>
     <offsets>
       <value>58</value>
+      <value>60</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
-      <value>59</value>
-      <value>59</value>
+      <value>60</value>
       <value>58</value>
       <value>59</value>
+      <value>60</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
-      <value>59</value>
-      <value>59</value>
-      <value>59</value>
+      <value>60</value>
+      <value>60</value>
       <value>59</value>
       <value>59</value>
       <value>56</value>
       <value>57</value>
       <value>56</value>
-      <value>56</value>
+      <value>57</value>
+      <value>59</value>
+      <value>59</value>
+      <value>59</value>
+      <value>59</value>
+      <value>57</value>
+      <value>54</value>
+      <value>54</value>
+      <value>57</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
       <value>56</value>
       <value>54</value>
-      <value>53</value>
-      <value>57</value>
-      <value>59</value>
-      <value>59</value>
-      <value>59</value>
-      <value>59</value>
-      <value>56</value>
       <value>54</value>
-      <value>53</value>
       <value>57</value>
       <value>59</value>
       <value>59</value>
@@ -116,21 +116,21 @@
       <value>56</value>
       <value>59</value>
       <value>59</value>
+      <value>60</value>
+      <value>60</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
-      <value>59</value>
-      <value>59</value>
-      <value>59</value>
-      <value>59</value>
+      <value>60</value>
+      <value>60</value>
       <value>58</value>
+      <value>60</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
       <value>59</value>
-      <value>59</value>
-      <value>59</value>
+      <value>60</value>
       <value>58</value>
     </offsets>
   </Bishop>
@@ -140,7 +140,7 @@
       <value>5044042586713724870</value>
       <value>14858684190899627</value>
       <value>9964646660903986900</value>
-      <value>18233998520971110908</value>
+      <value>5764454368793957957</value>
       <value>636138399505436111</value>
       <value>15185694729934309640</value>
       <value>12542900924967130535</value>
@@ -192,9 +192,9 @@
       <value>10303741201737201728</value>
       <value>17098109680693617664</value>
       <value>6021064595147588096</value>
-      <value>6768435291364732418</value>
-      <value>6768435291364732418</value>
-      <value>8748544289697080950</value>
+      <value>17509992666233816246</value>
+      <value>17509992666233816246</value>
+      <value>2179740017550975478</value>
       <value>8265677621350367754</value>
       <value>13152200277348779046</value>
       <value>16057682033081585878</value>
@@ -206,7 +206,7 @@
       <value>52</value>
       <value>51</value>
       <value>51</value>
-      <value>51</value>
+      <value>52</value>
       <value>51</value>
       <value>52</value>
       <value>51</value>
@@ -258,9 +258,9 @@
       <value>53</value>
       <value>54</value>
       <value>53</value>
-      <value>51</value>
       <value>52</value>
-      <value>52</value>
+      <value>53</value>
+      <value>53</value>
       <value>52</value>
       <value>52</value>
       <value>52</value>

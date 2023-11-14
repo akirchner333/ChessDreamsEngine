@@ -59,14 +59,14 @@ namespace Engine.Pieces.Magic
                 // Cause MaxValue is never gonna be the right answer. Unlike 0, which is the right answer for some positions
                 Array.Fill(keyValues, ulong.MaxValue);
                 var unique = true;
-                for (var j = 0; j < blockers.Count(); j++)
+                for (var j = 0; j < blockers.Length; j++)
                 {
                     var blockerKey = MakeKey(blockers[j], key, i);
                     var answer = _mover.CalculateMask(index, blockers[j]);
                     if (keyValues[blockerKey] != ulong.MaxValue && keyValues[blockerKey] != answer)
                     {
                         unique = false;
-                        j = blockers.Count() + 1;
+                        j = blockers.Length + 1;
                     }
                     else
                     {
