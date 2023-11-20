@@ -14,8 +14,8 @@
             if (!move.Capture)
                 return move;
 
-            move.TargetIndex = _board.FindPieceIndex(move.TargetSquare());
-            var piece = _board.Pieces[move.TargetIndex];
+            move.TargetListIndex = _board.FindPieceIndex(move.TargetSquare());
+            var piece = _board.Pieces[move.TargetListIndex];
 
             _board.RemoveSquare(move.TargetSquare(), piece.Side);
             _board.Move.TogglePiece(piece);
@@ -29,7 +29,7 @@
             if (!move.Capture)
                 return;
 
-            var piece = _board.Pieces[move.TargetIndex];
+            var piece = _board.Pieces[move.TargetListIndex];
             piece.Captured = false;
             _board.Move.TogglePiece(piece);
             if (!move.Side)

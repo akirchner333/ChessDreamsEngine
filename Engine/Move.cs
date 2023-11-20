@@ -23,7 +23,8 @@
         public ulong PassantTarget { get; set; }
         public ulong PassantSquare { get; set; }
         public int HalfMoves { get; set; }
-        public int TargetIndex { get; set; }
+        public int PieceListIndex { get; set; }
+        public int TargetListIndex { get; set; }
         public ulong[] PastPositions = new ulong[0];
 
         public Move(ulong start, ulong end, bool side)
@@ -67,6 +68,17 @@
             {
                 return "Move " + LongAlgebraic();
             }
+        }
+    }
+
+    //Claiming a draw
+    public class DrawMove : Move
+    {
+        public DrawMove(bool side) : base(0, 0, side){ }
+
+        public override string LongAlgebraic()
+        {
+            return "½–½";
         }
     }
 

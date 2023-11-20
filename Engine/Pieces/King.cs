@@ -35,8 +35,10 @@ namespace Engine
 
         public override Move[] Moves(Board b)
         {
-            //This is probably not the fastest way to do this
-            return base.Moves(b).Concat(_castler.Moves(b, Position)).ToArray();
+            var moves = new Move[8];
+            base.Moves(b).CopyTo(moves, 0);
+            _castler.Moves(b, Position).CopyTo(moves, 6);
+            return moves;
         }
 
 

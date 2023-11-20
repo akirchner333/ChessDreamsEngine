@@ -3,6 +3,7 @@
     public class FiftyMove : IRule
     {
         public int Clock { get; set; }
+        public bool DrawAvailable { get; private set; } = false;
         private Board _board;
 
         public FiftyMove(Board board)
@@ -40,7 +41,7 @@
             }
             else if (Clock >= 100)
             {
-                _board.drawAvailable = true;
+                DrawAvailable = true;
             }
 
             return m;
@@ -50,7 +51,7 @@
         {
             Clock = m.HalfMoves;
             if (Clock <= 100)
-                _board.drawAvailable = false;
+                DrawAvailable = false;
         }
     }
 }

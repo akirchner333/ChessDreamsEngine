@@ -1,4 +1,5 @@
-﻿using Engine.Rules;
+﻿using Engine.Pieces.Movers;
+using Engine.Rules;
 
 namespace Engine
 {
@@ -8,6 +9,7 @@ namespace Engine
         M ApplyMove(M move);
         void ReverseMove(M move);
         bool TerminalNode();
+        ulong Hash { get; }
     }
     public enum GameState
     {
@@ -68,7 +70,6 @@ namespace Engine
         public int TurnNumber { get; private set; } = 0;
         public static ulong TurnValue { get; private set; }
         public GameState State { get; set; } = GameState.PLAY;
-        public bool drawAvailable = false;
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~ RULES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public PieceMovement Move { get; private set; }
         public Capture Capture { get; private set; }
@@ -223,9 +224,11 @@ namespace Engine
         //Is the given square under attack by the other side?
         public bool Attacked(bool side, ulong position)
         {
-            return Pieces
-                .Where(p => p.Side != side && !p.Captured)
-                .Any(p => BitUtil.Overlap(position, p.AttackMask(this)));
+            return Array.Find(Pieces, p => {
+                return p.Side != side &&
+                       !p.Captured &&
+                       BitUtil.Overlap(position, p.AttackMask(this));
+            }) != null;
         }
 
         public bool TerminalNode()
@@ -282,6 +285,11 @@ namespace Engine
             return fen;
         }
 
+        public bool DrawAvailable()
+        {
+            return Clock.DrawAvailable || Repetition.DrawAvailable;
+        }
+
         // ----------------------------------------------------------------------- MOVE GENERATION --------------------------------------------
         public Move[] Moves()
         {
@@ -293,31 +301,38 @@ namespace Engine
             if (State != GameState.PLAY)
                 MoveList = Array.Empty<Move>();
             else
-                MoveList = PseudolegalMoves()
-                    .Where(m => LegalMove(m))
-                    .ToArray();
-        }
-
-        public Move[] PseudolegalMoves()
-        {
-            var movingPieces = Pieces.Where(p => p.Side == Turn && !p.Captured).ToArray();
-            var moves = new Move[218];
-            var moveCount = 0;
-            for (var i = 0; i < movingPieces.Length; i++)
             {
-                var pieceMoves = movingPieces[i].Moves(this);
-                pieceMoves.CopyTo(moves, moveCount);
-                moveCount += pieceMoves.Length;
-            }
+                var moves = new Move[218];
+                var moveCount = 0;
+                var king = (King)Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == Turn)!;
 
-            Array.Resize(ref moves, moveCount);
-            return moves;
+                foreach (var piece in Pieces)
+                {
+                    if (piece.Side != Turn || piece.Captured)
+                        continue;
+
+                    foreach (var move in piece.Moves(this))
+                    {
+                        if (move != null && LegalMove(move, king))
+                        {
+                            moves[moveCount] = move;
+                            moveCount++;
+                        }
+                    }
+                }
+
+                if (DrawAvailable())
+                {
+                    moves[moveCount] = new DrawMove(Turn);
+                    moveCount++;
+                }
+
+                Array.Resize(ref moves, moveCount);
+                MoveList = moves;
+            }
         }
 
-        //Just updates the AllPieces, WhitePieces, and BlackPieces boards, checks if it puts you in check
-        //And then puts them back
-        // TO DO: One shudders to look upon this. Make it better
-        public bool LegalMove(Move m)
+        public bool LegalMove(Move m, King king)
         {
             var pieceIndex = FindPieceIndex(m.Start);
             if (pieceIndex == -1)
@@ -327,7 +342,6 @@ namespace Engine
             m = Capture.ApplyMove(m, pieceIndex);
             m = Move.ApplyMove(m, pieceIndex);
 
-            var king = Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == m.Side);
             var check = Attacked(m.Side, king!.Position);
 
             Move.ReverseMove(m, pieceIndex);
@@ -340,6 +354,12 @@ namespace Engine
 
         public Move ApplyMove(Move m)
         {
+            if(m is DrawMove)
+            {
+                State = GameState.DRAW;
+                return m;
+            }
+
             var pieceIndex = FindPieceIndex(m.Start);
             if (pieceIndex == -1)
                 return m;
@@ -370,6 +390,11 @@ namespace Engine
 
         public void ReverseMove(Move m)
         {
+            if(m is DrawMove)
+            {
+                State = GameState.PLAY;
+                return;
+            }
 
             int pieceIndex = FindPieceIndex(m.End);
             if (pieceIndex == -1)

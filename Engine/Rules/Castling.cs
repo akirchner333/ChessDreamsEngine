@@ -84,32 +84,25 @@
             int effectedCastles = 0;
             if (p.Type == PieceTypes.ROOK)
             {
-                effectedCastles |= RookImpact(m.Start, p);
+                effectedCastles |= RookImpact(m.Start);
             }
             else if (p.Type == PieceTypes.KING)
             {
-                if (p.Side)
-                {
-                    effectedCastles |= (int)Castles.WhiteKingside;
-                    effectedCastles |= (int)Castles.WhiteQueenside;
-                }
-                else
-                {
-                    effectedCastles |= (int)Castles.BlackKingside;
-                    effectedCastles |= (int)Castles.BlackQueenside;
-                }
+                effectedCastles |= (int)Castles.WhiteKingside | (int)Castles.WhiteQueenside;
             }
 
             // If the rook is captured, then obviously it can't castle anymore
-            // Don't have to worry about this with the King cause, it can't be captured
+            // Don't have to worry about this with the King cause it can't be captured
             if (m.Capture)
             {
-                var target = _board.Pieces[m.TargetIndex];
+                var target = _board.Pieces[m.TargetListIndex];
                 if (target.Type == PieceTypes.ROOK)
                 {
-                    effectedCastles |= RookImpact(m.TargetSquare(), target);
+                    effectedCastles |= (RookImpact(m.TargetSquare()) << 2);
                 }
             }
+
+            effectedCastles = p.Side ? effectedCastles : (effectedCastles << 2 & 0b1100) | (effectedCastles >> 2 & 0b0011);
 
             CastleRights = BitUtil.Remove(CastleRights, effectedCastles);
 
@@ -119,12 +112,12 @@
             return m;
         }
 
-        public int RookImpact(ulong start, Piece p)
+        public int RookImpact(ulong start)
         {
-            if (BitUtil.Overlap(start, Board.Columns["A"]))
-                return p.Side ? (int)Castles.WhiteQueenside : (int)Castles.BlackQueenside;
-            else if (BitUtil.Overlap(start, Board.Columns["H"]))
-                return p.Side ? (int)Castles.WhiteKingside : (int)Castles.BlackKingside;
+            if (BitUtil.BitToX(start) < 4)
+                return (int)Castles.WhiteQueenside;
+            else if (BitUtil.BitToX(start) > 4)
+                return (int)Castles.WhiteKingside;
 
             return 0;
         }

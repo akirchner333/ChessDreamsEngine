@@ -65,19 +65,26 @@ namespace Engine
             return _attackLeaper.MoveMask(Index, board) | _passant.MoveMask(Index, board, _attackLeaper);
         }
 
+        // 4 spots for basic moves
+        // 12 spots for promotions
+        // 1 spot for en passant
+        // But they can kind of overlap, right?
         public override Move[] Moves(Board board)
         {
-            var mask = MoveMask(board);
-            var moves = _convert.ConvertMask(board, Position, mask);
+            var moves = new Move[12];
 
-            var promotions = _promotion.ConvertMask(board, Position, mask);
-            moves = moves.Concat(promotions).ToArray();
+            var mask = MoveMask(board);
+            var baseMoves = _convert.ConvertMask(board, Position, mask);
+            baseMoves.CopyTo(moves, 0);
 
             var passant = _passant.ConvertMask(
                 board, Position,
                 _passant.MoveMask(Index, board, _attackLeaper)
             );
-            moves = moves.Concat(passant).ToArray();
+            passant.CopyTo(moves, 3);
+
+            var promotions = _promotion.ConvertMask(board, Position, mask);
+            promotions.CopyTo(moves, 0);
 
             return moves;
         }
