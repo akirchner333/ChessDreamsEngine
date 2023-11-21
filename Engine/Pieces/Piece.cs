@@ -19,23 +19,8 @@ namespace Engine
         public int Index { get; set; }
         public bool Side;
         public bool Captured { get; set; } = false;
+        public int CastleRights { get; set; } = 0;
         protected MoveFactory _convert { get; set; } = new MoveFactory();
-
-        public Piece(int x, int y, bool side)
-        {
-            Side = side;
-            Index = BitUtil.CoordToIndex(x, y);
-            Position = 1ul << Index;
-            _convert.Side = side;
-        }
-
-        public Piece(string square, bool side)
-        {
-            Side = side;
-            Index = BitUtil.AlgebraicToIndex(square);
-            Position = 1ul << Index;
-            _convert.Side = side;
-        }
 
         public Piece(ulong bit, bool side)
         {

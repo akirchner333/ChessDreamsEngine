@@ -18,7 +18,6 @@
         public bool Promoting { get; protected set; } = false;
 
         //These are things we reference to help with reversing. They're set as the move is applied
-        //Is this the pieces first move?
         public int Castles { get; set; } = 0;
         public ulong PassantTarget { get; set; }
         public ulong PassantSquare { get; set; }
@@ -32,6 +31,11 @@
             Start = start;
             End = end;
             Side = side;
+        }
+
+        public static Move FromAlgebraic(string start, string end, bool side, bool capture = false)
+        {
+            return new Move(BitUtil.AlgebraicToBit(start), BitUtil.AlgebraicToBit(end), side) { Capture = capture };
         }
 
         public virtual ulong TargetSquare()

@@ -13,10 +13,10 @@ namespace Engine
     }
     public enum GameState
     {
-        PLAY,
-        WHITE_WINS,
-        BLACK_WINS,
-        DRAW
+        PLAY = 0,
+        WHITE_WINS = 1,
+        BLACK_WINS = 2,
+        DRAW = 3
     }
     public static class Sides
     {
@@ -350,7 +350,7 @@ namespace Engine
             return !check;
         }
 
-        // -------------------------------------------------------------------- MOVE APPLICATION -----------------------------------------------------------
+        // ----------------------------------------------------------------- MOVE APPLICATION ---------------------------------------------------------
 
         public Move ApplyMove(Move m)
         {
@@ -373,9 +373,6 @@ namespace Engine
             m = Clock.ApplyMove(m, pieceIndex);
             m = Promote.ApplyMove(m, pieceIndex);
 
-            //Store the current board state somewhere for 3/5 repetition
-
-            //Next move
             if (Turn == Sides.Black)
                 TurnNumber++;
             Turn = !Turn;
@@ -407,14 +404,12 @@ namespace Engine
             Castles.ReverseMove(m);
             Promote.ReverseMove(m, pieceIndex);
 
-            //To Do: Pop the board state back one
-
-            //Next move
             if (Turn == Sides.White)
                 TurnNumber--;
             Turn = !Turn;
             Hash ^= TurnValue;
-            Repetition.ApplyMove(m, pieceIndex);
+
+            Repetition.ReverseMove(m);
 
             State = GameState.PLAY;
             GenerateMoves();
@@ -422,10 +417,8 @@ namespace Engine
 
         public void RemoveSquare(ulong position, bool side)
         {
-            if (side)
-                WhitePieces = BitUtil.Remove(WhitePieces, position);
-            else
-                BlackPieces = BitUtil.Remove(BlackPieces, position);
+            WhitePieces = BitUtil.Remove(WhitePieces, position);
+            BlackPieces = BitUtil.Remove(BlackPieces, position);
             AllPieces = BlackPieces | WhitePieces;
         }
 

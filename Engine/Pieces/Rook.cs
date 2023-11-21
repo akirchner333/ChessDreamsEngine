@@ -1,4 +1,5 @@
 ﻿using Engine.Pieces.Movers;
+using Engine.Rules;
 
 namespace Engine
 {
@@ -9,19 +10,16 @@ namespace Engine
         public override char Short { get; } = 'r';
 
         private readonly RookMover _mover = new();
-        public Rook(int x, int y, bool side) : base(x, y, side)
-        {
-            _mover.Side = side;
-        }
-
-        public Rook(String algebraic, bool side) : base(algebraic, side)
-        {
-            _mover.Side = side;
-        }
+        public Rook(String algebraic, bool side) : this(BitUtil.AlgebraicToBit(algebraic), side) { }
 
         public Rook(ulong bit, bool side) : base(bit, side)
         {
             _mover.Side = side;
+            CastleRights = BitUtil.BitToX(bit) < 4 ? (int)Castles.WhiteKingside : (int)Castles.WhiteQueenside;
+            if (!side)
+            {
+                CastleRights <<= 2;
+            }
         }
 
         public override ulong MoveMask(Board board)

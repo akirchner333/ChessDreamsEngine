@@ -244,5 +244,25 @@ namespace EngineTest
                 Assert.AreEqual(hash, board.Hash, $"Hash mismatch on depth {depth} after {newSequence}");
             }
         }
+
+        [TestMethod]
+        public void CheckMateTest()
+        {
+            var whiteBoard = new Board("7k/8/2R5/8/8/8/8/K5R1 w - - 0 1");
+            whiteBoard.ApplyMove(new Move(BitUtil.AlgebraicToBit("c6"), BitUtil.AlgebraicToBit("h6"), true));
+            Assert.AreEqual(GameState.WHITE_WINS, whiteBoard.State);
+
+            var blackBoard = new Board("7k/8/1r6/8/8/6r1/8/K7 b - - 0 1");
+            blackBoard.ApplyMove(new Move(BitUtil.AlgebraicToBit("g3"), BitUtil.AlgebraicToBit("a3"), true));
+            Assert.AreEqual(GameState.BLACK_WINS, blackBoard.State);
+        }
+
+        [TestMethod]
+        public void DrawTest()
+        {
+            var whiteBoard = new Board("7k/8/2R5/8/8/8/8/K5R1 w - - 0 1");
+            whiteBoard.ApplyMove(new Move(BitUtil.AlgebraicToBit("c6"), BitUtil.AlgebraicToBit("c7"), true));
+            Assert.AreEqual(GameState.DRAW, whiteBoard.State);
+        }
     }
 }

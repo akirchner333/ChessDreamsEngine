@@ -1,4 +1,5 @@
 ﻿using Engine.Pieces.Movers;
+using Engine.Rules;
 
 namespace Engine
 {
@@ -11,21 +12,16 @@ namespace Engine
         private Leaper _leaper = new Leaper(new int[8] { 7, -7, 1, -1, 8, -8, 9, -9 }, "King");
         private CastleMover _castler = new CastleMover();
 
-        public King(int x, int y, bool side) : base(x, y, side)
-        {
-            _leaper.Side = side;
-            _castler.Side = side;
-        }
-
-        public King(string square, bool side) : base(square, side)
-        {
-            _leaper.Side = side;
-            _castler.Side = side;
-        }
+        public King(String algebraic, bool side) : this(BitUtil.AlgebraicToBit(algebraic), side) { }
         public King(ulong bit, bool side) : base(bit, side)
         {
             _leaper.Side = side;
             _castler.Side = side;
+            CastleRights = (int)Castles.WhiteQueenside | (int)Castles.WhiteKingside;
+            if (!side)
+            {
+                CastleRights <<= 2;
+            }
         }
 
         public override ulong MoveMask(Board b)

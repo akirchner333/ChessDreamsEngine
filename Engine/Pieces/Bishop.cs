@@ -9,15 +9,7 @@ namespace Engine
         public override char Short { get; } = 'b';
 
         private BishopMover _mover = new();
-        public Bishop(int x, int y, bool side) : base(x, y, side)
-        {
-            _mover.Side = side;
-        }
-
-        public Bishop(String algebraic, bool side) : base(algebraic, side)
-        {
-            _mover.Side = side;
-        }
+        public Bishop(int x, int y, bool side) : this(BitUtil.CoordToBit(x, y), side) { }
 
         public Bishop(ulong bit, bool side) : base(bit, side)
         {

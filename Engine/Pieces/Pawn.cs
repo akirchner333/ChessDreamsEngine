@@ -17,25 +17,9 @@ namespace Engine
 
         private Promotions _promotion;
 
-        // Everything gets set in SetFixed, so I'm ignoring the warnings here
-#pragma warning disable CS8618
-        public Pawn(int x, int y, bool side) : base(x, y, side)
-        {
-            setFixed();
-        }
-
-        public Pawn(String algebraic, bool side) : base(algebraic, side)
-        {
-            setFixed();
-        }
+        public Pawn(String algebraic, bool side) : this(BitUtil.AlgebraicToBit(algebraic), side) { }
 
         public Pawn(ulong bit, bool side) : base(bit, side)
-        {
-            setFixed();
-        }
-#pragma warning restore CS8618
-
-        private void setFixed()
         {
             _moveLeaper = new PeacefulLeaper(Side ? new int[1] { 8 } : new int[1] { -8 }, Side ? "PawnMoveWhite" : "PawnMoveBlack");
             _attackLeaper = new KillerLeaper(Side ? new int[2] { 7, 9 } : new int[2] { -7, -9 }, Side ? "PawnAttackWhite" : "PawnAttackBlack")

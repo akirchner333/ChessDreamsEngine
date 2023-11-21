@@ -27,7 +27,7 @@ namespace EngineTest.Rules
             Assert.AreEqual(0b1100, castle.CastleRights);
             castle.ReverseMove(castleMove);
 
-            Move captureMove = new Move(BitUtil.AlgebraicToBit("g6"), BitUtil.AlgebraicToBit("h7"), true) { Capture = true };
+            Move captureMove = Move.FromAlgebraic("g6", "h7", true, true);
             var knight = board.FindPiece(BitUtil.AlgebraicToBit("g6"));
             captureMove = castle.ApplyMove(captureMove, knight!);
             Assert.AreEqual(0b1011, castle.CastleRights);

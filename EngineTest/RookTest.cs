@@ -8,9 +8,9 @@ namespace EngineTest
         [TestMethod]
         public void TestPieceSprite()
         {
-            var white = new Rook(0, 0, Sides.White);
+            var white = new Rook("a1", Sides.White);
             Assert.AreEqual("WhiteRook", actual: white.PieceSprite());
-            var black = new Rook(0, 0, Sides.Black);
+            var black = new Rook("a1", Sides.Black);
             Assert.AreEqual("BlackRook", actual: black.PieceSprite());
         }
 
@@ -18,13 +18,13 @@ namespace EngineTest
         public void TestMoveMask()
         {
             var b = new Board();
-            var middle = new Rook(2, 2, Sides.White);
+            var middle = new Rook("c3", Sides.White);
             Assert.AreEqual((ulong)289360691368494084, actual: middle.MoveMask(b));
 
-            var topLeft = new Rook(0, 0, Sides.White);
+            var topLeft = new Rook("a1", Sides.White);
             Assert.AreEqual((ulong)72340172838076926, actual: topLeft.MoveMask(b));
 
-            var bottomRight = new Rook(7, 7, Sides.White);
+            var bottomRight = new Rook("h8", Sides.White);
             Assert.AreEqual((ulong)9187484529235886208, actual: bottomRight.MoveMask(b));
         }
 

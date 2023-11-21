@@ -81,45 +81,18 @@
             }
 
             m.Castles = CastleRights;
-            int effectedCastles = 0;
-            if (p.Type == PieceTypes.ROOK)
-            {
-                effectedCastles |= RookImpact(m.Start);
-            }
-            else if (p.Type == PieceTypes.KING)
-            {
-                effectedCastles |= (int)Castles.WhiteKingside | (int)Castles.WhiteQueenside;
-            }
-
-            // If the rook is captured, then obviously it can't castle anymore
-            // Don't have to worry about this with the King cause it can't be captured
+            int effectedCastles = p.CastleRights;
             if (m.Capture)
             {
                 var target = _board.Pieces[m.TargetListIndex];
-                if (target.Type == PieceTypes.ROOK)
-                {
-                    effectedCastles |= (RookImpact(m.TargetSquare()) << 2);
-                }
+                effectedCastles |= target.CastleRights;
             }
-
-            effectedCastles = p.Side ? effectedCastles : (effectedCastles << 2 & 0b1100) | (effectedCastles >> 2 & 0b0011);
-
             CastleRights = BitUtil.Remove(CastleRights, effectedCastles);
 
             _board.Hash ^= _values[m.Castles];
             _board.Hash ^= _values[CastleRights];
 
             return m;
-        }
-
-        public int RookImpact(ulong start)
-        {
-            if (BitUtil.BitToX(start) < 4)
-                return (int)Castles.WhiteQueenside;
-            else if (BitUtil.BitToX(start) > 4)
-                return (int)Castles.WhiteKingside;
-
-            return 0;
         }
 
         public void ReverseMove(Move m)

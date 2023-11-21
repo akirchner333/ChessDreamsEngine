@@ -19,9 +19,19 @@ namespace Engine
         public static int AlgebraicToIndex(string a)
         {
             return CoordToIndex(
-                (int)(a[0] - 1) % 32,
-                (int)(a[1]) - 49
+                AlgebraicToX(a),
+                AlgebraicToY(a)
             );
+        }
+
+        public static int AlgebraicToX(string a)
+        {
+            return (int)(a[0] - 1) % 32;
+        }
+
+        public static int AlgebraicToY(string a)
+        {
+            return (int)(a[1]) - 49;
         }
 
         private const string _files = "abcdefgh";

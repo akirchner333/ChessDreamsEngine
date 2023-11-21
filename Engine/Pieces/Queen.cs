@@ -10,17 +10,9 @@ namespace Engine
 
         private readonly RookMover _rookMover = new();
         private readonly BishopMover _bishopMover = new();
-        public Queen(int x, int y, bool side) : base(x, y, side)
-        {
-            _rookMover.Side = side;
-            _bishopMover.Side = side;
-        }
+        public Queen(int x, int y, bool side) : this(BitUtil.CoordToBit(x, y), side) { }
 
-        public Queen(String algebraic, bool side) : base(algebraic, side)
-        {
-            _rookMover.Side = side;
-            _bishopMover.Side = side;
-        }
+        public Queen(String algebraic, bool side) : this(BitUtil.AlgebraicToBit(algebraic), side) { }
 
         public Queen(ulong bit, bool side) : base(bit, side)
         {
