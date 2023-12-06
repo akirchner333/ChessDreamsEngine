@@ -7,6 +7,7 @@ namespace Engine
         public override string Name { get; } = "Queen";
         public override PieceTypes Type { get; } = PieceTypes.QUEEN;
         public override char Short { get; } = 'q';
+        public override int Rank { get { return 2; } }
 
         private readonly RookMover _rookMover = new();
         private readonly BishopMover _bishopMover = new();

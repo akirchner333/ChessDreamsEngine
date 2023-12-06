@@ -3,13 +3,14 @@ using Engine.Rules;
 
 namespace Engine
 {
-    public interface IGameEngine<M> where M : class
+    public interface IGameEngine<M> where M : IMove<M>
     {
         M[] Moves();
         M ApplyMove(M move);
         void ReverseMove(M move);
         bool TerminalNode();
         ulong Hash { get; }
+        bool Turn { get; }
     }
     public enum GameState
     {
@@ -66,7 +67,7 @@ namespace Engine
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GAME STATE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public Piece[] Pieces = Array.Empty<Piece>();
-        public bool Turn = Sides.White;
+        public bool Turn { get; private set; } = Sides.White;
         public int TurnNumber { get; private set; } = 0;
         public static ulong TurnValue { get; private set; }
         public GameState State { get; set; } = GameState.PLAY;
@@ -192,6 +193,11 @@ namespace Engine
             //So it's probably ok
             Array.Resize(ref Pieces, Pieces.Length + 1);
             Pieces[^1] = newPiece;
+            Array.Sort(Pieces, (a, b) =>
+            {
+                if (a.Rank != b.Rank) return a.Rank - b.Rank;
+                return (a.Side ? 0 : 1) - (b.Side ? 0 : 1);
+            });
 
             Move?.TogglePiece(newPiece);
         }
@@ -219,6 +225,15 @@ namespace Engine
         public int FindPieceIndex(ulong position)
         {
             return Array.FindIndex(Pieces, p => !p.Captured & p.Position == position);
+        }
+
+        public King? GetKing(bool side)
+        {
+            if(Pieces.Length > 0)
+            {
+                return (King)Pieces[side ? 0 : 1];
+            }
+            return null;
         }
 
         //Is the given square under attack by the other side?
@@ -304,7 +319,7 @@ namespace Engine
             {
                 var moves = new Move[218];
                 var moveCount = 0;
-                var king = (King)Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == Turn)!;
+                var king = GetKing(Turn);
 
                 foreach (var piece in Pieces)
                 {
@@ -427,7 +442,7 @@ namespace Engine
             GenerateMoves();
             if (MoveList.Length == 0)
             {
-                var king = Array.Find(Pieces, p => p.Type == PieceTypes.KING && p.Side == Turn);
+                var king = GetKing(Turn);
                 if (king != null)
                 {
                     if (Attacked(Turn, king.Position))

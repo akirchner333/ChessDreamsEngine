@@ -8,6 +8,7 @@ namespace Engine
         public override string Name { get; } = "Rook";
         public override PieceTypes Type { get; } = PieceTypes.ROOK;
         public override char Short { get; } = 'r';
+        public override int Rank { get { return 1; } }
 
         private readonly RookMover _mover = new();
         public Rook(String algebraic, bool side) : this(BitUtil.AlgebraicToBit(algebraic), side) { }
@@ -15,7 +16,7 @@ namespace Engine
         public Rook(ulong bit, bool side) : base(bit, side)
         {
             _mover.Side = side;
-            CastleRights = BitUtil.BitToX(bit) < 4 ? (int)Castles.WhiteKingside : (int)Castles.WhiteQueenside;
+            CastleRights = BitUtil.BitToX(bit) < 4 ? (int)Castles.WhiteQueenside : (int)Castles.WhiteKingside;
             if (!side)
             {
                 CastleRights <<= 2;

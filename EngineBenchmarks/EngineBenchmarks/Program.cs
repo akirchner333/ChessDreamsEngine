@@ -29,12 +29,12 @@ namespace EngineTest
         public void TestMovesTwo() => NolotTwo.GenerateMoves();
         [Benchmark]
         public void TestMovesThree() => NolotThree.GenerateMoves();
-        //[Benchmark]
-        //public Move TestApplyOne() => NolotOne.ApplyMove(MoveOne);
-        //[Benchmark]
-        //public Move TestApplyTwo() => NolotTwo.ApplyMove(MoveTwo);
-        //[Benchmark]
-        //public Move TestApplyThree() => NolotThree.ApplyMove(MoveThree);
+        [Benchmark]
+        public void TestEntire(){
+            var moves = NolotOne.Moves();
+            var fullMove = NolotOne.ApplyMove(moves[0]);
+            NolotOne.ReverseMove(fullMove);
+        }
     }
 
     public class Program

@@ -26,12 +26,15 @@ namespace EngineTest.Rules
             castleMove = castle.ApplyMove(castleMove, king!);
             Assert.AreEqual(0b1100, castle.CastleRights);
             castle.ReverseMove(castleMove);
+            Assert.AreEqual(0b1111, castle.CastleRights);
 
-            Move captureMove = Move.FromAlgebraic("g6", "h7", true, true);
+            Move captureMove = Move.FromAlgebraic("g6", "h8", true, true);
+            captureMove.TargetListIndex = Array.FindIndex(board.Pieces, p => p.Position == BitUtil.AlgebraicToBit("h8"));
             var knight = board.FindPiece(BitUtil.AlgebraicToBit("g6"));
             captureMove = castle.ApplyMove(captureMove, knight!);
             Assert.AreEqual(0b1011, castle.CastleRights);
             castle.ReverseMove(captureMove);
+            Assert.AreEqual(0b1111, castle.CastleRights);
         }
     }
 }

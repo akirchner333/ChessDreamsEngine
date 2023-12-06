@@ -9,6 +9,7 @@ namespace Engine
 
         public override PieceTypes Type { get; } = PieceTypes.PAWN;
         public override char Short { get; } = 'p';
+        public override int Rank { get { return 6; } }
 
         private PeacefulLeaper _moveLeaper;
         private KillerLeaper _attackLeaper;

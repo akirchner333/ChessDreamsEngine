@@ -2,9 +2,9 @@
 {
     public enum Castles
     {
-        WhiteKingside = 0b0001,
+        WhiteKingside =  0b0001,
         WhiteQueenside = 0b0010,
-        BlackKingside = 0b0100,
+        BlackKingside =  0b0100,
         BlackQueenside = 0b1000
     }
 

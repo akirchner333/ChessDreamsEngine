@@ -7,6 +7,7 @@ namespace Engine
         public override string Name { get; } = "Knight";
         public override PieceTypes Type { get; } = PieceTypes.KNIGHT;
         public override char Short { get; } = 'n';
+        public override int Rank { get { return 5; } }
 
         private Leaper _leaper = new Leaper(new int[8] { 15, -15, 17, -17, 6, -6, 10, -10 }, "Knight");
 

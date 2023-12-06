@@ -7,6 +7,7 @@ namespace Engine
         public override string Name { get; } = "Bishop";
         public override PieceTypes Type { get; } = PieceTypes.BISHOP;
         public override char Short { get; } = 'b';
+        public override int Rank { get { return 3; } }
 
         private BishopMover _mover = new();
         public Bishop(int x, int y, bool side) : this(BitUtil.CoordToBit(x, y), side) { }

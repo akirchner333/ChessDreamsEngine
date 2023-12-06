@@ -1,4 +1,5 @@
 using Engine;
+using Engine.Rules;
 
 namespace EngineTest
 {
@@ -49,6 +50,22 @@ namespace EngineTest
 
             var middleFriends = new Board("k7/4R3/8/8/2R3R1/4R3/8/7K w - - 0 1");
             Assert.AreEqual(17661576609792ul, middle.MoveMask(middleFriends));
+        }
+
+        [TestMethod]
+        public void TestCastleRights()
+        {
+            var a8 = new Rook("a8", false);
+            Assert.AreEqual((int)Castles.BlackQueenside, a8.CastleRights);
+
+            var h8 = new Rook("h8", false);
+            Assert.AreEqual((int)Castles.BlackKingside, h8.CastleRights);
+
+            var a1 = new Rook("a1", true);
+            Assert.AreEqual((int)Castles.WhiteQueenside, a1.CastleRights);
+
+            var h1 = new Rook("h1", true);
+            Assert.AreEqual((int)Castles.WhiteKingside, h1.CastleRights);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace Engine
         public abstract PieceTypes Type { get; }
         public abstract char Short { get; }
 
+        public virtual int Rank { get { return 999; } }
+
         public ulong Position { get; set; }
         public int Index { get; set; }
         public bool Side;

@@ -8,6 +8,7 @@ namespace Engine
         public override string Name { get; } = "King";
         public override PieceTypes Type { get; } = PieceTypes.KING;
         public override char Short { get; } = 'k';
+        public override int Rank { get { return 0; } }
 
         private Leaper _leaper = new Leaper(new int[8] { 7, -7, 1, -1, 8, -8, 9, -9 }, "King");
         private CastleMover _castler = new CastleMover();

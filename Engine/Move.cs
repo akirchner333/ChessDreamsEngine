@@ -1,6 +1,9 @@
 ﻿namespace Engine
 {
-    public interface IMove { }
+    public interface IMove<T>
+    {
+        bool EqualTo(T move);    
+    }
     enum MoveType
     {
         Quiet,
@@ -9,7 +12,7 @@
         Passant,
         Upgrade
     }
-    public class Move : IMove
+    public class Move : IMove<Move>
     {
         public ulong Start { get; private set; }
         public ulong End { get; private set; }
@@ -66,12 +69,19 @@
         {
             if (Capture)
             {
-                return "Capturing move " + LongAlgebraic();
+                return $"Capturing {(Side ? "White" : "Black")} move " + LongAlgebraic();
             }
             else
             {
-                return "Move " + LongAlgebraic();
+                return $"{(Side ? "White" : "Black")} Move " + LongAlgebraic();
             }
+        }
+
+        // This is not sufficient to determine if two moves from different board positions are the same
+        // But if we're comparing the same board position, we should be fine
+        public bool EqualTo(Move m)
+        {
+            return Side == m.Side && Start == m.Start && End == m.End && TargetSquare() == m.TargetSquare();
         }
     }
 
