@@ -27,7 +27,7 @@ namespace Engine
 
         public override ulong MoveMask(Board b)
         {
-            return _leaper.MoveMask(Index, b);
+            return BitUtil.Remove(_leaper.MoveMask(Index, b), Side ? b.BlackAttacks : b.WhiteAttacks);
         }
 
         public override Move[] Moves(Board b)

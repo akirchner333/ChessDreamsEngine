@@ -49,6 +49,11 @@ namespace Engine
             return Side ? b.BlackPieces : b.WhitePieces;
         }
 
+        public bool Active(bool side)
+        {
+            return side == this.Side && !Captured;
+        }
+
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Move Generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public abstract ulong MoveMask(Board b);

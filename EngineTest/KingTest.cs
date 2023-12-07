@@ -78,5 +78,25 @@ namespace EngineTest
             moves = StartEnd(king, attackedSquare);
             Assert.IsFalse(moves.Contains("e1g1"));
         }
+
+        [TestMethod]
+        public void CheckMoves()
+        {
+            // King shouldn't generate moves that put it in check
+            var corridor = new Board("k2r1r2/8/8/8/4K3/8/8/8 w - - 0 1");
+            var king = corridor.GetKing(true);
+            var moves = StartEnd(king, corridor);
+            Assert.AreEqual(2, moves.Count());
+            Assert.IsFalse(moves.Contains("e4d5"));
+            Assert.IsFalse(moves.Contains("e4d4"));
+            Assert.IsFalse(moves.Contains("e4d3"));
+
+            Assert.IsFalse(moves.Contains("e4f5"));
+            Assert.IsFalse(moves.Contains("e4f4"));
+            Assert.IsFalse(moves.Contains("e4f3"));
+
+            Assert.IsTrue(moves.Contains("e4e5"));
+            Assert.IsTrue(moves.Contains("e4e3"));
+        }
     }
 }

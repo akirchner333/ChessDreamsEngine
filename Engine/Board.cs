@@ -84,6 +84,8 @@ namespace Engine
         public ulong AllPieces { get; set; } = 0;
         public ulong WhitePieces { get; set; } = 0;
         public ulong BlackPieces { get; set; } = 0;
+        public ulong WhiteAttacks { get; set; } = 0;
+        public ulong BlackAttacks { get; set; } = 0;
         public Move[] MoveList { get; set; }
         public ulong Hash { get; set; } = 0;
 
@@ -160,6 +162,7 @@ namespace Engine
             Capture = new Capture(this);
             Repetition = new Repetition(this);
 
+            SetAttackMasks();
             SetGameState();
         }
 
@@ -239,11 +242,20 @@ namespace Engine
         //Is the given square under attack by the other side?
         public bool Attacked(bool side, ulong position)
         {
-            return Array.Find(Pieces, p => {
-                return p.Side != side &&
-                       !p.Captured &&
-                       BitUtil.Overlap(position, p.AttackMask(this));
-            }) != null;
+            return BitUtil.Overlap(side ? BlackAttacks : WhiteAttacks, position);
+        }
+
+        public ulong AttackMask(bool side)
+        {
+            var map = 0ul;
+            foreach(var  piece in Pieces)
+            {
+                if(piece.Active(side))
+                {
+                    map |= piece.AttackMask(this);
+                }
+            }
+            return map;
         }
 
         public bool TerminalNode()
@@ -356,13 +368,20 @@ namespace Engine
             // Promotion can put your opponent in check, but it can't put /you/ in check
             m = Capture.ApplyMove(m, pieceIndex);
             m = Move.ApplyMove(m, pieceIndex);
+            SetAttackMasks();
 
             var check = Attacked(m.Side, king!.Position);
 
             Move.ReverseMove(m, pieceIndex);
             Capture.ReverseMove(m, pieceIndex);
+            SetAttackMasks();
 
             return !check;
+        }
+        public void SetAttackMasks()
+        {
+            WhiteAttacks = AttackMask(true);
+            BlackAttacks = AttackMask(false);
         }
 
         // ----------------------------------------------------------------- MOVE APPLICATION ---------------------------------------------------------
@@ -395,6 +414,7 @@ namespace Engine
 
             Repetition.ApplyMove(m, pieceIndex);
 
+            SetAttackMasks();
             SetGameState();
 
             return m;
@@ -426,6 +446,7 @@ namespace Engine
 
             Repetition.ReverseMove(m);
 
+            SetAttackMasks();
             State = GameState.PLAY;
             GenerateMoves();
         }
