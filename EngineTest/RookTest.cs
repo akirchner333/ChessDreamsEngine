@@ -67,5 +67,16 @@ namespace EngineTest
             var h1 = new Rook("h1", true);
             Assert.AreEqual((int)Castles.WhiteKingside, h1.CastleRights);
         }
+
+        [TestMethod]
+        public void TestXRayAttacks()
+        {
+            var board = new Board("K7/7p/8/8/pnb3R1/8/p1p5/1B5k b - - 0 1");
+            var rook = board.FindPiece(BitUtil.AlgebraicToBit("g4"));
+            Assert.AreEqual(BitUtil.AlgebraicToBit("b4"), rook.XRayAttacks(board));
+
+            var bishop = board.FindPiece(BitUtil.AlgebraicToBit("b1"));
+            Assert.AreEqual(BitUtil.AlgebraicToBit("h7"), bishop.XRayAttacks(board));
+        }
     }
 }

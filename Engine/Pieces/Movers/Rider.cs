@@ -5,4 +5,9 @@
         ulong EmptyMask(int i);
         ulong CalculateMask(int i, ulong pieces);
     }
+
+    public interface IRider
+    {
+        ulong EmptyMask();
+    }
 }

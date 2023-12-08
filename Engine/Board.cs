@@ -79,13 +79,12 @@ namespace Engine
         public Castling Castles { get; private set; }
         public Promotion Promote { get; private set; }
         public Repetition Repetition { get; private set; }
+        public LegalMoves LegalMoves { get; private set; }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ RECORDS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         public ulong AllPieces { get; set; } = 0;
         public ulong WhitePieces { get; set; } = 0;
         public ulong BlackPieces { get; set; } = 0;
-        public ulong WhiteAttacks { get; set; } = 0;
-        public ulong BlackAttacks { get; set; } = 0;
         public Move[] MoveList { get; set; }
         public ulong Hash { get; set; } = 0;
 
@@ -104,6 +103,7 @@ namespace Engine
             Castles = new Castling(this);
             Promote = new Promotion(this);
             Repetition = new Repetition(this);
+            LegalMoves = new LegalMoves(this);
 
             SetGameState();
         }
@@ -161,8 +161,8 @@ namespace Engine
             Promote = new Promotion(this);
             Capture = new Capture(this);
             Repetition = new Repetition(this);
+            LegalMoves = new LegalMoves(this);
 
-            SetAttackMasks();
             SetGameState();
         }
 
@@ -237,25 +237,6 @@ namespace Engine
                 return (King)Pieces[side ? 0 : 1];
             }
             return null;
-        }
-
-        //Is the given square under attack by the other side?
-        public bool Attacked(bool side, ulong position)
-        {
-            return BitUtil.Overlap(side ? BlackAttacks : WhiteAttacks, position);
-        }
-
-        public ulong AttackMask(bool side)
-        {
-            var map = 0ul;
-            foreach(var  piece in Pieces)
-            {
-                if(piece.Active(side))
-                {
-                    map |= piece.AttackMask(this);
-                }
-            }
-            return map;
         }
 
         public bool TerminalNode()
@@ -335,12 +316,12 @@ namespace Engine
 
                 foreach (var piece in Pieces)
                 {
-                    if (piece.Side != Turn || piece.Captured)
+                    if (!piece.Active(Turn))
                         continue;
 
                     foreach (var move in piece.Moves(this))
                     {
-                        if (move != null && LegalMove(move, king))
+                        if (move != null && LegalMoves.LegalMove(move))
                         {
                             moves[moveCount] = move;
                             moveCount++;
@@ -357,31 +338,6 @@ namespace Engine
                 Array.Resize(ref moves, moveCount);
                 MoveList = moves;
             }
-        }
-
-        public bool LegalMove(Move m, King king)
-        {
-            var pieceIndex = FindPieceIndex(m.Start);
-            if (pieceIndex == -1)
-                return false;
-            // Piece movement and captures are the only thing that matters for attacks
-            // Promotion can put your opponent in check, but it can't put /you/ in check
-            m = Capture.ApplyMove(m, pieceIndex);
-            m = Move.ApplyMove(m, pieceIndex);
-            SetAttackMasks();
-
-            var check = Attacked(m.Side, king!.Position);
-
-            Move.ReverseMove(m, pieceIndex);
-            Capture.ReverseMove(m, pieceIndex);
-            SetAttackMasks();
-
-            return !check;
-        }
-        public void SetAttackMasks()
-        {
-            WhiteAttacks = AttackMask(true);
-            BlackAttacks = AttackMask(false);
         }
 
         // ----------------------------------------------------------------- MOVE APPLICATION ---------------------------------------------------------
@@ -406,15 +362,16 @@ namespace Engine
             m = Castles.ApplyMove(m, p);
             m = Clock.ApplyMove(m, pieceIndex);
             m = Promote.ApplyMove(m, pieceIndex);
+            
 
             if (Turn == Sides.Black)
                 TurnNumber++;
             Turn = !Turn;
             Hash ^= TurnValue;
 
+            m = LegalMoves.ApplyMove(m, pieceIndex);
             Repetition.ApplyMove(m, pieceIndex);
 
-            SetAttackMasks();
             SetGameState();
 
             return m;
@@ -438,6 +395,7 @@ namespace Engine
             Clock.ReverseMove(m, pieceIndex);
             Castles.ReverseMove(m);
             Promote.ReverseMove(m, pieceIndex);
+            
 
             if (Turn == Sides.White)
                 TurnNumber--;
@@ -445,8 +403,8 @@ namespace Engine
             Hash ^= TurnValue;
 
             Repetition.ReverseMove(m);
+            LegalMoves.ReverseMove(m, pieceIndex);
 
-            SetAttackMasks();
             State = GameState.PLAY;
             GenerateMoves();
         }
@@ -466,7 +424,7 @@ namespace Engine
                 var king = GetKing(Turn);
                 if (king != null)
                 {
-                    if (Attacked(Turn, king.Position))
+                    if (LegalMoves.InCheck(Turn))
                         State = Turn ? GameState.BLACK_WINS : GameState.WHITE_WINS;
                     else
                         State = GameState.DRAW;

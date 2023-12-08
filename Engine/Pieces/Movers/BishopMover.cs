@@ -16,6 +16,26 @@
         {
             return data.MoveMask(i, board, Side);
         }
+
+        public ulong AttackMask(int i, Board board)
+        {
+            return data.RawMask(i, board.AllPieces);
+        }
+
+        public ulong EmptyMask(int i)
+        {
+            return data.RawMask(i, 0ul);
+        }
+
+        public ulong XRayAttacks(int i, Board board)
+        {
+            return data.XRayAttacks(i, board, Side);
+        }
+
+        public ulong PathBetween(int i, int target, Board board)
+        {
+            return data.PathBetween(i, target, board, Side);
+        }
     }
 
     public class BishopCalc : IRiderCalc

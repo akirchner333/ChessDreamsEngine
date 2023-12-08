@@ -22,6 +22,11 @@ namespace Engine
         {
             return _leaper.MoveMask(Index, b);
         }
+
+        public override ulong AttackMask(Board b)
+        {
+            return _leaper.RawMask(Index);
+        }
     }
 }
 

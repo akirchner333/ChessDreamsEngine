@@ -1,4 +1,5 @@
 ﻿using Engine.Pieces.Magic;
+using System.Threading.Tasks;
 
 namespace Engine.Pieces.Movers
 {
@@ -32,9 +33,45 @@ namespace Engine.Pieces.Movers
 
         public ulong MoveMask(int i, Board board, bool side)
         {
-            var mask = EmptyMasks[i];
-            var key = ((mask & board.AllPieces) * Magics[i]) >> Offset[i];
+            var key = Key(i, board.AllPieces);
             return BitUtil.Remove(MoveDB[i][key], board.SidePieces(side));
+        }
+
+        public ulong RawMask(int i, ulong occ)
+        {
+            var key = Key(i, occ);
+            return MoveDB[i][key];
+        }
+
+        public ulong XRayAttacks(int i, Board board, bool side)
+        {
+            var moves = MoveMask(i, board, side);
+            var attacks = moves & board.SidePieces(!side);
+            var removedPieces = BitUtil.Remove(board.AllPieces, attacks);
+
+            var key = Key(i, removedPieces);
+            return BitUtil.Remove(MoveDB[i][key], attacks) & board.SidePieces(!side);
+        }
+
+        // Kind of returns two different things, depending on the situation
+        // If there are no pieces between the two squares, it returns the squares between them
+        // If there's one piece, it returns that piece's bit
+        // All other cases, it returns 0
+        // Can't think of a good name to cover both those cases
+        public ulong PathBetween(int i, int targetIndex, Board board, bool side)
+        {
+            if (!BitUtil.Overlap(RawMask(i, 0), BitUtil.IndexToBit(targetIndex)))
+                return 0;
+
+            var moves = MoveMask(i, board, side);
+            var targetMoves = MoveMask(targetIndex, board, side);
+            return moves & targetMoves;
+        }
+
+        private ulong Key(int i, ulong occ)
+        {
+            var mask = EmptyMasks[i];
+            return ((mask & occ) * Magics[i]) >> Offset[i];
         }
     }
 }

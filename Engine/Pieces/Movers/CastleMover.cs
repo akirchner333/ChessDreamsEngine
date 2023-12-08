@@ -28,7 +28,7 @@ namespace Engine.Pieces.Movers
         {
             List<Move> list = new List<Move>();
 
-            if (board.Attacked(Side, Position))
+            if (board.LegalMoves.Attacked(Side, Position))
                 return list;
 
             if (Side)
@@ -76,7 +76,7 @@ namespace Engine.Pieces.Movers
                 Castles.WhiteKingside => whiteKingside,
                 _ => 0ul
             };
-            var attacked = BitUtil.SplitBits(moveThrough).Any(x => b.Attacked(Side, x));
+            var attacked = BitUtil.SplitBits(moveThrough).Any(x => b.LegalMoves.Attacked(Side, x));
 
             //The squares which must be empty
             var emptyMask = castle switch

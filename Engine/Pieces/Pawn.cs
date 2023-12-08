@@ -47,7 +47,7 @@ namespace Engine
 
         public override ulong AttackMask(Board board)
         {
-            return _attackLeaper.MoveMask(Index, board) | _passant.MoveMask(Index, board, _attackLeaper);
+            return _attackLeaper.RawMask(Index) | _passant.MoveMask(Index, board, _attackLeaper);
         }
 
         // 4 spots for basic moves

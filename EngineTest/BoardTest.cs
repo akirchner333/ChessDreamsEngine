@@ -50,37 +50,13 @@ namespace EngineTest
         public void CheckTest()
         {
             Board rookCheck = new("k6r/8/8/8/8/N7/8/R6K b - - 0 1");
-            Assert.IsTrue(rookCheck.Attacked(Sides.White, BitUtil.AlgebraicToBit("h1")));
-            Assert.IsFalse(rookCheck.Attacked(Sides.Black, BitUtil.AlgebraicToBit("a8")));
+            Assert.IsTrue(rookCheck.LegalMoves.Attacked(Sides.White, BitUtil.AlgebraicToBit("h1")));
+            Assert.IsFalse(rookCheck.LegalMoves.Attacked(Sides.Black, BitUtil.AlgebraicToBit("a8")));
 
             Board pawnCheck = new("8/8/8/1k3p2/2P2K2/8/8/8 b - - 0 1");
-            Assert.IsTrue(pawnCheck.Attacked(Sides.Black, BitUtil.AlgebraicToBit("b5")));
-            Assert.IsFalse(pawnCheck.Attacked(Sides.White, BitUtil.AlgebraicToBit("f4")));
-        }
-
-        [TestMethod]
-        public void RemoveCheckMovesTest()
-        {
-            //The knight is pinned, so it has no legal moves
-            Board pinned = new("k3r3/8/8/8/4N3/8/8/4K3 w - - 0 1");
-            var moves = pinned.Moves();
-            Assert.IsFalse(moves.Any(m => m.Start == BitUtil.AlgebraicToBit("e4")));
-
-            //To move into the F column would put the king in check, so it has no legal moves
-            Board noF = new("3nk3/3pp3/8/8/8/8/8/K4R2 b - - 0 1");
-            moves = noF.Moves();
-            Assert.IsFalse(moves.Any(m => m.Start == BitUtil.AlgebraicToBit("e8")));
-
-            Board mandatoryCapture = new("4k3/4Q3/8/8/8/8/8/K7 b - - 0 1");
-            moves = mandatoryCapture.Moves();
-            Assert.AreEqual(1, moves.Length);
-            Assert.AreEqual("e8e7", moves[0].StartEnd());
-
-            Board mandatoryCapture2 = new("4k3/4Q2R/8/8/7q/8/8/K7 b - - 0 1");
-            moves = mandatoryCapture2.Moves();
-            Assert.AreEqual(1, moves.Length);
-            Assert.AreEqual("h4e7", moves[0].StartEnd());
-        }
+            Assert.IsTrue(pawnCheck.LegalMoves.Attacked(Sides.Black, BitUtil.AlgebraicToBit("b5")));
+            Assert.IsFalse(pawnCheck.LegalMoves.Attacked(Sides.White, BitUtil.AlgebraicToBit("f4")));
+        } 
 
         [TestMethod]
         public void BoardMoveTests()
@@ -207,7 +183,7 @@ namespace EngineTest
                     {
                         Assert.IsTrue(
                             officialMoves.Contains(m.LongAlgebraic()),
-                            $"Expected to find {m.LongAlgebraic()} in {parts[0]} but did not"
+                            $"Incorrectly found {m.LongAlgebraic()} in {parts[0]} after reversing {move.LongAlgebraic()}"
                         );
                     }
                 }

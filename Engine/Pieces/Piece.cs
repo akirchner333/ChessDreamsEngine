@@ -63,6 +63,16 @@ namespace Engine
             return MoveMask(b);
         }
 
+        public virtual ulong XRayAttacks(Board b)
+        {
+            return 0;
+        }
+
+        public virtual ulong PathBetween(Board b, int index)
+        {
+            return 0;
+        }
+
         // In many cases just breaking up the mask (am I using that term correctly?) will be enough
         // But for stuff like en passant or castling, we'll need to extend this method to add in some extra stuff
         public virtual Move[] Moves(Board b)

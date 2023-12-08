@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-    public class Queen : Piece
+    public class Queen : Piece, IRider
     {
         public override string Name { get; } = "Queen";
         public override PieceTypes Type { get; } = PieceTypes.QUEEN;
@@ -24,6 +24,25 @@ namespace Engine
         public override ulong MoveMask(Board board)
         {
             return _rookMover.MoveMask(Index, board) | _bishopMover.MoveMask(Index, board);
+        }
+
+        public override ulong AttackMask(Board b)
+        {
+            return _rookMover.AttackMask(Index, b) | _bishopMover.AttackMask(Index, b);
+        }
+
+        public override ulong XRayAttacks(Board board)
+        {
+            return _rookMover.XRayAttacks(Index, board) | _bishopMover.XRayAttacks(Index, board);
+        }
+
+        public override ulong PathBetween(Board b, int i)
+        {
+            return _rookMover.PathBetween(Index, i, b) | _bishopMover.PathBetween(Index, i, b);
+        }
+        public ulong EmptyMask()
+        {
+            return _rookMover.EmptyMask(Index) | _bishopMover.EmptyMask(Index);
         }
     }
 }

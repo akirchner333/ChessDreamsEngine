@@ -33,7 +33,17 @@ namespace EngineTest
             {
                 Assert.IsTrue(moves.Any(m => m == square));
             }
+        }
 
+        [TestMethod]
+        public void PathBetweenTest()
+        {
+            var board = new Board("k7/4r3/8/8/8/8/r1r1Q3/7K b - - 0 1");
+            var queen = board.FindPiece(BitUtil.AlgebraicToBit("e2"));
+            Assert.AreEqual(17661175005184ul, queen.PathBetween(board, BitUtil.AlgebraicToIndex("e7")));
+            Assert.AreEqual(1075838976ul, queen.PathBetween(board, BitUtil.AlgebraicToIndex("h5")));
+
+            Assert.AreEqual(1024ul, queen.PathBetween(board, BitUtil.AlgebraicToIndex("a2")));
         }
     }
 }

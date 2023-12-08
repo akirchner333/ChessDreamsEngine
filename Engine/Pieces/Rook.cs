@@ -3,7 +3,7 @@ using Engine.Rules;
 
 namespace Engine
 {
-    public class Rook : Piece
+    public class Rook : Piece, IRider
     {
         public override string Name { get; } = "Rook";
         public override PieceTypes Type { get; } = PieceTypes.ROOK;
@@ -28,12 +28,32 @@ namespace Engine
             return _mover.MoveMask(Index, board);
         }
 
+        public override ulong AttackMask(Board b)
+        {
+            return _mover.AttackMask(Index, b);
+        }
+
+        public override ulong XRayAttacks(Board board)
+        {
+            return _mover.XRayAttacks(Index, board);
+        }
+
+        public override ulong PathBetween(Board b, int i)
+        {
+            return _mover.PathBetween(Index, i, b);
+        }
+
+        public ulong EmptyMask()
+        {
+            return _mover.EmptyMask(Index);
+        }
+
         public override Move ApplyMove(Move m)
         {
-            if (m is CastleMove)
+            if (m is CastleMove cm)
             {
-                Position = ((CastleMove)m).RookEnd;
-                Index = BitUtil.BitToIndex(((CastleMove)m).RookEnd);
+                Position = cm.RookEnd;
+                Index = BitUtil.BitToIndex(cm.RookEnd);
                 return m;
             }
 
@@ -42,10 +62,10 @@ namespace Engine
 
         public override Move ReverseMove(Move m)
         {
-            if (m is CastleMove)
+            if (m is CastleMove cm)
             {
-                Position = ((CastleMove)m).RookStart;
-                Index = BitUtil.BitToIndex(((CastleMove)m).RookStart);
+                Position = cm.RookStart;
+                Index = BitUtil.BitToIndex(cm.RookStart);
                 return m;
             }
 
