@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
-using Engine.Pieces.Movers;
+﻿using Engine.Pieces.Movers;
 
 namespace Engine.Rules
 {
@@ -37,7 +31,7 @@ namespace Engine.Rules
                 // 1. Move the king out of the way
                 if (m.Start == king!.Position)
                 {
-                    foreach(Piece piece in attackers)
+                    foreach (Piece piece in attackers)
                     {
                         if ((piece is IRider rider) && BitUtil.Overlap(rider.EmptyMask(), m.End))
                         {
@@ -68,10 +62,10 @@ namespace Engine.Rules
             // If the piece is pinned
             if (BitUtil.Overlap(m.Start, m.Side ? WhitePins : BlackPins))
             {
-                foreach(var attacker in _board.Pieces)
+                foreach (var attacker in _board.Pieces)
                 {
                     // Find the piece that's attacking
-                    if(attacker.Active(!m.Side) && BitUtil.Overlap(attacker.XRayAttacks(_board), king.Position))
+                    if (attacker.Active(!m.Side) && BitUtil.Overlap(attacker.XRayAttacks(_board), king.Position))
                     {
                         var path = attacker.PathBetween(_board, BitUtil.BitToIndex(m.Start));
                         return BitUtil.Overlap(path | attacker.Position, m.End);
@@ -109,7 +103,7 @@ namespace Engine.Rules
                     WhiteAttacks |= piece.AttackMask(_board);
                     BlackPins |= piece.PathBetween(_board, blackKing.Index) & _board.AllPieces;
                 }
-                else if(!piece.Captured)
+                else if (!piece.Captured)
                 {
                     BlackAttacks |= piece.AttackMask(_board);
                     WhitePins |= piece.PathBetween(_board, whiteKing.Index) & _board.AllPieces;

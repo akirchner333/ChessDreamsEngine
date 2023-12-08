@@ -1,5 +1,4 @@
-﻿using Engine.Pieces.Movers;
-using Engine.Rules;
+﻿using Engine.Rules;
 
 namespace Engine
 {
@@ -232,7 +231,7 @@ namespace Engine
 
         public King? GetKing(bool side)
         {
-            if(Pieces.Length > 0)
+            if (Pieces.Length > 0)
             {
                 return (King)Pieces[side ? 0 : 1];
             }
@@ -344,7 +343,7 @@ namespace Engine
 
         public Move ApplyMove(Move m)
         {
-            if(m is DrawMove)
+            if (m is DrawMove)
             {
                 State = GameState.DRAW;
                 return m;
@@ -362,7 +361,7 @@ namespace Engine
             m = Castles.ApplyMove(m, p);
             m = Clock.ApplyMove(m, pieceIndex);
             m = Promote.ApplyMove(m, pieceIndex);
-            
+
 
             if (Turn == Sides.Black)
                 TurnNumber++;
@@ -379,7 +378,7 @@ namespace Engine
 
         public void ReverseMove(Move m)
         {
-            if(m is DrawMove)
+            if (m is DrawMove)
             {
                 State = GameState.PLAY;
                 return;
@@ -395,7 +394,7 @@ namespace Engine
             Clock.ReverseMove(m, pieceIndex);
             Castles.ReverseMove(m);
             Promote.ReverseMove(m, pieceIndex);
-            
+
 
             if (Turn == Sides.White)
                 TurnNumber--;

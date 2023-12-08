@@ -56,7 +56,7 @@ namespace EngineTest
             Board pawnCheck = new("8/8/8/1k3p2/2P2K2/8/8/8 b - - 0 1");
             Assert.IsTrue(pawnCheck.LegalMoves.Attacked(Sides.Black, BitUtil.AlgebraicToBit("b5")));
             Assert.IsFalse(pawnCheck.LegalMoves.Attacked(Sides.White, BitUtil.AlgebraicToBit("f4")));
-        } 
+        }
 
         [TestMethod]
         public void BoardMoveTests()
@@ -152,7 +152,7 @@ namespace EngineTest
         public void ReverseMove()
         {
             using StreamReader r = new("../../../board_moves.csv");
-            
+
             string line;
             while ((line = r.ReadLine()) != null)
             {
@@ -187,7 +187,7 @@ namespace EngineTest
                         );
                     }
                 }
-                
+
             }
         }
 

@@ -2,7 +2,7 @@
 {
     public interface IMove<T>
     {
-        bool EqualTo(T move);    
+        bool EqualTo(T move);
     }
     enum MoveType
     {
@@ -88,7 +88,7 @@
     //Claiming a draw
     public class DrawMove : Move
     {
-        public DrawMove(bool side) : base(0, 0, side){ }
+        public DrawMove(bool side) : base(0, 0, side) { }
 
         public override string LongAlgebraic()
         {

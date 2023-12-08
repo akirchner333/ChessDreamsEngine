@@ -15,7 +15,7 @@
                 return move;
 
             move.TargetListIndex = _board.FindPieceIndex(move.TargetSquare());
-            if(move.TargetListIndex == -1)
+            if (move.TargetListIndex == -1)
             {
                 throw new ArgumentException($"Incorrect capture while trying to play {move} on {_board.Fen()} {_board.BlackPieces} {_board.WhitePieces}");
             }

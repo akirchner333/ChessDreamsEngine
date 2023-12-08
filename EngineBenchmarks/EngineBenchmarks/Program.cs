@@ -30,7 +30,8 @@ namespace EngineTest
         [Benchmark]
         public void TestMovesThree() => NolotThree.GenerateMoves();
         [Benchmark]
-        public void TestEntire(){
+        public void TestEntire()
+        {
             var moves = NolotOne.Moves();
             var fullMove = NolotOne.ApplyMove(moves[0]);
             NolotOne.ReverseMove(fullMove);

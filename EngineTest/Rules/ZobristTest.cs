@@ -23,7 +23,7 @@ namespace EngineTest.Rules
         public void MoveSequenceTest()
         {
             using StreamReader r = new("../../../move_sequence.csv");
-            
+
             var board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             string line;
             int halfmove = 0;
