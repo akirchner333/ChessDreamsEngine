@@ -24,7 +24,7 @@ namespace EngineTest.Rules
             Assert.AreEqual(0b1111, castle.CastleRights);
 
             Move captureMove = Move.FromAlgebraic("g6", "h8", true, true);
-            captureMove.TargetListIndex = Array.FindIndex(board.Pieces, p => p.Position == BitUtil.AlgebraicToBit("h8"));
+            board.Capture.AddCapture(Array.FindIndex(board.Pieces, p => p.Position == BitUtil.AlgebraicToBit("h8")));
             var knight = board.FindPiece(BitUtil.AlgebraicToBit("g6"));
             captureMove = castle.ApplyMove(captureMove, knight!);
             Assert.AreEqual(0b1011, castle.CastleRights);

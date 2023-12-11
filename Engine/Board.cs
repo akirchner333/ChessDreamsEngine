@@ -408,6 +408,17 @@ namespace Engine
             GenerateMoves();
         }
 
+        //Commits the current state of the board, such that it can no longer be reversed
+        public void ApplyMoveReal(Move m)
+        {
+            ApplyMove(m);
+            Capture.Save();
+            Castles.Save();
+            Passant.Save();
+            Clock.Save();
+            Repetition.Save();
+        }
+
         public void RemoveSquare(ulong position, bool side)
         {
             WhitePieces = BitUtil.Remove(WhitePieces, position);

@@ -5,6 +5,9 @@
         public ulong PassantSquare { get; private set; } = 0;
         public ulong TargetSquare { get; private set; } = 0;
         private Board _board;
+        private FastStack<ulong> _passant = new FastStack<ulong>(16);
+        private FastStack<ulong> _targets = new FastStack<ulong>(16);
+
         private static ulong[] _values;
 
         static EnPassant()
@@ -37,26 +40,29 @@
 
             return BitUtil.BitToAlgebraic((ulong)PassantSquare);
         }
+
         public Move ApplyMove(Move m, Piece p)
         {
-            //This is awkward. Need some manner of handling hash of no-passant elegantly
-            if (PassantSquare != 0)
-            {
-                _board.Hash ^= _values[HashIndex()];
-            }
-            m.PassantTarget = TargetSquare;
-            m.PassantSquare = PassantSquare;
-
             if (p.Type == PieceTypes.PAWN && (m.Start >> 16 == m.End || m.Start << 16 == m.End))
             {
+                UpdateHash();
+                _passant.Push(PassantSquare);
+                _targets.Push(TargetSquare);
+
                 TargetSquare = m.End;
                 PassantSquare = _board.Turn ? m.Start << 8 : m.Start >> 8;
-                _board.Hash ^= _values[HashIndex()];
+                UpdateHash();
+                m.PassantImpact = true;
             }
-            else
+            else if(TargetSquare != 0)
             {
+                _passant.Push(PassantSquare);
+                _targets.Push(TargetSquare);
+                UpdateHash();
+
                 TargetSquare = 0;
                 PassantSquare = 0;
+                m.PassantImpact = true;
             }
 
             return m;
@@ -64,19 +70,20 @@
 
         public void ReverseMove(Move m)
         {
-            if (PassantSquare != 0)
+            if (m.PassantImpact)
             {
-                _board.Hash ^= _values[HashIndex()];
-            }
-
-            TargetSquare = m.PassantTarget;
-            PassantSquare = m.PassantSquare;
-            if (PassantSquare != 0)
-            {
-                _board.Hash ^= _values[HashIndex()];
+                UpdateHash();
+                PassantSquare = _passant.Pop();
+                TargetSquare = _targets.Pop();
+                UpdateHash();
             }
         }
 
+        public void Save()
+        {
+            _passant.Clear();
+            _targets.Clear();
+        }
 
         // Provide a mask of squares this piece can attack
         // Returns true if that mask overlaps with the passant square
@@ -88,6 +95,14 @@
         public int HashIndex()
         {
             return BitUtil.BitToX(PassantSquare);
+        }
+
+        public void UpdateHash()
+        {
+            if(PassantSquare != 0)
+            {
+                _board.Hash ^= _values[HashIndex()];
+            }
         }
     }
 }

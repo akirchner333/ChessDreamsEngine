@@ -17,6 +17,7 @@ namespace Engine.Rules
         public LegalMoves(Board board)
         {
             _board = board;
+            Attackers = Array.Empty<Piece>();
             SetAttackMasks();
         }
 

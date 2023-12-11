@@ -21,13 +21,10 @@
         public bool Promoting { get; protected set; } = false;
 
         //These are things we reference to help with reversing. They're set as the move is applied
-        public int Castles { get; set; } = 0;
-        public ulong PassantTarget { get; set; }
-        public ulong PassantSquare { get; set; }
-        public int HalfMoves { get; set; }
-        public int PieceListIndex { get; set; }
-        public int TargetListIndex { get; set; }
-        public ulong[] PastPositions = new ulong[0];
+        public bool CastleImpact { get; set; } = false;
+        public bool PassantImpact { get; set; } = false;
+        public bool ClockReset { get; set; } = false;
+        
 
         public Move(ulong start, ulong end, bool side)
         {

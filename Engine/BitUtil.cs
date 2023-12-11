@@ -23,7 +23,6 @@ namespace Engine
                 AlgebraicToY(a)
             );
         }
-
         public static int AlgebraicToX(string a)
         {
             return (int)(a[0] - 1) % 32;
@@ -85,6 +84,11 @@ namespace Engine
 
         //Do `a` and `b` share any bits?
         public static bool Overlap(ulong a, ulong b)
+        {
+            return (a & b) != 0;
+        }
+
+        public static bool Overlap(int a, int b)
         {
             return (a & b) != 0;
         }

@@ -11,6 +11,7 @@
     public class Castling
     {
         public int CastleRights { get; set; } = 0b1111;
+        private FastStack<int> _castleStack = new FastStack<int>(16);
         private Board _board;
         private static ulong[] _values;
 
@@ -80,18 +81,22 @@
                 }
             }
 
-            m.Castles = CastleRights;
             int effectedCastles = p.CastleRights;
             if (m.Capture)
             {
-                var target = _board.Pieces[m.TargetListIndex];
+                var target = _board.Capture.LastCapture();
                 effectedCastles |= target.CastleRights;
             }
-            CastleRights = BitUtil.Remove(CastleRights, effectedCastles);
 
-            _board.Hash ^= _values[m.Castles];
-            _board.Hash ^= _values[CastleRights];
-
+            if (BitUtil.Overlap(CastleRights, effectedCastles))
+            {
+                _board.Hash ^= _values[CastleRights];
+                _castleStack.Push(CastleRights);
+                CastleRights = BitUtil.Remove(CastleRights, effectedCastles);
+                _board.Hash ^= _values[CastleRights];
+                m.CastleImpact = true;
+            }
+            
             return m;
         }
 
@@ -102,9 +107,17 @@
                 _board.Move.MovePiece(_board.Pieces[castleMove.RookIndex], castleMove.RookEnd, castleMove.RookStart, m, true);
             }
 
-            _board.Hash ^= _values[m.Castles];
-            _board.Hash ^= _values[CastleRights];
-            CastleRights = m.Castles;
+            if(m.CastleImpact)
+            {
+                _board.Hash ^= _values[CastleRights];
+                CastleRights = _castleStack.Pop();
+                _board.Hash ^= _values[CastleRights];
+            }
+        }
+
+        public void Save()
+        {
+            _castleStack.Clear();
         }
     }
 }

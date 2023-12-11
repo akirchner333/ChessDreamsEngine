@@ -3,6 +3,7 @@
     public class FiftyMove : IRule
     {
         public int Clock { get; set; }
+        private FastStack<int> _clockStack = new FastStack<int>(75);
         public bool DrawAvailable { get; private set; } = false;
         private Board _board;
 
@@ -25,10 +26,11 @@
 
         public Move ApplyMove(Move m, int pieceIndex)
         {
-            m.HalfMoves = Clock;
             if (m.Capture || _board.Pieces[pieceIndex].Type == PieceTypes.PAWN)
             {
+                _clockStack.Push(Clock);
                 Clock = 0;
+                m.ClockReset = true;
             }
             else
             {
@@ -49,9 +51,22 @@
 
         public void ReverseMove(Move m, int _pieceIndex)
         {
-            Clock = m.HalfMoves;
+            if (m.ClockReset)
+            {
+                Clock = _clockStack.Pop();
+            }
+            else
+            {
+                Clock--;
+            }
+
             if (Clock <= 100)
                 DrawAvailable = false;
+        }
+
+        public void Save()
+        {
+            _clockStack.Clear();
         }
     }
 }
