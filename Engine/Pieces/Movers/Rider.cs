@@ -9,5 +9,6 @@
     public interface IRider
     {
         ulong EmptyMask();
+        ulong Mask(ulong occ);
     }
 }

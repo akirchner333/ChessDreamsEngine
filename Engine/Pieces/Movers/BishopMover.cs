@@ -17,14 +17,9 @@
             return data.MoveMask(i, board, Side);
         }
 
-        public ulong AttackMask(int i, Board board)
+        public ulong RawMask(int i, ulong occ)
         {
-            return data.RawMask(i, board.AllPieces);
-        }
-
-        public ulong EmptyMask(int i)
-        {
-            return data.RawMask(i, 0ul);
+            return data.RawMask(i, occ);
         }
 
         public ulong XRayAttacks(int i, Board board)

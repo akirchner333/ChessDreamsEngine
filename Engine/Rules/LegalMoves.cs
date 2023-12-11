@@ -10,6 +10,7 @@ namespace Engine.Rules
         public ulong WhitePins { get; set; } = 0;
         public ulong BlackPins { get; set; } = 0;
         public bool Check { get; set; } = false;
+        public Piece[] Attackers { get; set; }
 
         private Board _board;
 
@@ -24,28 +25,17 @@ namespace Engine.Rules
             var king = _board.GetKing(m.Side);
             if (Check)
             {
-                //Find out which piece is attacking the king
-                var attackers = Array.FindAll(_board.Pieces, p => p.Active(!m.Side) && BitUtil.Overlap(p.AttackMask(_board), king.Position));
-
                 //There are only 3 valid moves in this case:
-                // 1. Move the king out of the way
+                // 1. Move the king out of the way. Any moves which'd put the king into check have already
+                // been filtered out
                 if (m.Start == king!.Position)
-                {
-                    foreach (Piece piece in attackers)
-                    {
-                        if ((piece is IRider rider) && BitUtil.Overlap(rider.EmptyMask(), m.End))
-                        {
-                            return false;
-                        }
-                    }
                     return true;
-                }
 
                 // If two pieces are attacking the king, the only way out is to move the king. And we've already
                 // Established that you're not doing that
-                if (attackers.Length > 1)
+                if (Attackers.Length > 1)
                     return false;
-                var attacker = attackers[0];
+                var attacker = Attackers[0];
 
                 // 2. Capture the attacking piece
                 if (m.Capture && m.TargetSquare() == attacker.Position)
@@ -80,7 +70,11 @@ namespace Engine.Rules
         {
             var king = _board.GetKing(side);
             if (king == null) return false;
-            return Attacked(side, king.Position);
+            var check = Attacked(side, king.Position);
+            if(check)
+                Attackers = Array.FindAll(_board.Pieces, p => p.Active(!side) && BitUtil.Overlap(p.AttackMask(_board), king.Position));
+
+            return check;
         }
 
         public bool Attacked(bool side, ulong position)
@@ -100,12 +94,12 @@ namespace Engine.Rules
             {
                 if (piece.Active(true))
                 {
-                    WhiteAttacks |= piece.AttackMask(_board);
+                    WhiteAttacks |= piece.Mask(BitUtil.Remove(_board.AllPieces, blackKing.Position));
                     BlackPins |= piece.PathBetween(_board, blackKing.Index) & _board.AllPieces;
                 }
                 else if (!piece.Captured)
                 {
-                    BlackAttacks |= piece.AttackMask(_board);
+                    BlackAttacks |= piece.Mask(BitUtil.Remove(_board.AllPieces, whiteKing.Position));
                     WhitePins |= piece.PathBetween(_board, whiteKing.Index) & _board.AllPieces;
                 }
             }

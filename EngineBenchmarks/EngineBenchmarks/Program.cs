@@ -43,6 +43,18 @@ namespace EngineTest
         public static void Main(string[] args)
         {
             var summary = BenchmarkRunner.Run<BenchmarkTest>();
+            //Board NolotOne = new("r3qb1k/1b4p1/p2pr2p/3n4/Pnp1N1N1/6RP/1B3PP1/1B1QR1K1 w - - 0 1");
+            //var moves = NolotOne.Moves();
+            //for (var i = 0; i < 1000; i++)
+            //{
+            //    foreach(var move in moves)
+            //    {
+            //        var fullMove = NolotOne.ApplyMove(move);
+            //        NolotOne.ReverseMove(fullMove);
+            //    }
+            //}
+            
+            //Console.WriteLine("Yeah!");
         }
     }
 }

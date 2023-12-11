@@ -22,9 +22,9 @@ namespace Engine
             return _mover.MoveMask(Index, board);
         }
 
-        public override ulong AttackMask(Board b)
+        public override ulong Mask(ulong occ)
         {
-            return _mover.AttackMask(Index, b);
+            return _mover.RawMask(Index, occ);
         }
 
         public override ulong XRayAttacks(Board board)
@@ -35,11 +35,6 @@ namespace Engine
         public override ulong PathBetween(Board b, int i)
         {
             return _mover.PathBetween(Index, i, b);
-        }
-
-        public ulong EmptyMask()
-        {
-            return _mover.EmptyMask(Index);
         }
     }
 }

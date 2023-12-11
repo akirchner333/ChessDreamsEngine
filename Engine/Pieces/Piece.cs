@@ -57,12 +57,19 @@ namespace Engine
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Move Generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public abstract ulong MoveMask(Board b);
+        public abstract ulong Mask(ulong occ);
 
         public virtual ulong AttackMask(Board b)
         {
-            return MoveMask(b);
+            return Mask(b.AllPieces);
         }
 
+        public virtual ulong EmptyMask()
+        {
+            return Mask(0);
+        }
+
+        
         public virtual ulong XRayAttacks(Board b)
         {
             return 0;

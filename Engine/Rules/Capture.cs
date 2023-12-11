@@ -3,10 +3,13 @@
     public class Capture
     {
         private Board _board;
+        private int[] _captures;
+        private int _pointer = 0;
 
         public Capture(Board board)
         {
             _board = board;
+            _captures = new int[_board.Pieces.Length];
         }
 
         public Move ApplyMove(Move move, int pieceIndex)
@@ -14,12 +17,14 @@
             if (!move.Capture)
                 return move;
 
-            move.TargetListIndex = _board.FindPieceIndex(move.TargetSquare());
-            if (move.TargetListIndex == -1)
+            var targetIndex = _board.FindPieceIndex(move.TargetSquare());
+            if (targetIndex == -1)
             {
                 throw new ArgumentException($"Incorrect capture while trying to play {move} on {_board.Fen()} {_board.BlackPieces} {_board.WhitePieces}");
             }
-            var piece = _board.Pieces[move.TargetListIndex];
+
+            _captures[_pointer++] = targetIndex;
+            var piece = _board.Pieces[targetIndex];
 
             _board.RemoveSquare(move.TargetSquare(), piece.Side);
             _board.Move.TogglePiece(piece);
@@ -33,7 +38,7 @@
             if (!move.Capture)
                 return;
 
-            var piece = _board.Pieces[move.TargetListIndex];
+            var piece = _board.Pieces[_captures[--_pointer]];
             piece.Captured = false;
             _board.Move.TogglePiece(piece);
             if (!move.Side)

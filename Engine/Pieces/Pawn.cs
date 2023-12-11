@@ -45,6 +45,11 @@ namespace Engine
             return _moveLeaper.MoveMask(Index, board) | _twoSteps.MoveMask(Index, board) | _attackLeaper.MoveMask(Index, board);
         }
 
+        public override ulong Mask(ulong _occ)
+        {
+            return _attackLeaper.RawMask(Index);
+        }
+
         public override ulong AttackMask(Board board)
         {
             return _attackLeaper.RawMask(Index) | _passant.MoveMask(Index, board, _attackLeaper);

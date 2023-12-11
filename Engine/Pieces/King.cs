@@ -30,10 +30,7 @@ namespace Engine
             return BitUtil.Remove(_leaper.MoveMask(Index, b), Side ? b.LegalMoves.BlackAttacks : b.LegalMoves.WhiteAttacks);
         }
 
-        // I straight up do not know if this is how it should be
-        // But as long I'm only using the attack masks for determining checks and checkmates
-        // I think it's fine. I think.
-        public override ulong AttackMask(Board b)
+        public override ulong Mask(ulong _occ)
         {
             return _leaper.RawMask(Index);
         }
