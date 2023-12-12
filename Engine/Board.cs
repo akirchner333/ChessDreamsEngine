@@ -4,7 +4,7 @@ namespace Engine
 {
     public interface IGameEngine<M> where M : IMove<M>
     {
-        M[] Moves();
+        bool Moves(ref Span<M> moves);
         M ApplyMove(M move);
         void ReverseMove(M move);
         bool TerminalNode();
@@ -84,7 +84,6 @@ namespace Engine
         public ulong AllPieces { get; set; } = 0;
         public ulong WhitePieces { get; set; } = 0;
         public ulong BlackPieces { get; set; } = 0;
-        public Move[] MoveList { get; set; }
         public ulong Hash { get; set; } = 0;
 
         // ------------------------------------------------------------- BOARD CREATION ------------------------------------------------
@@ -103,8 +102,6 @@ namespace Engine
             Promote = new Promotion(this);
             Repetition = new Repetition(this);
             LegalMoves = new LegalMoves(this);
-
-            SetGameState();
         }
 
         public Board(string fen)
@@ -161,8 +158,6 @@ namespace Engine
             Capture = new Capture(this);
             Repetition = new Repetition(this);
             LegalMoves = new LegalMoves(this);
-
-            SetGameState();
         }
 
         public static Board StartPosition()
@@ -298,19 +293,26 @@ namespace Engine
         }
 
         // ----------------------------------------------------------------------- MOVE GENERATION --------------------------------------------
-        public Move[] Moves()
+
+        //For when you can't be bothered to alloc your own
+        public Move[] MoveArray()
         {
-            return MoveList;
+            Span<Move> moves = new Move[218];
+            Moves(ref moves);
+            return moves.ToArray();
         }
 
-        public void GenerateMoves()
+        // Returns false if the game is over and you can't actually have moves
+        public bool Moves(ref Span<Move> moves)
         {
             if (State != GameState.PLAY)
-                MoveList = Array.Empty<Move>();
+            {
+                return false;
+            }
             else
             {
-                var moves = new Move[218];
                 var moveCount = 0;
+                var king = GetKing(Turn);
 
                 foreach (var piece in Pieces)
                 {
@@ -327,14 +329,22 @@ namespace Engine
                     }
                 }
 
+                // We don't know if the game is over until we actually generate the moves
+                // Which might cause some problems downhill, I'm not sure
+                if(moveCount == 0)
+                {
+                    EndGame();
+                    return false;
+                }
+
                 if (DrawAvailable())
                 {
                     moves[moveCount] = new DrawMove(Turn);
                     moveCount++;
                 }
 
-                Array.Resize(ref moves, moveCount);
-                MoveList = moves;
+                moves = moves.Slice(0, moveCount);
+                return true;
             }
         }
 
@@ -370,8 +380,6 @@ namespace Engine
             m = LegalMoves.ApplyMove(m, pieceIndex);
             Repetition.ApplyMove(m, pieceIndex);
 
-            SetGameState();
-
             return m;
         }
 
@@ -404,7 +412,6 @@ namespace Engine
             LegalMoves.ReverseMove(m, pieceIndex);
 
             State = GameState.PLAY;
-            GenerateMoves();
         }
 
         // Commits the current state of the board, so it can no longer be reversed
@@ -425,20 +432,12 @@ namespace Engine
             AllPieces = BlackPieces | WhitePieces;
         }
 
-        public void SetGameState()
+        public void EndGame()
         {
-            GenerateMoves();
-            if (MoveList.Length == 0)
-            {
-                var king = GetKing(Turn);
-                if (king != null)
-                {
-                    if (LegalMoves.InCheck(Turn))
-                        State = Turn ? GameState.BLACK_WINS : GameState.WHITE_WINS;
-                    else
-                        State = GameState.DRAW;
-                }
-            }
+            if (LegalMoves.Check)
+                State = Turn ? GameState.BLACK_WINS : GameState.WHITE_WINS;
+            else
+                State = GameState.DRAW;
         }
     }
 }

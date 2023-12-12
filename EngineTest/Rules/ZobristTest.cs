@@ -32,7 +32,7 @@ namespace EngineTest.Rules
             while ((line = r.ReadLine()) != null)
             {
                 var parts = line.Split(',');
-                var moves = board.Moves();
+                var moves = board.MoveArray();
                 hashes.Add(board.Hash);
                 //Assert.IsTrue(hashes.Distinct().Count() == hashes.Count(), $"Hash collision at halfmove {halfmove}, before {parts[0]}");
 

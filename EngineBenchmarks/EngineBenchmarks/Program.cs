@@ -24,15 +24,16 @@ namespace EngineTest
         }
 
         [Benchmark]
-        public void TestMovesOne() => NolotOne.GenerateMoves();
+        public void TestMovesOne() => NolotOne.MoveArray();
         [Benchmark]
-        public void TestMovesTwo() => NolotTwo.GenerateMoves();
+        public void TestMovesTwo() => NolotTwo.MoveArray();
         [Benchmark]
-        public void TestMovesThree() => NolotThree.GenerateMoves();
+        public void TestMovesThree() => NolotThree.MoveArray();
         [Benchmark]
         public void TestEntire()
         {
-            var moves = NolotOne.Moves();
+            Span<Move> moves = new Move[218];
+            NolotOne.Moves(ref moves);
             var fullMove = NolotOne.ApplyMove(moves[0]);
             NolotOne.ReverseMove(fullMove);
         }

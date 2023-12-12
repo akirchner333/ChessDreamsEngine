@@ -72,9 +72,9 @@ namespace EngineTest
                 var parts = line.Split(',');
                 var board = new Board(parts[0]);
                 var officialMoves = parts[1].Split(" ").ToList();
-                var moves = board.Moves();
+                var moves = board.MoveArray();
 
-                foreach (var move in board.Moves())
+                foreach (var move in moves)
                 {
                     Assert.IsTrue(
                         officialMoves.Contains(move.LongAlgebraic()),
@@ -122,10 +122,10 @@ namespace EngineTest
             {
                 var parts = line.Split(',');
                 var officialMoves = parts[1].Split(" ").ToList();
-                var moves = board.Moves();
+                var moves = board.MoveArray();
                 //var missing = String.Join(" ", moves.Select(m => m.LongAlgebraic()));
 
-                foreach (var move in board.Moves())
+                foreach (var move in moves)
                 {
                     Assert.IsTrue(
                         officialMoves.Contains(move.LongAlgebraic()),
@@ -162,11 +162,11 @@ namespace EngineTest
                 var board = new Board(fen);
 
                 var hash = board.Hash;
-                var moves = board.Moves();
+                var moves = board.MoveArray();
                 var all = board.AllPieces;
                 var white = board.WhitePieces;
                 var black = board.BlackPieces;
-                foreach (var move in board.Moves())
+                foreach (var move in moves)
                 {
                     var fullMove = board.ApplyMove(move);
                     board.ReverseMove(fullMove);
@@ -176,7 +176,7 @@ namespace EngineTest
                     Assert.AreEqual(white, board.WhitePieces, $"White pieces mismatch {move}");
                     Assert.AreEqual(black, board.BlackPieces, $"Black pieces mismatch {move}");
 
-                    var moveList = board.Moves();
+                    var moveList = board.MoveArray();
 
                     Assert.AreEqual(moves.Length, officialMoves.Count, $"Move count mismatch on {parts[0]}");
                     foreach (var m in moveList)
@@ -208,7 +208,7 @@ namespace EngineTest
             var white = board.WhitePieces;
             var black = board.BlackPieces;
 
-            foreach (var move in board.Moves())
+            foreach (var move in board.MoveArray())
             {
                 var newSequence = sequence + " " + move.LongAlgebraic();
                 var fullMove = board.ApplyMove(move);
@@ -226,10 +226,16 @@ namespace EngineTest
         {
             var whiteBoard = new Board("7k/8/2R5/8/8/8/8/K5R1 w - - 0 1");
             whiteBoard.ApplyMove(new Move(BitUtil.AlgebraicToBit("c6"), BitUtil.AlgebraicToBit("h6"), true));
+            Span<Move> moves = new Move[218];
+            var getMoves = whiteBoard.Moves(ref moves);
+            Assert.IsFalse(getMoves);
             Assert.AreEqual(GameState.WHITE_WINS, whiteBoard.State);
 
             var blackBoard = new Board("7k/8/1r6/8/8/6r1/8/K7 b - - 0 1");
             blackBoard.ApplyMove(new Move(BitUtil.AlgebraicToBit("g3"), BitUtil.AlgebraicToBit("a3"), true));
+            Span<Move> moves2 = new Move[218];
+            var getMoves2 = blackBoard.Moves(ref moves2);
+            Assert.IsFalse(getMoves2);
             Assert.AreEqual(GameState.BLACK_WINS, blackBoard.State);
         }
 
@@ -238,6 +244,9 @@ namespace EngineTest
         {
             var whiteBoard = new Board("7k/8/2R5/8/8/8/8/K5R1 w - - 0 1");
             whiteBoard.ApplyMove(new Move(BitUtil.AlgebraicToBit("c6"), BitUtil.AlgebraicToBit("c7"), true));
+            Span<Move> moves = new Move[218];
+            var getMoves = whiteBoard.Moves(ref moves);
+            Assert.IsFalse(getMoves);
             Assert.AreEqual(GameState.DRAW, whiteBoard.State);
         }
     }
