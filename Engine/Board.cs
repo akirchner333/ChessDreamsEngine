@@ -311,7 +311,6 @@ namespace Engine
             {
                 var moves = new Move[218];
                 var moveCount = 0;
-                var king = GetKing(Turn);
 
                 foreach (var piece in Pieces)
                 {
@@ -408,7 +407,7 @@ namespace Engine
             GenerateMoves();
         }
 
-        //Commits the current state of the board, such that it can no longer be reversed
+        // Commits the current state of the board, so it can no longer be reversed
         public void ApplyMoveReal(Move m)
         {
             ApplyMove(m);

@@ -3,6 +3,7 @@
     public interface IMove<T>
     {
         bool EqualTo(T move);
+        bool Quiet();
     }
     enum MoveType
     {
@@ -18,7 +19,6 @@
         public ulong End { get; private set; }
         public bool Side { get; private set; }
         public bool Capture { get; set; } = false;
-        public bool Promoting { get; protected set; } = false;
 
         //These are things we reference to help with reversing. They're set as the move is applied
         public bool CastleImpact { get; set; } = false;
@@ -80,6 +80,12 @@
         {
             return Side == m.Side && Start == m.Start && End == m.End && TargetSquare() == m.TargetSquare();
         }
+
+        public bool Quiet()
+        {
+            //Not strictly true - we should also be checking if this move puts the opponent into check. 
+            return !Capture;
+        }
     }
 
     //Claiming a draw
@@ -118,7 +124,6 @@
         public PromotionMove(ulong start, ulong end, bool side, PieceTypes promotion) : base(start, end, side)
         {
             Promotion = promotion;
-            Promoting = true;
         }
 
         public override string LongAlgebraic()

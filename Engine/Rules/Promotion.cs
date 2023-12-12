@@ -22,7 +22,7 @@
 
         public void ReverseMove(Move move, int pieceIndex)
         {
-            if (move.Promoting)
+            if (move is PromotionMove)
             {
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
                 _board.Pieces[pieceIndex] = Board.NewPiece(move.Start, PieceTypes.PAWN, move.Side);
