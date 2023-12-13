@@ -71,13 +71,13 @@
 
         public Move ApplyMove(Move m, Piece p)
         {
-            if (m is CastleMove castleMove)
+            if (m.Castling())
             {
-                castleMove.RookIndex = _board.FindPieceIndex(castleMove.RookStart);
-                if (castleMove.RookIndex != -1)
+                var RookIndex = _board.FindPieceIndex(m.CastleStart);
+                if (RookIndex != -1)
                 {
-                    var piece = _board.Pieces[castleMove.RookIndex];
-                    m = _board.Move.MovePiece(piece, castleMove.RookStart, castleMove.RookEnd, m);
+                    var piece = _board.Pieces[RookIndex];
+                    m = _board.Move.MovePiece(piece, m.CastleStart, m.CastleEnd, m);
                 }
             }
 
@@ -102,9 +102,10 @@
 
         public void ReverseMove(Move m)
         {
-            if (m is CastleMove castleMove && castleMove.RookIndex >= 0)
+            if (m.Castling())
             {
-                _board.Move.MovePiece(_board.Pieces[castleMove.RookIndex], castleMove.RookEnd, castleMove.RookStart, m, true);
+                var RookIndex = _board.FindPieceIndex(m.CastleEnd);
+                _board.Move.MovePiece(_board.Pieces[RookIndex], m.CastleEnd, m.CastleStart, m, true);
             }
 
             if(m.CastleImpact)

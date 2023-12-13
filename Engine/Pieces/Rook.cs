@@ -45,10 +45,10 @@ namespace Engine
 
         public override Move ApplyMove(Move m)
         {
-            if (m is CastleMove cm)
+            if (m.Castling())
             {
-                Position = cm.RookEnd;
-                Index = BitUtil.BitToIndex(cm.RookEnd);
+                Position = m.CastleEnd;
+                Index = BitUtil.BitToIndex(m.CastleEnd);
                 return m;
             }
 
@@ -57,10 +57,10 @@ namespace Engine
 
         public override Move ReverseMove(Move m)
         {
-            if (m is CastleMove cm)
+            if (m.Castling())
             {
-                Position = cm.RookStart;
-                Index = BitUtil.BitToIndex(cm.RookStart);
+                Position = m.CastleStart;
+                Index = BitUtil.BitToIndex(m.CastleStart);
                 return m;
             }
 

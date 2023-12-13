@@ -62,19 +62,25 @@ namespace Engine
         public override Move[] Moves(Board board)
         {
             var moves = new Move[12];
+            var moveCount = 0;
 
             var mask = MoveMask(board);
             var baseMoves = _convert.ConvertMask(board, Position, mask);
             baseMoves.CopyTo(moves, 0);
+            moveCount += baseMoves.Length;
 
             var passant = _passant.ConvertMask(
                 board, Position,
                 _passant.MoveMask(Index, board, _attackLeaper)
             );
-            passant.CopyTo(moves, 3);
+            passant.CopyTo(moves, moveCount);
+            moveCount += passant.Length;
 
             var promotions = _promotion.ConvertMask(board, Position, mask);
-            promotions.CopyTo(moves, 0);
+            promotions.CopyTo(moves, moveCount);
+            moveCount += promotions.Length;
+
+            Array.Resize(ref moves, moveCount);
 
             return moves;
         }

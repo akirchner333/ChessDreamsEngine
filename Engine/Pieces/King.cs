@@ -38,8 +38,18 @@ namespace Engine
         public override Move[] Moves(Board b)
         {
             var moves = new Move[8];
-            base.Moves(b).CopyTo(moves, 0);
-            _castler.Moves(b, Position).CopyTo(moves, 6);
+            var moveCount = 0;
+
+            var baseMoves = base.Moves(b);
+            baseMoves.CopyTo(moves, 0);
+            moveCount += baseMoves.Length;
+
+            var castleMoves = _castler.Moves(b, Position);
+            castleMoves.CopyTo(moves, moveCount);
+            moveCount += castleMoves.Count();
+
+            Array.Resize(ref moves, moveCount);
+
             return moves;
         }
 

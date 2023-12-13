@@ -10,7 +10,7 @@ namespace EngineTest
         {
             var b = new Board("8/8/8/8/8/8/8/8 w - - 0 1");
             var king = new King("d3", Sides.White);
-            var targets = king.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            var targets = king.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(8, targets.Count());
 
             string[] expected = new string[] { "c2", "c3", "c4", "d2", "d4", "e2", "e3", "e4" };
@@ -20,7 +20,7 @@ namespace EngineTest
             }
 
             var topCornerKing = new King("a1", Sides.White);
-            targets = topCornerKing.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            targets = topCornerKing.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(3, targets.Count());
 
             expected = new string[] { "a2", "b1", "b2" };
@@ -30,7 +30,7 @@ namespace EngineTest
             }
 
             var bottomCornerKing = new King("h8", Sides.White);
-            targets = bottomCornerKing.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            targets = bottomCornerKing.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(3, targets.Count());
 
             expected = new string[] { "h7", "g7", "g8" };

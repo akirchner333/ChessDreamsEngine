@@ -13,10 +13,10 @@ namespace EngineTest.Rules
             var castle = new Castling(board);
             Assert.AreEqual(0b1111, castle.CastleRights);
             var king = board.FindPiece(BitUtil.AlgebraicToBit("e1"));
-            Move castleMove = new CastleMove(BitUtil.AlgebraicToBit("e1"), BitUtil.AlgebraicToBit("c1"), true)
+            Move castleMove = new Move(BitUtil.AlgebraicToBit("e1"), BitUtil.AlgebraicToBit("c1"), true)
             {
-                RookStart = BitUtil.AlgebraicToBit("a1"),
-                RookEnd = BitUtil.AlgebraicToBit("d1")
+                CastleStart = BitUtil.AlgebraicToBit("a1"),
+                CastleEnd = BitUtil.AlgebraicToBit("d1")
             };
             castleMove = castle.ApplyMove(castleMove, king!);
             Assert.AreEqual(0b1100, castle.CastleRights);

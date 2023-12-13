@@ -10,13 +10,13 @@ namespace EngineTest
         {
             Board b = new Board();
             Pawn whitePawn = new Pawn("a2", Sides.White);
-            var targets = whitePawn.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            var targets = whitePawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(2, targets.Count());
             Assert.IsTrue(targets.Contains("a3"));
             Assert.IsTrue(targets.Contains("a4"));
 
             Pawn blackPawn = new Pawn("a7", Sides.Black);
-            targets = blackPawn.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            targets = blackPawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(2, targets.Count());
             Assert.IsTrue(targets.Contains("a6"));
             Assert.IsTrue(targets.Contains("a5"));
@@ -27,12 +27,12 @@ namespace EngineTest
         {
             Board b = new Board();
             Pawn whitePawn = new Pawn("a4", Sides.White);
-            var targets = whitePawn.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            var targets = whitePawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(1, targets.Count());
             Assert.IsTrue(targets.Contains("a5"), $"Expected to contain a5 actually continas {targets.First()}");
 
             Pawn blackPawn = new Pawn("a5", Sides.Black);
-            targets = blackPawn.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            targets = blackPawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(1, targets.Count());
             Assert.IsTrue(targets.Contains("a4"), $"Expected to contain a4 actually contains {targets.First()}");
         }
@@ -43,12 +43,12 @@ namespace EngineTest
             Board b = new Board();
             b.AddPiece(0, 2, PieceTypes.PAWN, Sides.Black);
             Pawn whitePawn = new Pawn("a2", Sides.White);
-            var targets = whitePawn.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            var targets = whitePawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(0, targets.Count());
 
             Pawn blackPawn = new Pawn("a7", Sides.Black);
             b.AddPiece(0, 5, PieceTypes.PAWN, Sides.Black);
-            targets = blackPawn.Moves(b).Where(m => m != null).Select(m => m.EndAlgebraic());
+            targets = blackPawn.Moves(b).Select(m => m.EndAlgebraic());
             Assert.AreEqual(0, targets.Count());
         }
 
@@ -63,7 +63,7 @@ namespace EngineTest
             Assert.IsTrue(targets.Contains("b3"));
             Assert.IsTrue(targets.Contains("d3"));
             var moves = whitePawn.Moves(b);
-            Assert.IsTrue(moves.Where(m => m != null).All(m => m.Capture));
+            Assert.IsTrue(moves.All(m => m.Capture));
 
             Pawn leftPawn = new Pawn("a2", Sides.White);
             targets = EndPoints(leftPawn, b);
@@ -92,19 +92,19 @@ namespace EngineTest
         {
             Board b = new Board();
             Pawn whitePawn = new Pawn("b7", Sides.White);
-            var moves = whitePawn.Moves(b).Where(m => m != null);
+            var moves = whitePawn.Moves(b);
             Assert.AreEqual(4, moves.Count());
-            Assert.IsTrue(moves.All(m => m is PromotionMove));
+            Assert.IsTrue(moves.All(m => m.Promoting()));
             Assert.IsTrue(moves.All(m => BitUtil.BitToAlgebraic(m.End) == "b8"));
-            Assert.IsTrue(moves.Any(m => ((PromotionMove)m).Promotion == PieceTypes.ROOK));
-            Assert.IsTrue(moves.Any(m => ((PromotionMove)m).Promotion == PieceTypes.QUEEN));
-            Assert.IsTrue(moves.Any(m => ((PromotionMove)m).Promotion == PieceTypes.BISHOP));
-            Assert.IsTrue(moves.Any(m => ((PromotionMove)m).Promotion == PieceTypes.KNIGHT));
+            Assert.IsTrue(moves.Any(m => m.Promotion == PieceTypes.ROOK));
+            Assert.IsTrue(moves.Any(m => m.Promotion == PieceTypes.QUEEN));
+            Assert.IsTrue(moves.Any(m => m.Promotion == PieceTypes.BISHOP));
+            Assert.IsTrue(moves.Any(m => m.Promotion == PieceTypes.KNIGHT));
 
             Pawn blackPawn = new Pawn("b2", Sides.Black);
-            moves = blackPawn.Moves(b).Where(m => m != null);
+            moves = blackPawn.Moves(b);
             Assert.AreEqual(4, moves.Count());
-            Assert.IsTrue(moves.All(m => m is PromotionMove));
+            Assert.IsTrue(moves.All(m => m.Promoting()));
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace EngineTest
             b.AddPiece("c8", PieceTypes.ROOK, Sides.Black);
 
             Pawn whitePawn = new Pawn("b7", Sides.White);
-            var moves = whitePawn.Moves(b).Where(m => m != null);
+            var moves = whitePawn.Moves(b);
             Assert.AreEqual(8, moves.Count());
             Assert.IsTrue(moves.All(m => m.Capture));
             Assert.IsTrue(moves.Any(m => m.End == BitUtil.AlgebraicToBit("a8")));
@@ -132,14 +132,11 @@ namespace EngineTest
             Assert.IsNotNull(blackPawn);
 
             var moves = blackPawn!.Moves(b);
-            Assert.IsTrue(moves.Any(m => m is PassantMove));
-            var passant = Array.Find(moves, m => m is PassantMove);
-            if (passant != null)
-            {
-                Assert.AreEqual(BitUtil.AlgebraicToBit("b4"), passant.Start);
-                Assert.AreEqual(BitUtil.AlgebraicToBit("a3"), passant.End);
-                Assert.AreEqual(BitUtil.AlgebraicToBit("a4"), passant.TargetSquare());
-            }
+            Assert.IsTrue(moves.Any(m => m.Passant()));
+            var passant = Array.Find(moves, m => m.Passant());
+            Assert.AreEqual(BitUtil.AlgebraicToBit("b4"), passant.Start);
+            Assert.AreEqual(BitUtil.AlgebraicToBit("a3"), passant.End);
+            Assert.AreEqual(BitUtil.AlgebraicToBit("a4"), passant.TargetSquare());
         }
     }
 }

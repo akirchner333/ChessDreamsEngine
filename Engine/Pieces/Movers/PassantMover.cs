@@ -22,7 +22,11 @@ namespace Engine.Pieces.Movers
             var moves = new Move[BitOperations.PopCount(mask)];
             BitUtil.SplitBitsNew(mask, (ulong bit, int i) =>
             {
-                moves[i] = new PassantMove(start, b.Passant.PassantSquare, Side, b.Passant.TargetSquare);
+                moves[i] = new Move(start, b.Passant.PassantSquare, Side)
+                {
+                    PassantTargetSquare = b.Passant.TargetSquare,
+                    Capture = true
+                };
             });
 
             return moves;

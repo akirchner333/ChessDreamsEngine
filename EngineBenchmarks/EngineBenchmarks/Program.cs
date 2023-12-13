@@ -11,10 +11,10 @@ namespace EngineTest
         private readonly Board NolotThree = new("r2qk2r/ppp1b1pp/2n1p3/3pP1n1/3P2b1/2PB1NN1/PP4PP/R1BQK2R w KQkq - 0 1");
         private readonly Move MoveOne = new(BitUtil.AlgebraicToBit("d1"), BitUtil.AlgebraicToBit("d4"), true) { Capture = true };
         private readonly Move MoveTwo = new(BitUtil.AlgebraicToBit("b3"), BitUtil.AlgebraicToBit("f7"), true) { Capture = true };
-        private readonly CastleMove MoveThree = new(BitUtil.AlgebraicToBit("e1"), BitUtil.AlgebraicToBit("g1"), true)
+        private readonly Move MoveThree = new(BitUtil.AlgebraicToBit("e1"), BitUtil.AlgebraicToBit("g1"), true)
         {
-            RookStart = BitUtil.AlgebraicToBit("h1"),
-            RookEnd = BitUtil.AlgebraicToBit("f1")
+            CastleStart = BitUtil.AlgebraicToBit("h1"),
+            CastleEnd = BitUtil.AlgebraicToBit("f1")
         };
 
         [GlobalSetup]

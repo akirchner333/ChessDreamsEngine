@@ -10,10 +10,10 @@
 
         public Move ApplyMove(Move move, int pieceIndex)
         {
-            if (move is PromotionMove promo)
+            if (move.Promoting())
             {
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
-                _board.Pieces[pieceIndex] = Board.NewPiece(promo.End, promo.Promotion, promo.Side);
+                _board.Pieces[pieceIndex] = Board.NewPiece(move.End, (PieceTypes)move.Promotion!, move.Side);
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
             }
 
@@ -22,7 +22,7 @@
 
         public void ReverseMove(Move move, int pieceIndex)
         {
-            if (move is PromotionMove)
+            if (move.Promoting())
             {
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
                 _board.Pieces[pieceIndex] = Board.NewPiece(move.Start, PieceTypes.PAWN, move.Side);

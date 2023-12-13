@@ -34,31 +34,31 @@ namespace Engine.Pieces.Movers
             if (Side)
             {
                 if (CastleLegal(Castles.WhiteKingside, board))
-                    list.Add(new CastleMove(Position, g1, Side)
+                    list.Add(new Move(Position, g1, Side)
                     {
-                        RookStart = BitUtil.AlgebraicToBit("h1"),
-                        RookEnd = BitUtil.AlgebraicToBit("f1")
+                        CastleStart = BitUtil.AlgebraicToBit("h1"),
+                        CastleEnd = BitUtil.AlgebraicToBit("f1")
                     });
                 if (CastleLegal(Castles.WhiteQueenside, board))
-                    list.Add(new CastleMove(Position, c1, Side)
+                    list.Add(new Move(Position, c1, Side)
                     {
-                        RookStart = BitUtil.AlgebraicToBit("a1"),
-                        RookEnd = BitUtil.AlgebraicToBit("d1")
+                        CastleStart = BitUtil.AlgebraicToBit("a1"),
+                        CastleEnd = BitUtil.AlgebraicToBit("d1")
                     });
             }
             else
             {
                 if (CastleLegal(Castles.BlackKingside, board))
-                    list.Add(new CastleMove(Position, g8, Side)
+                    list.Add(new Move(Position, g8, Side)
                     {
-                        RookStart = BitUtil.AlgebraicToBit("h8"),
-                        RookEnd = BitUtil.AlgebraicToBit("f8")
+                        CastleStart = BitUtil.AlgebraicToBit("h8"),
+                        CastleEnd = BitUtil.AlgebraicToBit("f8")
                     });
                 if (CastleLegal(Castles.BlackQueenside, board))
-                    list.Add(new CastleMove(Position, c8, Side)
+                    list.Add(new Move(Position, c8, Side)
                     {
-                        RookStart = BitUtil.AlgebraicToBit("a8"),
-                        RookEnd = BitUtil.AlgebraicToBit("d8")
+                        CastleStart = BitUtil.AlgebraicToBit("a8"),
+                        CastleEnd = BitUtil.AlgebraicToBit("d8")
                     });
             }
             return list;

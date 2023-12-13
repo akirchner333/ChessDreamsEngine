@@ -321,7 +321,7 @@ namespace Engine
 
                     foreach (var move in piece.Moves(this))
                     {
-                        if (move != null && LegalMoves.LegalMove(move))
+                        if (LegalMoves.LegalMove(move))
                         {
                             moves[moveCount] = move;
                             moveCount++;
@@ -339,7 +339,7 @@ namespace Engine
 
                 if (DrawAvailable())
                 {
-                    moves[moveCount] = new DrawMove(Turn);
+                    moves[moveCount] = new Move(0, 0, Turn) { Draw = true };
                     moveCount++;
                 }
 
@@ -352,7 +352,7 @@ namespace Engine
 
         public Move ApplyMove(Move m)
         {
-            if (m is DrawMove)
+            if (m.Draw)
             {
                 State = GameState.DRAW;
                 return m;
@@ -385,7 +385,7 @@ namespace Engine
 
         public void ReverseMove(Move m)
         {
-            if (m is DrawMove)
+            if (m.Draw)
             {
                 State = GameState.PLAY;
                 return;
