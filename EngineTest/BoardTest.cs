@@ -170,7 +170,7 @@ namespace EngineTest
                 {
                     var fullMove = board.ApplyMove(move);
                     board.ReverseMove(fullMove);
-                    Assert.AreEqual(fen, board.Fen(), $"Expected: {fen}, Actual: {board.Fen()}, After {move.StartEnd()}");
+                    Assert.AreEqual(fen, board.Fen(), $"Expected: {fen}, Actual: {board.Fen()}, After {move.LongAlgebraic()}");
                     Assert.AreEqual(hash, board.Hash, $"Hash mismatch {move}");
                     Assert.AreEqual(all, board.AllPieces, $"All Pieces mismatch {move}");
                     Assert.AreEqual(white, board.WhitePieces, $"White pieces mismatch {move}");

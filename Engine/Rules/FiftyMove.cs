@@ -26,7 +26,7 @@
 
         public Move ApplyMove(Move m, int pieceIndex)
         {
-            if (m.Capture || _board.Pieces[pieceIndex].Type == PieceTypes.PAWN)
+            if (m.Capture() || _board.Pieces[pieceIndex].Type == PieceTypes.PAWN)
             {
                 _clockStack.Push(Clock);
                 Clock = 0;

@@ -7,10 +7,14 @@ namespace Engine.Pieces.Movers
         public bool Side { get; set; }
         public CastleMover() { }
 
+        public const ulong a1 = 1;
         public const ulong c1 = 4ul;
         public const ulong g1 = 64ul;
+        public const ulong h1 = 128ul;
+        public const ulong a8 = 72057594037927936;
         public const ulong c8 = 288230376151711744;
         public const ulong g8 = 4611686018427387904;
+        public const ulong h8 = 9223372036854775808;
 
         public const ulong whiteKingside = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_01100000;
         public const ulong whiteQueenside = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00001110;
@@ -34,32 +38,16 @@ namespace Engine.Pieces.Movers
             if (Side)
             {
                 if (CastleLegal(Castles.WhiteKingside, board))
-                    list.Add(new Move(Position, g1, Side)
-                    {
-                        CastleStart = BitUtil.AlgebraicToBit("h1"),
-                        CastleEnd = BitUtil.AlgebraicToBit("f1")
-                    });
+                    list.Add(Move.CastleMove(Position, g1, h1, Side));
                 if (CastleLegal(Castles.WhiteQueenside, board))
-                    list.Add(new Move(Position, c1, Side)
-                    {
-                        CastleStart = BitUtil.AlgebraicToBit("a1"),
-                        CastleEnd = BitUtil.AlgebraicToBit("d1")
-                    });
+                    list.Add(Move.CastleMove(Position, c1, a1, Side));
             }
             else
             {
                 if (CastleLegal(Castles.BlackKingside, board))
-                    list.Add(new Move(Position, g8, Side)
-                    {
-                        CastleStart = BitUtil.AlgebraicToBit("h8"),
-                        CastleEnd = BitUtil.AlgebraicToBit("f8")
-                    });
+                    list.Add(Move.CastleMove(Position, g8, h8, Side));
                 if (CastleLegal(Castles.BlackQueenside, board))
-                    list.Add(new Move(Position, c8, Side)
-                    {
-                        CastleStart = BitUtil.AlgebraicToBit("a8"),
-                        CastleEnd = BitUtil.AlgebraicToBit("d8")
-                    });
+                    list.Add(Move.CastleMove(Position, c8, a8, Side));
             }
             return list;
         }

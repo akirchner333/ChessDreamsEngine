@@ -13,17 +13,13 @@ namespace EngineTest.Rules
             var castle = new Castling(board);
             Assert.AreEqual(0b1111, castle.CastleRights);
             var king = board.FindPiece(BitUtil.AlgebraicToBit("e1"));
-            Move castleMove = new Move(BitUtil.AlgebraicToBit("e1"), BitUtil.AlgebraicToBit("c1"), true)
-            {
-                CastleStart = BitUtil.AlgebraicToBit("a1"),
-                CastleEnd = BitUtil.AlgebraicToBit("d1")
-            };
+            Move castleMove = Move.CastleMove(BitUtil.AlgebraicToBit("e1"), BitUtil.AlgebraicToBit("c1"), BitUtil.AlgebraicToBit("a1"), true);
             castleMove = castle.ApplyMove(castleMove, king!);
             Assert.AreEqual(0b1100, castle.CastleRights);
             castle.ReverseMove(castleMove);
             Assert.AreEqual(0b1111, castle.CastleRights);
 
-            Move captureMove = Move.FromAlgebraic("g6", "h8", true, true);
+            Move captureMove = Move.FromAlgebraic("g6", "h8", true, MoveType.Capture);
             board.Capture.AddCapture(Array.FindIndex(board.Pieces, p => p.Position == BitUtil.AlgebraicToBit("h8")));
             var knight = board.FindPiece(BitUtil.AlgebraicToBit("g6"));
             captureMove = castle.ApplyMove(captureMove, knight!);

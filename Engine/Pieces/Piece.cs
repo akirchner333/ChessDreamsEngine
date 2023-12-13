@@ -89,18 +89,24 @@ namespace Engine
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MOVE APPLICATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        public virtual Move ApplyMove(Move m)
+        public void Move(ulong destination)
         {
-            Position = m.End;
-            Index = BitUtil.BitToIndex(m.End);
-            return m;
+            Position = destination;
+            Index = BitUtil.BitToIndex(destination);
         }
+        
+        //public virtual Move ApplyMove(Move m)
+        //{
+        //    Position = m.End;
+        //    Index = BitUtil.BitToIndex(m.End);
+        //    return m;
+        //}
 
-        public virtual Move ReverseMove(Move m)
-        {
-            Position = m.Start;
-            Index = BitUtil.BitToIndex(m.Start);
-            return m;
-        }
+        //public virtual Move ReverseMove(Move m)
+        //{
+        //    Position = m.Start;
+        //    Index = BitUtil.BitToIndex(m.Start);
+        //    return m;
+        //}
     }
 }

@@ -13,7 +13,7 @@
             if (move.Promoting())
             {
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
-                _board.Pieces[pieceIndex] = Board.NewPiece(move.End, (PieceTypes)move.Promotion!, move.Side);
+                _board.Pieces[pieceIndex] = Board.NewPiece(move.End, move.Promotion, move.Side);
                 _board.Move.TogglePiece(_board.Pieces[pieceIndex]);
             }
 

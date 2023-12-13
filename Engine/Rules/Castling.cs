@@ -14,11 +14,18 @@
         private FastStack<int> _castleStack = new FastStack<int>(16);
         private Board _board;
         private static ulong[] _values;
+        private static ulong[] _rookMoves = new ulong[64];
 
         static Castling()
         {
             _values = Rand.RandULongArray(16);
             _values[0] = 0;
+
+            for(var i = 0; i < 64; i++)
+            {
+                var x = BitUtil.IndexToX(i);
+                _rookMoves[i] = BitUtil.CoordToBit(Math.Clamp(x, 3, 5), BitUtil.IndexToY(i));
+            }
         }
 
         public Castling(Board board)
@@ -69,20 +76,25 @@
             return (CastleRights & (int)c) != 0;
         }
 
+        public ulong RookDestination(Move move)
+        {
+            return _rookMoves[BitUtil.BitToIndex(move.OtherPosition)];
+        }
+
         public Move ApplyMove(Move m, Piece p)
         {
             if (m.Castling())
             {
-                var RookIndex = _board.FindPieceIndex(m.CastleStart);
+                var RookIndex = _board.FindPieceIndex(m.OtherPosition);
                 if (RookIndex != -1)
                 {
                     var piece = _board.Pieces[RookIndex];
-                    m = _board.Move.MovePiece(piece, m.CastleStart, m.CastleEnd, m);
+                    m = _board.Move.MovePiece(piece, m.OtherPosition, RookDestination(m), m);
                 }
             }
 
             int effectedCastles = p.CastleRights;
-            if (m.Capture)
+            if (m.Capture())
             {
                 var target = _board.Capture.LastCapture();
                 effectedCastles |= target.CastleRights;
@@ -104,8 +116,8 @@
         {
             if (m.Castling())
             {
-                var RookIndex = _board.FindPieceIndex(m.CastleEnd);
-                _board.Move.MovePiece(_board.Pieces[RookIndex], m.CastleEnd, m.CastleStart, m, true);
+                var RookIndex = _board.FindPieceIndex(RookDestination(m));
+                _board.Move.MovePiece(_board.Pieces[RookIndex], RookDestination(m), m.OtherPosition, m);
             }
 
             if(m.CastleImpact)

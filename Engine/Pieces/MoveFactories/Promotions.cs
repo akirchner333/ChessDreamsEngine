@@ -16,8 +16,8 @@ namespace Engine.Pieces.MoveFactories
             BitUtil.SplitBitsNew(moveMask, (ulong bit, int i) =>
             {
                 var capture = BitUtil.Overlap(bit, b.AllPieces);
-                var baseMove = new Move(start, bit, Side) { Capture = capture };
-                moves[i * 4] = baseMove with { Promotion = PieceTypes.ROOK };
+                var baseMove = Move.PromotionMove(start, bit, Side, PieceTypes.ROOK, capture);
+                moves[i * 4] = baseMove;
                 moves[i * 4 + 1] = baseMove with { Promotion = PieceTypes.KNIGHT };
                 moves[i * 4 + 2] = baseMove with { Promotion = PieceTypes.BISHOP };
                 moves[i * 4 + 3] = baseMove with { Promotion = PieceTypes.QUEEN };

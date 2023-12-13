@@ -39,13 +39,13 @@
 
         public void ReverseMove(Move move, int pieceIndex)
         {
-            MovePiece(_board.Pieces[pieceIndex], move.End, move.Start, move, true);
+            MovePiece(_board.Pieces[pieceIndex], move.End, move.Start, move);
         }
 
-        public Move MovePiece(Piece p, ulong start, ulong end, Move m, bool reverse = false)
+        public Move MovePiece(Piece p, ulong start, ulong end, Move m)
         {
             TogglePiece(p);
-            m = reverse ? p.ReverseMove(m) : p.ApplyMove(m);
+            p.Move(end);
             TogglePiece(p);
 
             if (p.Side == Sides.Black)

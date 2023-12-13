@@ -4,14 +4,9 @@ namespace EngineTest
 {
     public class PieceTest
     {
-        public static IEnumerable<string> EndPoints(Piece p, Board b)
+        public static IEnumerable<string> Algebraic(Piece p, Board b)
         {
-            return p.Moves(b).Select(m => m.EndAlgebraic());
-        }
-
-        public static IEnumerable<string> StartEnd(Piece p, Board b)
-        {
-            return p.Moves(b).Select(m => m.StartEnd());
+            return p.Moves(b).Select(m => m.LongAlgebraic());
         }
     }
 }

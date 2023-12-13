@@ -11,24 +11,24 @@ namespace EngineTest
             Queen topLeft = new Queen("a1", true);
             Board b = new Board();
 
-            var moves = EndPoints(topLeft, b);
+            var moves = Algebraic(topLeft, b);
             Assert.AreEqual(21, moves.Count());
             foreach (var square in new string[] {
-                "a2", "a3", "a4", "a5", "a6", "a7", "a8",
-                "b1", "c1", "d1", "e1", "f1", "g1", "h1",
-                "b2", "c3", "d4", "e5", "f6", "g7", "h8"
+                "a1a2", "a1a3", "a1a4", "a1a5", "a1a6", "a1a7", "a1a8",
+                "a1b1", "a1c1", "a1d1", "a1e1", "a1f1", "a1g1", "a1h1",
+                "a1b2", "a1c3", "a1d4", "a1e5", "a1f6", "a1g7", "a1h8"
             })
             {
                 Assert.IsTrue(moves.Any(m => m == square));
             }
 
             Queen bottomRight = new Queen("h8", true);
-            moves = EndPoints(bottomRight, b);
+            moves = Algebraic(bottomRight, b);
             Assert.AreEqual(21, moves.Count());
             foreach (var square in new string[] {
-                "h1", "h2", "h3", "h4", "h5", "h6", "h7",
-                "a8", "b8", "c8", "d8", "e8", "f8", "g8",
-                "a1", "b2", "c3", "d4", "e5", "f6", "g7"
+                "h8h1", "h8h2", "h8h3", "h8h4", "h8h5", "h8h6", "h8h7",
+                "h8a8", "h8b8", "h8c8", "h8d8", "h8e8", "h8f8", "h8g8",
+                "h8a1", "h8b2", "h8c3", "h8d4", "h8e5", "h8f6", "h8g7"
             })
             {
                 Assert.IsTrue(moves.Any(m => m == square));

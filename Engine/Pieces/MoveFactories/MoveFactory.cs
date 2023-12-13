@@ -12,7 +12,7 @@ namespace Engine.Pieces.MoveFactories
             var moves = new Move[BitOperations.PopCount(moveMask)];
             BitUtil.SplitBitsNew(moveMask, (ulong bit, int i) =>
             {
-                moves[i] = new Move(start, bit, Side) { Capture = BitUtil.Overlap(bit, b.AllPieces) };
+                moves[i] = new Move(start, bit, Side, BitUtil.Overlap(bit, b.AllPieces));
             });
 
             return moves;

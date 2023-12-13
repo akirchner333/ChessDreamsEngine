@@ -27,7 +27,7 @@ namespace EngineTest.Rules
         public void CaptureResetTest()
         {
             var board = new Board("rnbqkb1r/pppppppp/8/8/8/6n1/PPPPPPPP/RNBQKBNR w KQkq - 99 49");
-            board.ApplyMove(new Move(BitUtil.AlgebraicToBit("f2"), BitUtil.AlgebraicToBit("g3"), true) { Capture = true });
+            board.ApplyMove(new Move(BitUtil.AlgebraicToBit("f2"), BitUtil.AlgebraicToBit("g3"), true, true));
             Assert.AreEqual(0, board.Clock.Clock);
             Assert.IsFalse(board.DrawAvailable());
         }

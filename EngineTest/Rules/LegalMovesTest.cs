@@ -26,13 +26,13 @@ namespace EngineTest.Rules
             Board mandatoryCapture = new("4k3/4Q3/8/8/8/8/8/K7 b - - 0 1");
             var moves = mandatoryCapture.MoveArray();
             Assert.AreEqual(1, moves.Length);
-            Assert.AreEqual("e8e7", moves[0].StartEnd());
+            Assert.AreEqual("e8e7", moves[0].LongAlgebraic());
 
             // The black queen has to capture the white queen
             Board mandatoryCapture2 = new("4k3/4Q2R/8/8/7q/8/8/K7 b - - 0 1");
             moves = mandatoryCapture2.MoveArray();
             Assert.AreEqual(1, moves.Length);
-            Assert.AreEqual("h4e7", moves[0].StartEnd());
+            Assert.AreEqual("h4e7", moves[0].LongAlgebraic());
         }
 
         [TestMethod]

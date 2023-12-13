@@ -35,23 +35,23 @@ namespace EngineTest
         public void TestMoves()
         {
             var b = new Board();
-            var bishop = new Bishop(3, 3, Sides.White);
+            var bishop = new Bishop(BitUtil.AlgebraicToBit("d4"), Sides.White);
             var moves = bishop.Moves(b);
-            var targets = moves.Select(m => m.EndAlgebraic());
+            var targets = moves.Select(m => m.LongAlgebraic());
             Assert.AreEqual(13, targets.Count());
-            Assert.IsTrue(targets.Contains("a1"));
-            Assert.IsTrue(targets.Contains("a7"));
-            Assert.IsTrue(targets.Contains("b2"));
-            Assert.IsTrue(targets.Contains("b6"));
-            Assert.IsTrue(targets.Contains("c3"));
-            Assert.IsTrue(targets.Contains("c5"));
-            Assert.IsTrue(targets.Contains("e3"));
-            Assert.IsTrue(targets.Contains("e5"));
-            Assert.IsTrue(targets.Contains("f2"));
-            Assert.IsTrue(targets.Contains("f6"));
-            Assert.IsTrue(targets.Contains("g1"));
-            Assert.IsTrue(targets.Contains("g7"));
-            Assert.IsTrue(targets.Contains("h8"));
+            Assert.IsTrue(targets.Contains("d4a1"));
+            Assert.IsTrue(targets.Contains("d4a7"));
+            Assert.IsTrue(targets.Contains("d4b2"));
+            Assert.IsTrue(targets.Contains("d4b6"));
+            Assert.IsTrue(targets.Contains("d4c3"));
+            Assert.IsTrue(targets.Contains("d4c5"));
+            Assert.IsTrue(targets.Contains("d4e3"));
+            Assert.IsTrue(targets.Contains("d4e5"));
+            Assert.IsTrue(targets.Contains("d4f2"));
+            Assert.IsTrue(targets.Contains("d4f6"));
+            Assert.IsTrue(targets.Contains("d4g1"));
+            Assert.IsTrue(targets.Contains("d4g7"));
+            Assert.IsTrue(targets.Contains("d4h8"));
         }
     }
 }

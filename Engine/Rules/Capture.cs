@@ -13,7 +13,7 @@
 
         public Move ApplyMove(Move move, int pieceIndex)
         {
-            if (!move.Capture)
+            if (!move.Capture())
                 return move;
 
             var targetIndex = _board.FindPieceIndex(move.TargetSquare());
@@ -34,7 +34,7 @@
 
         public void ReverseMove(Move move, int pieceIndex)
         {
-            if (!move.Capture)
+            if (!move.Capture())
                 return;
 
             var piece = _board.Pieces[_captures.Pop()];

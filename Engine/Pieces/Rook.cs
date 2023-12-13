@@ -42,29 +42,5 @@ namespace Engine
         {
             return _mover.PathBetween(Index, i, b);
         }
-
-        public override Move ApplyMove(Move m)
-        {
-            if (m.Castling())
-            {
-                Position = m.CastleEnd;
-                Index = BitUtil.BitToIndex(m.CastleEnd);
-                return m;
-            }
-
-            return base.ApplyMove(m);
-        }
-
-        public override Move ReverseMove(Move m)
-        {
-            if (m.Castling())
-            {
-                Position = m.CastleStart;
-                Index = BitUtil.BitToIndex(m.CastleStart);
-                return m;
-            }
-
-            return base.ReverseMove(m);
-        }
     }
 }

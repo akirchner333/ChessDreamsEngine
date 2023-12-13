@@ -39,7 +39,7 @@ namespace Engine.Rules
                 var attacker = Attackers[0];
 
                 // 2. Capture the attacking piece
-                if (m.Capture && m.TargetSquare() == attacker.Position)
+                if (m.Capture() && m.TargetSquare() == attacker.Position)
                     return true;
 
                 // 3. Move into the path of the attacker

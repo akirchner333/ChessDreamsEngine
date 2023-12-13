@@ -5,7 +5,7 @@
         bool EqualTo(T move);
         bool Quiet();
     }
-    enum MoveType
+    public enum MoveType
     {
         Quiet,
         Capture,
@@ -19,12 +19,10 @@
     {
         public ulong Start { get; private set; }
         public ulong End { get; private set; }
-        public ulong CastleStart { get; set; } = 0;
-        public ulong CastleEnd { get; set; } = 0;
-        public ulong PassantTargetSquare { get; set; } = 0;
-        public PieceTypes? Promotion { get; set; } = null;
+        public ulong OtherPosition { get; set; } = 0;
+        public MoveType Type { get; private set; } = MoveType.Quiet;
+        public PieceTypes Promotion { get; set; } = PieceTypes.PAWN;
         public bool Side { get; set; }
-        public bool Capture { get; set; } = false;
 
         //These are things we reference to help with reversing. They're set as the move is applied
         public bool CastleImpact { get; set; } = false;
@@ -39,30 +37,51 @@
             Side = side;
         }
 
-        public static Move FromAlgebraic(string start, string end, bool side, bool capture = false)
+        public Move(ulong start, ulong end, bool side, bool capture)
         {
-            return new Move(BitUtil.AlgebraicToBit(start), BitUtil.AlgebraicToBit(end), side) { Capture = capture };
+            Start = start;
+            End = end;
+            Side = side;
+            Type = capture ? MoveType.Capture : MoveType.Quiet;
+        }
+
+        public static Move FromAlgebraic(string start, string end, bool side, MoveType type)
+        {
+            return new Move(BitUtil.AlgebraicToBit(start), BitUtil.AlgebraicToBit(end), side) { Type = type };
+        }
+
+        public static Move CastleMove(ulong start, ulong end, ulong rookStart, bool side)
+        {
+            return new Move(start, end, side)
+            {
+                Type = MoveType.Castle,
+                OtherPosition = rookStart
+            };
+        }
+
+        public static Move PromotionMove(ulong start, ulong end, bool side, PieceTypes promotion, bool capture)
+        {
+            return new Move(start, end, side)
+            {
+                Type = capture ? MoveType.CapturePromotion : MoveType.Promotion,
+                Promotion = promotion
+            };
+        }
+
+        public static Move PassantMove(ulong start, ulong end, ulong target, bool side)
+        {
+            return new Move(start, end, side)
+            {
+                Type = MoveType.Passant,
+                OtherPosition = target
+            };
         }
 
         public ulong TargetSquare()
         {
-            if(PassantTargetSquare != 0)
-                return PassantTargetSquare;
+            if(Type == MoveType.Passant)
+                return OtherPosition;
             return End;
-        }
-        public string EndAlgebraic()
-        {
-            return BitUtil.BitToAlgebraic(End);
-        }
-
-        public string StartAlgebraic()
-        {
-            return BitUtil.BitToAlgebraic(Start);
-        }
-
-        public string StartEnd()
-        {
-            return StartAlgebraic() + EndAlgebraic();
         }
 
         public string LongAlgebraic()
@@ -71,7 +90,7 @@
             {
                 return "½–½";
             }
-            return StartEnd() + PromotionChar();
+            return $"{BitUtil.BitToAlgebraic(Start)}{BitUtil.BitToAlgebraic(End)}{PromotionChar()}";
         }
 
         public string PromotionChar()
@@ -88,7 +107,7 @@
 
         public override string ToString()
         {
-            if (Capture)
+            if (Capture())
             {
                 return $"Capturing {(Side ? "White" : "Black")} move " + LongAlgebraic();
             }
@@ -105,25 +124,29 @@
             return Side == m.Side && Start == m.Start && End == m.End && TargetSquare() == m.TargetSquare();
         }
 
-        public bool Quiet()
-        {
-            //Not strictly true - we should also be checking if this move puts the opponent into check. 
-            return !Capture;
-        }
-
         public bool Castling()
         {
-            return CastleStart != 0 && CastleEnd != 0;
+            return Type == MoveType.Castle;
         }
 
         public bool Promoting()
         {
-            return Promotion != null;
+            return Type == MoveType.Promotion || Type == MoveType.CapturePromotion;
         }
 
         public bool Passant()
         {
-            return PassantTargetSquare != 0;
+            return Type == MoveType.Passant;
+        }
+
+        public bool Capture()
+        {
+            return Type == MoveType.Capture || Type == MoveType.Passant || Type == MoveType.CapturePromotion;
+        }
+
+        public bool Quiet()
+        {
+            return Type == MoveType.Quiet;
         }
     }
 }
