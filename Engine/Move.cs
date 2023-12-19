@@ -84,6 +84,7 @@
             return End;
         }
 
+
         public string LongAlgebraic()
         {
             if (Draw)
@@ -146,7 +147,7 @@
 
         public bool Quiet()
         {
-            return Type == MoveType.Quiet;
+            return Type == MoveType.Quiet || Type == MoveType.Castle;
         }
     }
 }

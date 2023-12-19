@@ -5,14 +5,25 @@
         private Board _board;
         private FastStack<ulong> _positions = new FastStack<ulong>(160);
         public bool DrawAvailable { get; private set; } = false;
+        // Make repeat count available so I can punish naughty AIs for returning to the same position
+        public int RepeatCount = 0;
         public Repetition(Board board)
         {
             _board = board;
+            _positions.Push(_board.Hash);
         }
 
         public Move ApplyMove(Move move, int pieceIndex)
         {
-            _positions.Push(_board.Hash);
+            //try
+            //{
+                _positions.Push(_board.Hash);
+            //}
+            //catch
+            //{
+            //    throw new Exception($"Repetition push issue, {_positions.Count()}, {_board.Clock.Clock}");
+            //}
+            
             CheckDraw();
             return move;
         }
@@ -25,12 +36,12 @@
 
         public void CheckDraw()
         {
-            var repetitions = _positions.CountValues(_board.Hash);
-            if (repetitions >= 5)
+            RepeatCount = _positions.CountValues(_board.Hash);
+            if (RepeatCount >= 5)
             {
                 _board.State = GameState.DRAW;
             }
-            else if (repetitions >= 3)
+            else if (RepeatCount >= 3)
             {
                 DrawAvailable = true;
             }
@@ -46,8 +57,15 @@
         {
             if (_board.Clock.Clock == 0)
             {
+                var currentPosition = _positions.Pop();
                 _positions.Clear();
+                _positions.Push(currentPosition);
             }
+        }
+
+        public int StoredPositions()
+        {
+            return _positions.Count();
         }
     }
 }

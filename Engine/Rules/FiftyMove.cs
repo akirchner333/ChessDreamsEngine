@@ -3,7 +3,7 @@
     public class FiftyMove : IRule
     {
         public int Clock { get; set; }
-        private FastStack<int> _clockStack = new FastStack<int>(75);
+        private FastStack<int> _clockStack = new FastStack<int>(128);
         public bool DrawAvailable { get; private set; } = false;
         private Board _board;
 

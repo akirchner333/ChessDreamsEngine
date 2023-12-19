@@ -10,6 +10,7 @@ namespace Engine
         bool TerminalNode();
         ulong Hash { get; }
         bool Turn { get; }
+        int MAXMOVES { get; }
     }
     public enum GameState
     {
@@ -39,6 +40,8 @@ namespace Engine
         //TODO
         // - Build from FEN
         // - Print FEN
+
+        public int MAXMOVES => 218;
 
         public readonly static ulong[] Rows = new ulong[8]
         {
@@ -361,7 +364,6 @@ namespace Engine
             var pieceIndex = FindPieceIndex(m.Start);
             if (pieceIndex == -1)
                 return m;
-
             Piece p = Pieces[pieceIndex];
 
             m = Capture.ApplyMove(m, pieceIndex);
@@ -370,7 +372,6 @@ namespace Engine
             m = Castles.ApplyMove(m, p);
             m = Clock.ApplyMove(m, pieceIndex);
             m = Promote.ApplyMove(m, pieceIndex);
-
 
             if (Turn == Sides.Black)
                 TurnNumber++;

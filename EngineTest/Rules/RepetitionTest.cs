@@ -50,5 +50,15 @@ namespace EngineTest.Rules
 
             Assert.AreEqual(GameState.DRAW, board.State);
         }
+
+        [TestMethod]
+        public void ResetTest()
+        {
+            var board = Board.StartPosition();
+            board.ApplyMoveReal(Move.FromAlgebraic("b1", "c3", true, MoveType.Quiet));
+            Assert.AreEqual(2, board.Repetition.StoredPositions());
+            board.ApplyMoveReal(Move.FromAlgebraic("h7", "h5", false, MoveType.Quiet));
+            Assert.AreEqual(1, board.Repetition.StoredPositions());
+        }
     }
 }
