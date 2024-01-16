@@ -35,11 +35,17 @@ namespace Engine
             return _leaper.RawMask(Index);
         }
 
-        public override Move[] Moves(Board b)
+        public override Move[] Moves(Board b, bool captureOnly = false)
         {
+            if (captureOnly)
+            {
+                var mask = MoveMask(b) & enemyPieces(b);
+                return _convert.ConvertMask(b, Position, mask);
+            }
+
             var moves = new Move[8];
             var moveCount = 0;
-
+            
             var baseMoves = base.Moves(b);
             baseMoves.CopyTo(moves, 0);
             moveCount += baseMoves.Length;

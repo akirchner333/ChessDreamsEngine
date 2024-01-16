@@ -1,10 +1,11 @@
 ﻿using Engine.Rules;
+using System.ComponentModel;
 
 namespace Engine
 {
     public interface IGameEngine<M> where M : IMove<M>
     {
-        bool Moves(ref Span<M> moves);
+        bool Moves(ref Span<M> moves, bool captureOnly = false);
         M ApplyMove(M move);
         void ReverseMove(M move);
         bool TerminalNode();
@@ -298,15 +299,20 @@ namespace Engine
         // ----------------------------------------------------------------------- MOVE GENERATION --------------------------------------------
 
         //For when you can't be bothered to alloc your own
-        public Move[] MoveArray()
+        public Move[] MoveArray(bool captureOnly = false)
         {
             Span<Move> moves = new Move[218];
-            Moves(ref moves);
+            Moves(ref moves, captureOnly);
             return moves.ToArray();
         }
 
+        public bool Moves(ref Span<Move> moves, bool captureOnly = false)
+        {
+            return SideMoves(ref moves, Turn, captureOnly);
+        }
+
         // Returns false if the game is over and you can't actually have moves
-        public bool Moves(ref Span<Move> moves)
+        public bool SideMoves(ref Span<Move> moves, bool side, bool captureOnly = false)
         {
             if (State != GameState.PLAY)
             {
@@ -315,14 +321,14 @@ namespace Engine
             else
             {
                 var moveCount = 0;
-                var king = GetKing(Turn);
+                var king = GetKing(side);
 
                 foreach (var piece in Pieces)
                 {
-                    if (!piece.Active(Turn))
+                    if (!piece.Active(side))
                         continue;
 
-                    foreach (var move in piece.Moves(this))
+                    foreach (var move in piece.Moves(this, captureOnly))
                     {
                         if (LegalMoves.LegalMove(move))
                         {
@@ -342,7 +348,7 @@ namespace Engine
 
                 if (DrawAvailable())
                 {
-                    moves[moveCount] = new Move(0, 0, Turn) { Draw = true };
+                    moves[moveCount] = new Move(0, 0, side) { Draw = true };
                     moveCount++;
                 }
 

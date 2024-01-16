@@ -38,5 +38,17 @@ namespace EngineTest
             Assert.IsTrue(targets.Any(m => m == "h1g3"));
         }
 
+        [TestMethod]
+        public void CaptureOnly()
+        {
+            var board = new Board("K7/8/3r1r2/8/4N3/6r1/3B4/7k w - - 0 1");
+            var knight = board.FindPiece(BitUtil.AlgebraicToBit("e4"));
+            var moves = knight.Moves(board, true);
+            Assert.AreEqual(moves.Length, 3);
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e4d6"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e4f6"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e4g3"));
+        }
+
     }
 }

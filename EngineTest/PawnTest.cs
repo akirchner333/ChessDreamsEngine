@@ -138,5 +138,20 @@ namespace EngineTest
             Assert.AreEqual(BitUtil.AlgebraicToBit("a3"), passant.End);
             Assert.AreEqual(BitUtil.AlgebraicToBit("a4"), passant.TargetSquare());
         }
+
+        [TestMethod]
+        public void CaptureOnlyTest()
+        {
+            var board = new Board("k5n1/5P2/8/1pP5/8/4r3/5P2/7K w - b6 0 1");
+            var moves = board.MoveArray(true);
+
+            Assert.AreEqual(6, moves.Length);
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "f2e3"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "c5b6"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "f7g8r"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "f7g8b"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "f7g8n"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "f7g8q"));
+        }
     }
 }

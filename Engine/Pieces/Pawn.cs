@@ -59,12 +59,12 @@ namespace Engine
         // 12 spots for promotions
         // 1 spot for en passant
         // But they can kind of overlap, right?
-        public override Move[] Moves(Board board)
+        public override Move[] Moves(Board board, bool captureOnly = false)
         {
             var moves = new Move[12];
             var moveCount = 0;
 
-            var mask = MoveMask(board);
+            var mask = captureOnly ? _attackLeaper.MoveMask(Index, board) : MoveMask(board);
             var baseMoves = _convert.ConvertMask(board, Position, mask);
             baseMoves.CopyTo(moves, 0);
             moveCount += baseMoves.Length;

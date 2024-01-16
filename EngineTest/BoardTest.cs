@@ -249,5 +249,25 @@ namespace EngineTest
             Assert.IsFalse(getMoves);
             Assert.AreEqual(GameState.DRAW, whiteBoard.State);
         }
+
+        [TestMethod]
+        public void SideMovesTest()
+        {
+            var boardWhite = new Board("k1b2r2/6p1/1p3p1R/2P1p1B1/q3P3/2nP4/NNP5/2Q4K w - - 0 1");
+            var boardBlack = new Board("k1b2r2/6p1/1p3p1R/2P1p1B1/q3P3/2nP4/NNP5/2Q4K b - - 0 1");
+
+            Span<Move> ww = new Move[218];
+            boardWhite.SideMoves(ref ww, true);
+            Span<Move> bw = new Move[218];
+            boardBlack.SideMoves(ref bw, true);
+
+            Span<Move> wb = new Move[218];
+            boardWhite.SideMoves(ref wb, false);
+            Span<Move> bb = new Move[218];
+            boardBlack.SideMoves(ref bb, false);
+
+            Assert.AreEqual(wb.Length, bb.Length);
+            Assert.AreEqual(bw.Length, ww.Length);
+        }
     }
 }

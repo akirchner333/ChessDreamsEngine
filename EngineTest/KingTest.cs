@@ -84,10 +84,9 @@ namespace EngineTest
         {
             // King shouldn't generate moves that put it in check
             var corridor = new Board("k2r1r2/8/8/8/4K3/8/8/8 w - - 0 1");
-            Console.WriteLine(corridor.LegalMoves.WhiteAttacks);
             var king = corridor.GetKing(true);
             var moves = Algebraic(king, corridor);
-            //Assert.AreEqual(2, moves.Count());
+            Assert.AreEqual(2, moves.Count());
             Assert.IsFalse(moves.Contains("e4d5"));
             Assert.IsFalse(moves.Contains("e4d4"));
             Assert.IsFalse(moves.Contains("e4d3"));
@@ -98,6 +97,19 @@ namespace EngineTest
 
             Assert.IsTrue(moves.Contains("e4e5"));
             Assert.IsTrue(moves.Contains("e4e3"));
+        }
+
+        [TestMethod]
+        public void CaptureOnlyTest()
+        {
+            var board = new Board("k7/8/8/8/6p1/r4pK1/5P1p/8 w - - 0 1");
+            var king = board.GetKing(true);
+            var moves = king.Moves(board, true);
+            foreach (var move in moves)
+                Console.WriteLine(move);
+            Assert.AreEqual(2, moves.Count());
+            Assert.IsTrue(moves.Any(move => move.LongAlgebraic() == "g3h2"));
+            Assert.IsTrue(moves.Any(move => move.LongAlgebraic() == "g3g4"));
         }
     }
 }

@@ -82,9 +82,9 @@ namespace Engine
 
         // In many cases just breaking up the mask (am I using that term correctly?) will be enough
         // But for stuff like en passant or castling, we'll need to extend this method to add in some extra stuff
-        public virtual Move[] Moves(Board b)
+        public virtual Move[] Moves(Board b, bool captureOnly = false)
         {
-            var mask = MoveMask(b);
+            var mask = captureOnly ? (AttackMask(b) & enemyPieces(b)) : MoveMask(b);
             return _convert.ConvertMask(b, Position, mask);
         }
 
@@ -94,19 +94,5 @@ namespace Engine
             Position = destination;
             Index = BitUtil.BitToIndex(destination);
         }
-        
-        //public virtual Move ApplyMove(Move m)
-        //{
-        //    Position = m.End;
-        //    Index = BitUtil.BitToIndex(m.End);
-        //    return m;
-        //}
-
-        //public virtual Move ReverseMove(Move m)
-        //{
-        //    Position = m.Start;
-        //    Index = BitUtil.BitToIndex(m.Start);
-        //    return m;
-        //}
     }
 }
