@@ -269,5 +269,14 @@ namespace EngineTest
             Assert.AreEqual(wb.Length, bb.Length);
             Assert.AreEqual(bw.Length, ww.Length);
         }
+
+        [TestMethod]
+        public void MoveCountTest()
+        {
+            var board = new Board("k1b2r2/6p1/1p3p1R/2P1p1B1/q3P3/2nP4/NNP5/2Q4K w - - 0 1");
+            var (white, black) = board.MoveCount();
+            Assert.AreEqual(33, white);
+            Assert.AreEqual(43, black);
+        }
     }
 }

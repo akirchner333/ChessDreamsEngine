@@ -1,5 +1,7 @@
-﻿using Engine.Rules;
+﻿using Engine.Pieces.Movers;
+using Engine.Rules;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace Engine
 {
@@ -217,7 +219,7 @@ namespace Engine
             };
         }
 
-        // --------------------------------------------------------------- BOARD INFORMATION -------------------------------------------------
+        // ---------------------------------------------------------- BOARD INFORMATION -----------------------------------------------
         public Piece? FindPiece(ulong position)
         {
             return Array.Find(Pieces, p => !p.Captured & p.Position == position);
@@ -321,7 +323,6 @@ namespace Engine
             else
             {
                 var moveCount = 0;
-                var king = GetKing(side);
 
                 foreach (var piece in Pieces)
                 {
@@ -340,13 +341,13 @@ namespace Engine
 
                 // We don't know if the game is over until we actually generate the moves
                 // Which might cause some problems downhill, I'm not sure
-                if(moveCount == 0)
+                if(moveCount == 0 && !captureOnly)
                 {
                     EndGame();
                     return false;
                 }
 
-                if (DrawAvailable())
+                if (DrawAvailable() && !captureOnly)
                 {
                     moves[moveCount] = new Move(0, 0, side) { Draw = true };
                     moveCount++;
@@ -355,6 +356,58 @@ namespace Engine
                 moves = moves.Slice(0, moveCount);
                 return true;
             }
+        }
+
+        public (int, int) MoveCount()
+        {
+            if (State != GameState.PLAY)
+            {
+                return (0, 0);
+            }
+
+            var white = 0;
+            var black = 0;
+
+            foreach (var piece in Pieces)
+            {
+                if (piece.Captured)
+                    continue;
+
+                foreach (var move in piece.Moves(this, false))
+                {
+                    if (LegalMoves.LegalMove(move))
+                    {
+                        if (piece.Side)
+                        {
+                            white++;
+                        }
+                        else
+                        {
+                            black++;
+                        }
+                    }
+                }
+            }
+
+            if ((Turn && white == 0) || (!Turn && black == 0))
+            {
+                EndGame();
+                return (0, 0);
+            }
+
+            if (DrawAvailable())
+            {
+                if (Turn)
+                {
+                    white++;
+                }
+                else
+                {
+                    black++;
+                }
+            }
+
+            return (white, black);
         }
 
         // ----------------------------------------------------------------- MOVE APPLICATION ---------------------------------------------------------

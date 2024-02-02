@@ -94,6 +94,16 @@
             return $"{BitUtil.BitToAlgebraic(Start)}{BitUtil.BitToAlgebraic(End)}{PromotionChar()}";
         }
 
+        public string EndString()
+        {
+            return BitUtil.BitToAlgebraic(End);
+        }
+
+        public string StartString()
+        {
+            return BitUtil.BitToAlgebraic(End);
+        }
+
         public string PromotionChar()
         {
             return Promotion switch

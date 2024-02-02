@@ -36,22 +36,27 @@ namespace Engine.Rules
                 // Established that you're not doing that
                 if (Attackers.Length > 1)
                     return false;
-                var attacker = Attackers[0];
+                
+                // If this piece is pinned, then it can't move in any way that'd help the king
+                // I'm pretty sure. I can't think of a counter example
+                if(!IsPinned(m.Start, m.Side))
+                {
+                    var attacker = Attackers[0];
+                    // 2. Capture the attacking piece
+                    if (m.Capture() && m.TargetSquare() == attacker.Position)
+                        return true;
 
-                // 2. Capture the attacking piece
-                if (m.Capture() && m.TargetSquare() == attacker.Position)
-                    return true;
-
-                // 3. Move into the path of the attacker
-                var path = attacker.PathBetween(_board, king.Index);
-                if (BitUtil.Overlap(path, m.End))
-                    return true;
+                    // 3. Move into the path of the attacker
+                    var path = attacker.PathBetween(_board, king.Index);
+                    if (BitUtil.Overlap(path, m.End))
+                        return true;
+                }
 
                 return false;
             }
 
             // If the piece is pinned
-            if (BitUtil.Overlap(m.Start, m.Side ? WhitePins : BlackPins))
+            if (IsPinned(m.Start, m.Side))
             {
                 foreach (var attacker in _board.Pieces)
                 {
@@ -65,6 +70,11 @@ namespace Engine.Rules
             }
 
             return true;
+        }
+
+        public bool IsPinned(ulong position, bool side)
+        {
+            return BitUtil.Overlap(position, side ? WhitePins : BlackPins);
         }
 
         public bool InCheck(bool side)
