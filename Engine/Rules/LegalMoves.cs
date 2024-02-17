@@ -60,10 +60,13 @@ namespace Engine.Rules
             {
                 foreach (var attacker in _board.Pieces)
                 {
-                    // Find the piece that's attacking
-                    if (attacker.Active(!m.Side) && BitUtil.Overlap(attacker.XRayAttacks(_board), king.Position))
+                    // Find the piece that's pinning this piece
+                    if (attacker.Active(!m.Side) && 
+                        BitUtil.Overlap(attacker.XRayAttacks(_board), king.Position) &&
+                        BitUtil.Overlap(attacker.PathBetween(_board, king.Index), m.Start)
+                    )
                     {
-                        var path = attacker.PathBetween(_board, BitUtil.BitToIndex(m.Start));
+                        var path = attacker.PathBetween(_board, king.Index, true);
                         return BitUtil.Overlap(path | attacker.Position, m.End);
                     }
                 }

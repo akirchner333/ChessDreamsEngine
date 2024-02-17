@@ -114,6 +114,8 @@ namespace Engine
         {
             var fields = fen.Split(' ');
 
+            //if (fields.Length != 6)
+            //    Console.WriteLine($"Bad fen {fen}");
             //Piece placement
             var y = 7; //why do FENs start with 8 and go down?
             foreach (var row in fields[0].Split('/'))

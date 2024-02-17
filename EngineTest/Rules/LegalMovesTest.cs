@@ -61,11 +61,28 @@ namespace EngineTest.Rules
         }
 
         [TestMethod]
-        public void PinTest()
+        public void PinMapTest()
         {
             var board = new Board("8/1r1p2k1/5pp1/4B3/3b4/1PP5/1K1P2R1/8 b - - 0 1");
             Assert.AreEqual(393216ul, board.LegalMoves.WhitePins);
             Assert.AreEqual(105553116266496ul, board.LegalMoves.BlackPins);
+        }
+
+        [TestMethod]
+        public void PinnedPieceTest()
+        {
+            var board = new Board("k1r1R2K/8/8/4B3/7P/2b5/8/7r w - - 0 1");
+            var moves = board.MoveArray();
+            //Bishop can capture, move forward, or move back
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e5d4"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e5f6"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e5c3"));
+            // Rook can capture, move forward, or move back
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e8d8"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e8f8"));
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "e8c8"));
+            // Pawn can move forward
+            Assert.IsTrue(moves.Any(m => m.LongAlgebraic() == "h4h5"));
         }
 
         [TestMethod]

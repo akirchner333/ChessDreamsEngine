@@ -75,7 +75,7 @@ namespace Engine
             return 0;
         }
 
-        public virtual ulong PathBetween(Board b, int index)
+        public virtual ulong PathBetween(Board b, int index, bool raw = false)
         {
             return 0;
         }

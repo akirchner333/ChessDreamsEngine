@@ -36,9 +36,9 @@ namespace Engine
             return _rookMover.XRayAttacks(Index, board) | _bishopMover.XRayAttacks(Index, board);
         }
 
-        public override ulong PathBetween(Board b, int i)
+        public override ulong PathBetween(Board b, int i, bool raw = false)
         {
-            return _rookMover.PathBetween(Index, i, b) | _bishopMover.PathBetween(Index, i, b);
+            return _rookMover.PathBetween(Index, i, b, raw) | _bishopMover.PathBetween(Index, i, b, raw);
         }
     }
 }

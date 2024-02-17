@@ -93,13 +93,12 @@
             }
             return $"{BitUtil.BitToAlgebraic(Start)}{BitUtil.BitToAlgebraic(End)}{PromotionChar()}";
         }
-
-        public string EndString()
+        public string StartString()
         {
-            return BitUtil.BitToAlgebraic(End);
+            return BitUtil.BitToAlgebraic(Start);
         }
 
-        public string StartString()
+        public string EndString()
         {
             return BitUtil.BitToAlgebraic(End);
         }

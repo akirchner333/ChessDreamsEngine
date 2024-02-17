@@ -57,14 +57,26 @@ namespace Engine.Pieces.Movers
         // If there's one piece, it returns that piece's bit
         // All other cases, it returns 0
         // Can't think of a good name to cover both those cases
-        public ulong PathBetween(int i, int targetIndex, Board board, bool side)
+        public ulong PathBetween(int i, int targetIndex, Board board, bool side, bool raw)
         {
             if (!BitUtil.Overlap(RawMask(i, 0), BitUtil.IndexToBit(targetIndex)))
                 return 0;
 
+            if(raw)
+                return RawMask(i, 0) & RawMask(targetIndex, 0);
+
             var moves = MoveMask(i, board, side);
             var targetMoves = MoveMask(targetIndex, board, side);
             return moves & targetMoves;
+        }
+
+        // Just returns all the squares between point A and B
+        public ulong PathBetweenRaw(int i, int targetIndex)
+        {
+            if (!BitUtil.Overlap(RawMask(i, 0), BitUtil.IndexToBit(targetIndex)))
+                return 0;
+
+            return RawMask(i, 0) & RawMask(targetIndex, 0);
         }
 
         private ulong Key(int i, ulong occ)

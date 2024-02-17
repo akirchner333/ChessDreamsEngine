@@ -27,9 +27,9 @@
             return data.XRayAttacks(i, board, Side);
         }
 
-        public ulong PathBetween(int i, int target, Board board)
+        public ulong PathBetween(int i, int target, Board board, bool raw)
         {
-            return data.PathBetween(i, target, board, Side);
+            return data.PathBetween(i, target, board, Side, raw);
         }
     }
 
