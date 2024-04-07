@@ -76,7 +76,7 @@
             return (CastleRights & (int)c) != 0;
         }
 
-        public ulong RookDestination(Move move)
+        public static ulong RookDestination(Move move)
         {
             return _rookMoves[BitUtil.BitToIndex(move.OtherPosition)];
         }

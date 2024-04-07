@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
+    // http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm
     public class PGN
     {
         public Dictionary<string, string> Attributes { get; private set; } = new Dictionary<string, string>();
