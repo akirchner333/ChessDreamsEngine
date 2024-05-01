@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
+    // Takes A PGN and plays through the game
+    // Useful for converting PGNs into a set of FENs, for example
     // http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm
     public class PGN
     {
@@ -147,8 +149,6 @@ namespace Engine
         public bool PromotionMatch(string algebraic, Move move)
         {
             // The last letter might be +, if it puts the king into check
-            // So how do I find the last non-plus sign character?
-            // For real, I hate it here
             var promote = new Regex(@"([QRBN])\+?$");
             var last = promote.Match(algebraic).Groups[1].Value[0];
             return move.Promoting() && move.Promotion == LetterToType(last);

@@ -2,8 +2,10 @@
 
 namespace Engine.Rules
 {
+    // Determines which moves are legal
     public class LegalMoves
     {
+        // bitboards of all the places pieces can attack
         public ulong WhiteAttacks { get; set; } = 0;
         public ulong BlackAttacks { get; set; } = 0;
         // WhitePins is a board of the white pieces which are pinned. BlackPins is the same for black pieces

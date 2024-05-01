@@ -1,5 +1,7 @@
 ﻿namespace Engine.Rules
 {
+    // Handles the fifty move rule
+    // https://en.wikipedia.org/wiki/Fifty-move_rule
     public class FiftyMove : IRule
     {
         public int Clock { get; set; }

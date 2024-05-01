@@ -15,6 +15,7 @@
         CapturePromotion
     }
 
+    // Moves are a struct so can be `stackalloc`ed
     public struct Move : IMove<Move>
     {
         public ulong Start { get; private set; }

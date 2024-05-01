@@ -1,5 +1,6 @@
 ﻿namespace Engine
 {
+    // Some random functions that I've ended up needing
     public static class Rand
     {
         public static Random R { get; private set; }

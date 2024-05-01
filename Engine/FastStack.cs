@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Engine
 {
     //https://github.com/Tearth/Cosette/blob/e433c8c9adfe92568f8585217a542db22688ad4b/Cosette/Engine/Common/FastStack.cs
+    // Used for helping with reversing moves - old states are added to the stack
     public class FastStack<T>
     {
         private T[] _stack;

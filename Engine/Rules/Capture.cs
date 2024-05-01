@@ -1,6 +1,6 @@
 ﻿namespace Engine.Rules
 {
-    public class Capture
+    public class Capture : IRule
     {
         private Board _board;
         private FastStack<int> _captures;

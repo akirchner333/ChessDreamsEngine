@@ -1,7 +1,6 @@
 ﻿namespace Engine.Rules
 {
-    // Handles movement and stores all the zobrist values for piece square combos
-    // Kind of an awkward combo, so I dunno
+    // Handles movement
     public class PieceMovement
     {
         private Board _board;

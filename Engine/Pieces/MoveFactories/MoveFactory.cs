@@ -2,6 +2,7 @@
 
 namespace Engine.Pieces.MoveFactories
 {
+    // Converts boards into arrays of moves
     public class MoveFactory : Base
     {
         public MoveFactory() { }

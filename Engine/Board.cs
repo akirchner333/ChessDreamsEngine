@@ -40,10 +40,7 @@ namespace Engine
 
     public class Board : IGameEngine<Move>
     {
-        //TODO
-        // - Build from FEN
-        // - Print FEN
-
+        // The maximum number of legal moves a board can have
         public int MAXMOVES => 218;
 
         public readonly static ulong[] Rows = new ulong[8]
@@ -90,6 +87,8 @@ namespace Engine
         public ulong AllPieces { get; set; } = 0;
         public ulong WhitePieces { get; set; } = 0;
         public ulong BlackPieces { get; set; } = 0;
+        // The zobrist hash of the current board state is stored here
+        // Individual rules access and update it as they handle relevant events
         public ulong Hash { get; set; } = 0;
 
         // ------------------------------------------------------------- BOARD CREATION ------------------------------------------------
@@ -113,9 +112,6 @@ namespace Engine
         public Board(string fen)
         {
             var fields = fen.Split(' ');
-
-            //if (fields.Length != 6)
-            //    Console.WriteLine($"Bad fen {fen}");
             //Piece placement
             var y = 7; //why do FENs start with 8 and go down?
             foreach (var row in fields[0].Split('/'))
@@ -158,6 +154,7 @@ namespace Engine
                 Hash ^= TurnValue;
             TurnNumber = Int32.Parse(fields[5]);
 
+            // Builds all the rules
             Move = new PieceMovement(this);
             Castles = new Castling(fields, this);
             Passant = new EnPassant(fields, this);
@@ -227,6 +224,7 @@ namespace Engine
             return Array.Find(Pieces, p => !p.Captured & p.Position == position);
         }
 
+        // Like Array.FindIndex, it'll return -1 if there's no piece at that position
         public int FindPieceIndex(ulong position)
         {
             return Array.FindIndex(Pieces, p => !p.Captured & p.Position == position);
@@ -310,6 +308,8 @@ namespace Engine
             return moves.ToArray();
         }
 
+        // We use a Span of moves here for speed. The space for the moves is
+        // allocated beforehand and then truncated
         public bool Moves(ref Span<Move> moves, bool captureOnly = false)
         {
             return SideMoves(ref moves, Turn, captureOnly);
@@ -360,6 +360,8 @@ namespace Engine
             }
         }
 
+        // Returns the number of legal moves for each side
+        // Relevant for players to rate mobility
         public (int, int) MoveCount()
         {
             if (State != GameState.PLAY)

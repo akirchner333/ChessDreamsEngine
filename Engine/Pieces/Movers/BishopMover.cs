@@ -5,6 +5,7 @@
         public static RiderData data;
         public bool Side;
 
+        // My goal here is to load the magic info for each piece type once and only once
         static BishopMover()
         {
             data = new RiderData("Bishop", new BishopCalc());

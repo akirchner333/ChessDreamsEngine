@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-
+    // The generic piece class
     public interface IPiece
     {
         string Name { get; }

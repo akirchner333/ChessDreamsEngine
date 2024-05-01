@@ -1,5 +1,7 @@
 ﻿namespace Engine.Rules
 {
+    // Handles 3 and 5 fold repetition
+    // https://en.wikipedia.org/wiki/Threefold_repetition
     public class Repetition
     {
         private Board _board;

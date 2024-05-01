@@ -1,5 +1,7 @@
 ﻿namespace Engine.Pieces.Movers
 {
+    // A leaper is a piece to moves directly to a square, skipping at intervening squares
+    // https://en.wikipedia.org/wiki/Fairy_chess_piece#Leapers
     public class Leaper : IMover
     {
         public string Key { get; private set; }

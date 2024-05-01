@@ -4,6 +4,8 @@ namespace Engine.Pieces.Magic
 {
     public static class MagicDatabase
     {
+        // I have not yet figured out how to load this XML file in a manner
+        // that would work on other people's computers. It hasn't been a priority
         public static string XMLPath { get; private set; } = @"C:\Users\akirc\OneDrive\Desktop\Projects\Engine\Engine\Pieces\Magic\KnownMagic.xml";
         public static XDocument KnownMagics { get; private set; }
 

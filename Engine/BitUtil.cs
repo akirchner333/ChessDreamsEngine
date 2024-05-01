@@ -10,12 +10,6 @@ namespace Engine
             return 1ul << AlgebraicToIndex(a);
         }
 
-        // So when you access a string with [] you get a char and chars are basically just numbers through unicode
-        // So 'a' is 97 through 'h' is 104. But what if it's capital letters? That's 'A' = 65 through 'H' = 72
-        // 97 is a prime, so there's nothing we can do with that, but if we subtract one from each value we get 96 and 64, which are both divisible by 32
-        // So it's a[0] - 1 % 32 gets use the values, regardless of upper or lower case
-        // Since we're moduloing by 32, this'd work for boards with up to 32 files
-        // Disclaimer: I was sick with every disease when I wrote this method
         public static int AlgebraicToIndex(string a)
         {
             return CoordToIndex(
@@ -23,6 +17,13 @@ namespace Engine
                 AlgebraicToY(a)
             );
         }
+        
+        // So when you access a string with [] you get a char and chars are basically just numbers through unicode
+        // So 'a' is 97 through 'h' is 104. But what if it's capital letters? That's 'A' = 65 through 'H' = 72
+        // 97 is a prime, so there's nothing we can do with that, but if we subtract one from each value we get 96 and 64, which are both divisible by 32
+        // So it's a[0] - 1 % 32 gets use the values, regardless of upper or lower case
+        // Since we're moduloing by 32, this'd work for boards with up to 32 files
+        // Disclaimer: I was sick with every disease when I wrote this method
         public static int AlgebraicToX(string a)
         {
             return (int)(a[0] - 1) % 32;

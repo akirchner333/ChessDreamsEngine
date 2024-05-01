@@ -8,7 +8,7 @@
         BlackQueenside = 0b1000
     }
 
-    public class Castling
+    public class Castling : IRule
     {
         public int CastleRights { get; set; } = 0b1111;
         private FastStack<int> _castleStack = new FastStack<int>(16);
