@@ -1,7 +1,7 @@
 ﻿namespace Engine.Rules
 {
     // Handles movement
-    public class PieceMovement
+    public class PieceMovement : IRule
     {
         private Board _board;
 

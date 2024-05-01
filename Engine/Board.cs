@@ -431,8 +431,8 @@ namespace Engine
 
             m = Capture.ApplyMove(m, pieceIndex);
             m = Move.ApplyMove(m, pieceIndex);
-            m = Passant.ApplyMove(m, p);
-            m = Castles.ApplyMove(m, p);
+            m = Passant.ApplyMove(m, pieceIndex);
+            m = Castles.ApplyMove(m, pieceIndex);
             m = Clock.ApplyMove(m, pieceIndex);
             m = Promote.ApplyMove(m, pieceIndex);
 
@@ -461,9 +461,9 @@ namespace Engine
 
             Capture.ReverseMove(m, pieceIndex);
             Move.ReverseMove(m, pieceIndex);
-            Passant.ReverseMove(m);
+            Passant.ReverseMove(m, pieceIndex);
             Clock.ReverseMove(m, pieceIndex);
-            Castles.ReverseMove(m);
+            Castles.ReverseMove(m, pieceIndex);
             Promote.ReverseMove(m, pieceIndex);
 
 
@@ -472,7 +472,7 @@ namespace Engine
             Turn = !Turn;
             Hash ^= TurnValue;
 
-            Repetition.ReverseMove(m);
+            Repetition.ReverseMove(m, pieceIndex);
             LegalMoves.ReverseMove(m, pieceIndex);
 
             State = GameState.PLAY;

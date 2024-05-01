@@ -81,7 +81,7 @@
             return _rookMoves[BitUtil.BitToIndex(move.OtherPosition)];
         }
 
-        public Move ApplyMove(Move m, Piece p)
+        public Move ApplyMove(Move m, int pieceIndex)
         {
             if (m.Castling())
             {
@@ -93,7 +93,7 @@
                 }
             }
 
-            int effectedCastles = p.CastleRights;
+            int effectedCastles = _board.Pieces[pieceIndex].CastleRights;
             if (m.Capture())
             {
                 var target = _board.Capture.LastCapture();
@@ -112,7 +112,7 @@
             return m;
         }
 
-        public void ReverseMove(Move m)
+        public void ReverseMove(Move m, int _pieceIndex)
         {
             if (m.Castling())
             {

@@ -2,7 +2,7 @@
 {
     // Handles 3 and 5 fold repetition
     // https://en.wikipedia.org/wiki/Threefold_repetition
-    public class Repetition
+    public class Repetition : IRule
     {
         private Board _board;
         private FastStack<ulong> _positions = new FastStack<ulong>(160);
@@ -17,20 +17,13 @@
 
         public Move ApplyMove(Move move, int pieceIndex)
         {
-            //try
-            //{
-                _positions.Push(_board.Hash);
-            //}
-            //catch
-            //{
-            //    throw new Exception($"Repetition push issue, {_positions.Count()}, {_board.Clock.Clock}");
-            //}
+            _positions.Push(_board.Hash);
             
             CheckDraw();
             return move;
         }
 
-        public void ReverseMove(Move move)
+        public void ReverseMove(Move move, int _pieceIndex)
         {
             _positions.Pop();
             CheckDraw();

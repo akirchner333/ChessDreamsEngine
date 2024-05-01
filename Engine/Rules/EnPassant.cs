@@ -1,6 +1,6 @@
 ﻿namespace Engine.Rules
 {
-    public class EnPassant
+    public class EnPassant : IRule
     {
         public ulong PassantSquare { get; private set; } = 0;
         public ulong TargetSquare { get; private set; } = 0;
@@ -41,9 +41,9 @@
             return BitUtil.BitToAlgebraic((ulong)PassantSquare);
         }
 
-        public Move ApplyMove(Move m, Piece p)
+        public Move ApplyMove(Move m, int pieceIndex)
         {
-            if (p.Type == PieceTypes.PAWN && (m.Start >> 16 == m.End || m.Start << 16 == m.End))
+            if (_board.Pieces[pieceIndex].Type == PieceTypes.PAWN && (m.Start >> 16 == m.End || m.Start << 16 == m.End))
             {
                 UpdateHash();
                 _passant.Push(PassantSquare);
@@ -68,7 +68,7 @@
             return m;
         }
 
-        public void ReverseMove(Move m)
+        public void ReverseMove(Move m, int _pieceIndex)
         {
             if (m.PassantImpact)
             {

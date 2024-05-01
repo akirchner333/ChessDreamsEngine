@@ -3,7 +3,7 @@
 namespace Engine.Rules
 {
     // Determines which moves are legal
-    public class LegalMoves
+    public class LegalMoves : IRule
     {
         // bitboards of all the places pieces can attack
         public ulong WhiteAttacks { get; set; } = 0;
